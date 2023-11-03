@@ -1,0 +1,81 @@
+@use "./colors.scss";
+
+//
+// Input
+//
+$input-hover-background: #b1b1b1;
+
+input {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;  
+}
+
+input:focus {
+    outline-width: 0;
+}
+
+input.outline {
+    transition: background-color .2s;
+
+    padding: 15px;
+    border-radius: 20px;
+    border: none;
+    border-style: none;
+    background-color: #cccccc;
+}
+
+input.outline:hover {
+    background-color: $input-hover-background;
+}
+
+input.outline:focus {
+    background-color: $input-hover-background;
+}
+
+//
+// Button
+//
+
+button {
+    outline: none;
+    border: none;
+    border-radius: 20px;
+    padding: 15px;
+    padding-left: 25px;
+    padding-right: 25px;
+    margin: 0;
+
+    transition: background-color .2s;
+
+    &.primary {
+        background-color: colors.$primary-color;
+       
+        color: #fff;
+    }
+
+    &.primary:not(:disabled) {
+        box-shadow: 0 0 3px colors.$primary-color;
+    }
+
+    
+    &.primary:hover {
+        background-color: colors.$primary-dark-color;
+    }
+
+    &.primary:disabled {
+        background-color: #bebaba;
+        color: #2e2c2c;
+    }
+}
+
+// Anchor
+
+a {
+   text-decoration: none;
+}
+
+// Paragraph
+p.error {
+    color: colors.$error-color;
+}

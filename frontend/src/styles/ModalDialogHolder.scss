@@ -1,0 +1,18 @@
+body.active-full-screen-modal-dialog {
+    overflow: hidden;
+}
+
+#modal-dialog-holder.active-modal-dialog #modal-dialog-overlay {
+    background: #000000aa;
+    position: absolute;
+    z-index: 1;
+
+    width: 100%;
+}
+
+#modal-dialog-holder.active-modal-dialog.fullscreen #modal-dialog-overlay {
+    left: 0;
+    top: 0;
+
+    height: 100%;
+}

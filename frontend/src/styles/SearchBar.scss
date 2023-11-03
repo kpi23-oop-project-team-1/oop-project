@@ -1,0 +1,40 @@
+.search-bar-container {
+    border: 1px black solid;
+    border-radius: 10px;
+    display: flex;
+
+    input {
+        outline-width: 0;
+        border: none;
+        border-style: none;
+        vertical-align: middle;
+        margin: 15px 5px;
+        margin-left: 10px;
+        width: 100%;
+    }
+
+    .search-bar-clear-query-button {
+        background: none;
+        padding: 0;
+        vertical-align: middle;
+
+        svg {
+            stroke: #000;
+        }
+
+        &:hover svg {
+            stroke: #333;
+            //background-color: #aaa;
+        }
+    }
+
+    .search-bar-search-button {
+        margin-left: 10px;
+        height: 100%;
+        padding: 17.5px 25px;
+        border-radius: 0 9px 9px 0;
+        box-sizing: border-box;
+
+        box-shadow: none;
+    }
+}

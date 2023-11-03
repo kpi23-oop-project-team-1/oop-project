@@ -1,0 +1,30 @@
+@use "./dimensions.scss";
+
+#header {
+    display: flex;
+    position: sticky;
+    height: dimensions.$header-height;
+    align-items: center;
+    border-bottom: 1px black solid;
+    background: #fff;
+
+    .search-bar-container {
+        margin-left: 20px;
+        width: 45%;
+    }
+}
+
+#modal-dialog-holder.active-modal-dialog:not(.fullscreen) #header {
+    z-index: 2;
+}
+
+#header-logo {    
+    margin: 5px;
+    width: dimensions.$header-icon-size;
+    height: dimensions.$header-icon-size;
+}
+
+#header-logo-name {
+    margin-left: 5px;
+    display: inline-block;
+}
