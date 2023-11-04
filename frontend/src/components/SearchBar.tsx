@@ -5,27 +5,26 @@ import { ChangeEventHandler } from "react"
 export type SearchBarProps = {
     text?: string,
     placeholder: string,
-    searchButtonText: string
-    onInput?: (text: string) => void
+    searchButtonText: string,
+    onInputFocusChanged: (isFocused: boolean) => void,
+    onInputTextChanged: (text: string) => void
 }
 
 export default function SearchBar(props: SearchBarProps) {
-    function optionalOnInput(text: string) {
-        props.onInput && props.onInput(text)
-    }
-
     return (
         <div className="search-bar-container">
             <input 
               type="text"
               placeholder={props.placeholder}
-              onChange={e => optionalOnInput(e.target.value)}
+              onChange={e => props.onInputTextChanged(e.target.value)}
+              onFocus={() => props.onInputFocusChanged(true)}
+              onBlur={() => props.onInputFocusChanged(false)}
               value={props.text}/>
             <button 
               type="button" 
               className="search-bar-clear-query-button"
               title="Clear"
-              onClick={() => optionalOnInput("")}>
+              onClick={() => props.onInputTextChanged("")}>
                 <CloseIcon width={16} height={16}/>
             </button>
             <button

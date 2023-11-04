@@ -1,17 +1,16 @@
 import { useState } from "react"
-import FullHeader from "../components/FullHeader"
-import ModalDialogHolder, { ModalDialogType } from "../components/ModalDialogHolder"
 import "../styles/MainPage.scss"
-
-type MainPageDialogType = 'search' | 'none'
+import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader"
 
 export default function MainPage() {
-    let [modalDialogType, setModalDialogType] = useState<ModalDialogType>()
-    let [activeDialogType, setActiveDialogType] = useState<MainPageDialogType>('none')
+    let [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
 
     return (
-        <ModalDialogHolder type={modalDialogType} active={activeDialogType != 'none'}>
-            <FullHeader/>
-        </ModalDialogHolder>
+        <PageWithSearchHeader
+          dialogSwitch={undefined} 
+          dialogType={dialogType} 
+          onChangeDialogType={setDialogType}>
+
+        </PageWithSearchHeader>
     )
 }

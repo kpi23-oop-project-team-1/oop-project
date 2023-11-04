@@ -4,7 +4,10 @@ import { englishStringResources } from '../StringResources'
 import "../styles/FullHeader.scss"
 import SearchBar from './SearchBar'
 
-export default function FullHeader() {
+export type FullHeaderProps = {
+};
+
+export default function FullHeader(props: FullHeaderProps) {
     const strRes = englishStringResources
 
     let [searchQuery, setSearchQuery] = useState("")
@@ -17,7 +20,8 @@ export default function FullHeader() {
               placeholder={strRes.headerSearchBoxPlaceholder}
               text={searchQuery}
               searchButtonText={strRes.search}
-              onInput={text => setSearchQuery(text)}/>
+              onInputTextChanged={text => setSearchQuery(text)}
+              onInputFocusChanged={() => {}}/>
         </div>
     )
 }

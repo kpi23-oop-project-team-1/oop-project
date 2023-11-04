@@ -14,7 +14,7 @@
     }
 }
 
-#modal-dialog-holder.active-modal-dialog:not(.fullscreen) #header {
+#dialog-holder.active-dialog:not(.fullscreen) #header {
     z-index: 2;
 }
 
