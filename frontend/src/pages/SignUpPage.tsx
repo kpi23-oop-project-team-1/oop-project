@@ -29,19 +29,19 @@ export default function SignUpPage() {
                         placeholder={strRes.personFirstName} 
                         inputType="text"
                         errorText={isValidFirstName ? undefined : strRes.textEmptyError}
-                        onInput={e => setFirstName(e.target.value)}/>
+                        onTextChanged={setFirstName}/>
 
                     <AdvancedInput 
                         placeholder={strRes.personLastName} 
                         inputType="text"
                         errorText={isValidLastName ? undefined : strRes.textEmptyError}
-                        onInput={e => setLastName(e.target.value)}/>
+                        onTextChanged={setLastName}/>
 
                     <AdvancedInput 
                         placeholder={strRes.email} 
                         inputType="email"
                         errorText={isValidEmail ? undefined : strRes.invalidEmail}
-                        onInput={e => setEmail(e.target.value)}/>
+                        onTextChanged={setEmail}/>
 
                     <div id="sign-up-form-telnum-block">
                         <UaFlag id="sign-up-form-ua-flag" width={16} height={16}/>
@@ -50,7 +50,7 @@ export default function SignUpPage() {
                             placeholder={strRes.telephoneNumber} 
                             inputType="tel"
                             errorText={isValidTelNumber ? undefined : strRes.invalidTelNumber}
-                            onInput={e => setTelNumber(e.target.value)}/>
+                            onTextChanged={setTelNumber}/>
                     </div>
 
                     <AdvancedInput
@@ -58,8 +58,6 @@ export default function SignUpPage() {
                         inputType="password"/>
 
                     <button id="signup-button" className="primary">{strRes.signUp}</button>
-
-                   
                 </div>
             </div>
             <Footer/>

@@ -3,6 +3,7 @@
 //
 // Input
 //
+
 $input-hover-background: #b1b1b1;
 
 input {
@@ -13,24 +14,6 @@ input {
 
 input:focus {
     outline-width: 0;
-}
-
-input.outline {
-    transition: background-color .2s;
-
-    padding: 15px;
-    border-radius: 20px;
-    border: none;
-    border-style: none;
-    background-color: #cccccc;
-}
-
-input.outline:hover {
-    background-color: $input-hover-background;
-}
-
-input.outline:focus {
-    background-color: $input-hover-background;
 }
 
 //
@@ -69,13 +52,18 @@ button {
     }
 }
 
+//
 // Anchor
+//
 
 a {
    text-decoration: none;
 }
 
+//
 // Paragraph
+//
+
 p.error {
     color: colors.$error-color;
 }

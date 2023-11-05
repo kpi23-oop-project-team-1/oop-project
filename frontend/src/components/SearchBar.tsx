@@ -1,6 +1,5 @@
 import "../styles/SearchBar.scss"
 import CloseIcon from "../../public/images/close.svg"
-import { ChangeEventHandler } from "react"
 
 export type SearchBarProps = {
     text?: string,

@@ -1,13 +1,6 @@
 @use 'sass:math';
 @use 'colors';
 
-$error-icon-size: 20px;
-$error-border-width: 2px;
-
-.advanced-input-title {
-    margin: 0 0 3px 10px;
-}
-
 .advanced-input-error {
     visibility: hidden;
  
@@ -15,34 +8,6 @@ $error-border-width: 2px;
     height: 25px;
 }
 
-.advanced-input-error-icon {
-    visibility: hidden;
-    position: relative;
-    margin-left: -($error-icon-size + 10px);
-    top: 50%;
-    transform: translateY((math.div($error-icon-size, 4)));
-    pointer-events: none;
-
-    color: colors.$error-color;
-    fill: colors.$error-color;
-}
-
-.advanced-input-container input {
-    transition: background-color .1s;
-
-    outline: $error-border-width transparent solid;
-}
-
-.advanced-input-container.in-error-state {
-    .advanced-input-error {
-        visibility: visible;
-    }
-
-    input {
-        outline: $error-border-width colors.$error-color solid;
-    }
-
-    .advanced-input-error-icon {
-        visibility: visible;
-    }
+.advanced-input-container.in-error-state .advanced-input-error {
+    visibility: visible;
 }

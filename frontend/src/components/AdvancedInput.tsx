@@ -1,11 +1,11 @@
 import "../styles/AdvancedInput.scss";
-import ErrorOutlineIcon from '../../public/images/error_outline.svg'
-import { ChangeEventHandler } from "react";
+import { HTMLInputTypeAttribute } from "react";
+import AdvancedInputField from "./AdvancedInputField";
 
-type AdvancedInputProps = {
+export type AdvancedInputProps = {
     placeholder: string,
-    inputType?: string, 
-    onInput?: ChangeEventHandler<HTMLInputElement>
+    inputType?: HTMLInputTypeAttribute, 
+    onTextChanged?: (newText: string) => void
     errorText?: string,
     reserveSpaceForError?: boolean
 }
@@ -13,13 +13,11 @@ type AdvancedInputProps = {
 export default function AdvancedInput(props: AdvancedInputProps) {
     return (
         <div className={"advanced-input-container" + (props.errorText ? " in-error-state" : "")}>
-            <p className="advanced-input-title">{props.placeholder}</p>
-
-            <div className="advanced-input-field-container">
-                <input type={props.inputType ?? "text"} onChange={props.onInput} className="outline"></input>
-
-                <ErrorOutlineIcon width={20} height={20} className="advanced-input-error-icon"/>
-            </div>
+            <AdvancedInputField 
+              placeholder={props.placeholder}
+              inputType={props.inputType}
+              onTextChanged={props.onTextChanged}
+              showErrorIcon={props.errorText != undefined}/>
            
             {(props.reserveSpaceForError ?? true) || (props.errorText) ? 
                 <p className="advanced-input-error error">{props.errorText}</p> 

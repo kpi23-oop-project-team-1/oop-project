@@ -23,14 +23,14 @@ export default function SignInPage() {
                         <AdvancedInput
                             placeholder={strRes.email} 
                             inputType="email" 
-                            onInput={(event) => setEmail(event.target.value)}
+                            onTextChanged={setEmail}
                             errorText={emailErrorText} />
 
                         <AdvancedInput 
                             placeholder={strRes.password} 
                             inputType="password" 
                             reserveSpaceForError={false}
-                            onInput={(event) => setPassword(event.target.value)}/>
+                            onTextChanged={setPassword}/>
 
                         <div id="signup-block">
                             <p>{strRes.newToWebsite}</p>
