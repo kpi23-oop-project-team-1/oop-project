@@ -19,7 +19,10 @@ interface StringResources {
     readonly aboutShopifyDetail: string,
     readonly copyright: string,
     readonly faq: string,
-    readonly userAgreement: string
+    readonly userAgreement: string,
+    readonly cart: string,
+    readonly remove: string,
+    readonly checkout: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -43,5 +46,8 @@ export const ukrainianStringResources : StringResources = {
     aboutShopifyDetail: "Ми заснували Shopify з однією метою: надавати високоякісні, ретельно розроблені продукти, створені для кожного. Наша пристрасть до досконалості рухала нами з самого початку і продовжує рухати нас вперед. Ми знаємо, що кожний товар має значення, і прагнемо зробити Ваші покупки максимально корисними. Не погоджуйтесь ні на що, окрім найкращого",
     copyright: "©2023 від Shopify",
     userAgreement: "Угода користувача",
-    faq: "FAQ"
+    faq: "FAQ",
+    cart: "Кошик",
+    remove: "Видалити",
+    checkout: "Оформити замовлення"
 }

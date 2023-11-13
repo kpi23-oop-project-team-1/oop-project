@@ -1,0 +1,50 @@
+@use 'colors';
+
+.number-spinner-control {
+    $size: 24px;
+
+    width: $size;
+    height: $size;
+
+    svg {
+        position: relative;
+        transition: fill .5s linear;
+        
+        width: $size * 0.75;
+        height: $size * 0.75;
+
+        top: 50%;
+        transform: translateY(-50%);
+        fill: colors.$primary-light-color;
+    }
+}
+
+.number-spinner-control:disabled svg {
+    fill: #989898;
+}
+
+.number-spinner-minus {
+    margin-right: 5px;
+}
+
+.number-spinner-plus {
+    margin-left: 5px;
+}
+
+.number-spinner-container input {
+
+    border-radius: 5px;
+    width: 70px;
+    padding: 10px;
+
+    border: #333 1px solid;
+    text-align: center;
+    transition-property: border-color;
+    transition-duration: .5s;
+    transition-timing-function: linear;
+
+    &:focus {
+        border-color: colors.$primary-light-color;
+        box-shadow: colors.$primary-color 0 0 5px;
+    }
+}

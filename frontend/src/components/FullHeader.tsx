@@ -9,6 +9,7 @@ import "../styles/FullHeader.scss"
 import SearchBar from './SearchBar'
 
 export type FullHeaderProps = {
+    onShowCart: () => void
 };
 
 export default function FullHeader(props: FullHeaderProps) {
@@ -36,15 +37,13 @@ export default function FullHeader(props: FullHeaderProps) {
             </div>
 
             <div id="header-option-block">
-                <CartButton productCount={1}/>
+                <CartButton productCount={1} onClick={props.onShowCart}/>
                 <HeaderLinkRoundButton href='/' icon={<FavoriteIcon/>} type='fill-only'/>
                 <HeaderLinkRoundButton href='/' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
             </div>
         </div>
     )
 }
-
-type HeaderLinkRoundButtonType = 'stroke-only' | 'fill-only'
 
 function HeaderLinkRoundButton(props: { id?: string, href: string, icon: React.ReactElement, type: 'stroke-only' | 'fill-only' }) {
     return (
@@ -54,9 +53,9 @@ function HeaderLinkRoundButton(props: { id?: string, href: string, icon: React.R
     )
 }
 
-function CartButton(props: { productCount: number }) {
+function CartButton(props: { productCount: number, onClick: () => void }) {
     return (
-        <div id="header-cart-button-container">
+        <div id="header-cart-button-container" onClick={props.onClick}>
             <button className='icon-button'>
                 <CartIcon/>
             </button>

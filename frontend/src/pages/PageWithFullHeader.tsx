@@ -1,11 +1,10 @@
+import CartDialog from "../components/CartDialog"
 import { DialogHolder, DialogInfo, DialogSwitch } from "../components/Dialogs"
 import FullHeader from "../components/FullHeader"
 
-export type PageWithFullHeaderDialogType = undefined
+export type PageWithFullHeaderDialogType = 'cart'
 
 export type PageWithFullHeaderProps<T> = React.PropsWithChildren<{
-    // Actually this declaration has no sense as the CombinedPageWithSearchHeaderDialogType is intended to strip undefined when possible.
-    // And we are always adding undefined. But this makes the transpiler happy.
     dialogType: PageWithFullHeaderDialogType | T | undefined,
     dialogSwitch?: DialogSwitch<T>
     onChangeDialogType: ((type: PageWithFullHeaderDialogType | T | undefined) => void),
@@ -15,11 +14,13 @@ export default function PageWithSearchHeader<T>(props: PageWithFullHeaderProps<T
     function dialogSwitch(type: PageWithFullHeaderDialogType | T): DialogInfo {
         // Temporarily like this. More dialogs will be added.
         switch (type) {
-            default:
-                if (type != null && props.dialogSwitch != undefined) {
-                    return props.dialogSwitch(type)
+            case 'cart':
+                return {
+                    mode: 'fullscreen',
+                    factory: () => <CartDialog onClose={() => props.onChangeDialogType(undefined)}/>
                 }
-                throw "Expected dialogSwitch in props"
+            default:
+                throw "Unexpected type in props"
         }
     }
 
@@ -28,7 +29,8 @@ export default function PageWithSearchHeader<T>(props: PageWithFullHeaderProps<T
           dialogType={props.dialogType}
           dialogSwitch={dialogSwitch}
           onHideDialog={() => props.onChangeDialogType(undefined)}>
-            <FullHeader />
+            <FullHeader onShowCart={() => props.onChangeDialogType('cart')} />
+            
             {props.children}
         </DialogHolder>
     )

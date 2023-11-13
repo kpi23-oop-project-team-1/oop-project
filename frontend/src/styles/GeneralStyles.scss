@@ -20,21 +20,20 @@ input:focus {
 // Button
 //
 
+$button-round-radius: 20px;
+
 button {
     outline: none;
     border: none;
-    border-radius: 20px;
-    padding: 15px;
-    padding-left: 25px;
-    padding-right: 25px;
+    border-radius: $button-round-radius;
+    padding: 15px 25px;
     margin: 0;
 
     transition: background-color .2s;
 
     &.primary {
         background-color: colors.$primary-color;
-       
-        color: #fff;
+        color: colors.$color-on-primary;
     }
 
     &.primary:not(:disabled) {
@@ -63,7 +62,26 @@ button {
 
 a {
    text-decoration: none;
+   
+   &:visited {
+       color: inherit;
+   }
 }
+
+a.link-button {
+    border-radius: $button-round-radius;
+    padding: 15px 25px;
+
+    &.primary {
+        background-color: colors.$primary-color;
+        color: colors.$color-on-primary;
+    }
+
+    &.primary:not(:disabled) {
+        box-shadow: 0 0 3px colors.$primary-color;
+    }
+}
+
 
 //
 // Paragraph

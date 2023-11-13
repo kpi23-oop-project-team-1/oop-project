@@ -1,0 +1,38 @@
+@use 'colors';
+
+$menu-round-radius: 5px;
+
+.menu {
+    border-radius: $menu-round-radius;
+    background-color: colors.$surface-color;
+}
+
+.menu-item {
+    border-radius: 0;
+    padding: 15px 5px;
+    background-color: transparent;
+
+    display: flex;
+
+    svg {
+        $size: 18px;
+
+        width: $size;
+        height: $size;
+        margin-right: 8px;
+    }
+
+    &:hover {
+        background-color: #eee;
+    }
+
+    &:first-child {
+        border-top-left-radius: $menu-round-radius;
+        border-top-right-radius: $menu-round-radius;
+    }
+
+    &:last-child {
+        border-bottom-left-radius: $menu-round-radius;
+        border-bottom-right-radius: $menu-round-radius;
+    }
+}

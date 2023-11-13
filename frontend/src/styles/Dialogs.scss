@@ -21,12 +21,14 @@ body.active-full-screen-dialog {
     left: 50%;
     transform: translateX(-50%);
 
-    &.fullscreen {
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
+    width: fit-content;
+}
 
-    &.under-header {
-        top: dimensions.$header-height;
-    }
+#dialog-holder.fullscreen .dialog {
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#dialog-holder.under-header .dialog {
+    top: dimensions.$header-height;
 }

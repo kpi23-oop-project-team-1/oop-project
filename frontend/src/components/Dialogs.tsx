@@ -17,18 +17,6 @@ export type DialogHolderProps<T> = PropsWithChildren<{
 }>;
 
 export function DialogHolder<T>(props: DialogHolderProps<T>) {
-    function createDialogHolderClass(dialogInfo: DialogInfo | undefined): string {
-        if (dialogInfo != undefined) {
-            return "active-dialog" + (dialogInfo.mode == "fullscreen" ? " fullscreen" : "")
-        }
-
-        return ""
-    }
-
-    function createDialogClass(dialogInfo: DialogInfo): string {
-        return `dialog ${dialogInfo.mode}`; 
-    }
-    
     useEffect(() => {
         const classList = document.body.classList
 
@@ -40,17 +28,26 @@ export function DialogHolder<T>(props: DialogHolderProps<T>) {
     }, [props.dialogType])
 
     const dialogInfo = props.dialogType != undefined ? props.dialogSwitch(props.dialogType) : undefined
+    const dialogHolderClass = dialogInfo ? "active-dialog " + dialogInfo.mode : ""
 
     return (
-        <div id="dialog-holder" className={createDialogHolderClass(dialogInfo)}>
+        <div id="dialog-holder" className={dialogHolderClass}>
             {props.children}
             {dialogInfo ? (
                 <div id="dialog-overlay" onClick={props.onHideDialog}>
-                    <div className={createDialogClass(dialogInfo)} onClick={e => e.stopPropagation()}>
-                        {dialogInfo.factory()}
-                    </div>
+                    {dialogInfo.factory()}
                 </div>
             ) : undefined}
         </div>
     )
+}
+
+export type DialogProps = React.PropsWithChildren<{
+    id?: string
+}>
+
+export function Dialog(props: DialogProps) {
+    return (<div className="dialog" id={props.id} onClick={e => e.stopPropagation()}>
+        {props.children}
+    </div>)
 }

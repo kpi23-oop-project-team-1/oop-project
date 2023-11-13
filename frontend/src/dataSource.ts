@@ -1,4 +1,4 @@
-import { AuthCreditials, AuthStatusResult, ConciseProductInfo, SignUpInfo, SignUpStatusResult, StatusVoidResult } from "./dataModels";
+import { AuthCreditials, AuthStatusResult, CartProductInfo, ConciseProductInfo, SignUpInfo, SignUpStatusResult, StatusVoidResult } from "./dataModels";
 import { httpFetchAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
@@ -6,6 +6,11 @@ export interface DataSource {
     signUpAsync(info: SignUpInfo): Promise<SignUpStatusResult>
 
     getSpecialProductsAsync(): Promise<ConciseProductInfo[]>
+
+    getCartProducts(): Promise<CartProductInfo[]>
+    addProductToCart(id: number): Promise<undefined>
+    updateCartProductQuantity(productId: number, newAmount: number): Promise<undefined>
+    removeProductFromCart(productId: number): Promise<undefined>
 }
 
 export class ServerDataSource implements DataSource {
@@ -43,9 +48,42 @@ export class ServerDataSource implements DataSource {
             url: this.createUrl("specialproducts")
         })
     }
+
+    async getCartProducts(): Promise<CartProductInfo[]> {
+        return await httpFetchAsync<CartProductInfo[]>({
+            method: "GET",
+            url: this.createUrl("cartproducts")
+        })
+    }
+
+    async addProductToCart(id: number): Promise<undefined> {
+        return await httpFetchAsync<undefined>({
+            method: "POST",
+            url: this.createUrl(`addcartproduct?id=${id}`)
+        })
+    }
+
+    async updateCartProductQuantity(productId: number, newAmount: number): Promise<undefined> {
+        return await httpFetchAsync<undefined>({
+            method: "POST",
+            url: this.createUrl(`cartproductamount?id=${productId}&amount=${newAmount}`)
+        })
+    }
+
+    async removeProductFromCart(productId: number): Promise<undefined> {
+        return await httpFetchAsync<undefined>({
+            method: "DELETE",
+            url: this.createUrl(`cartproduct?id=${productId}`)
+        })
+    }
 }
 
 export class TestDataSource implements DataSource {
+    private readonly cart: CartProductInfo[] = [
+        { id: 0, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", quantity: 1, totalAmount: 3 },
+        { id: 1, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", quantity: 1, totalAmount: 5 }
+    ]
+
     async authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult> {
         return { type: "success", value: { accessKey: "" } };
     }
@@ -69,6 +107,30 @@ export class TestDataSource implements DataSource {
             { id: 8, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
             { id: 9, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" }
         ]
+    }
+
+    async getCartProducts(): Promise<CartProductInfo[]> {
+        return this.cart
+    }
+
+    async addProductToCart(id: number): Promise<undefined> {
+        return undefined
+    }
+
+    async updateCartProductQuantity(productId: number, newAmount: number): Promise<undefined> {
+        const index = this.cart.findIndex(p => p.id == productId)
+        if (index > 0) {
+            this.cart[index].quantity = newAmount
+        }
+        return undefined
+    }
+
+    async removeProductFromCart(productId: number): Promise<undefined> {
+        const index = this.cart.findIndex(p => p.id == productId)
+        if (index > 0) {
+            this.cart.splice(index, 1)
+        }
+        return undefined
     }
 
 }
