@@ -1,39 +1,38 @@
+@use 'colors';
+
+$search-bar-round-radius: 20px;
+
 .search-bar-container {
-    border: 1px black solid;
-    border-radius: 10px;
+    border-radius: $search-bar-round-radius;
     display: flex;
+    background-color: colors.$surface-color;
 
     input {
         outline-width: 0;
         border: none;
         border-style: none;
         vertical-align: middle;
-        margin: 15px 5px;
+        background: transparent;
+        margin: 0px 5px;
         margin-left: 10px;
+        padding-left: 10px;
         width: 100%;
     }
 
-    .search-bar-clear-query-button {
-        background: none;
-        padding: 0;
-        vertical-align: middle;
+    .search-bar-search-button {
+        $horizontal-padding: 35px;
 
-        svg {
-            stroke: #000;
-        }
+        height: 100%;
+       
+        border-radius: $search-bar-round-radius;
+        box-sizing: border-box;
+        background-color: colors.$primary-light-color;
+        padding: 15px $horizontal-padding;
 
-        &:hover svg {
-            stroke: #333;
-        }
+        box-shadow: none !important;
     }
 
-    .search-bar-search-button {
-        margin-left: 10px;
-        height: 100%;
-        padding: 17.5px 25px;
-        border-radius: 0 9px 9px 0;
-        box-sizing: border-box;
-
-        box-shadow: none;
+    .search-bar-search-button:hover {
+        background-color: darken(colors.$primary-light-color, 10%);
     }
 }

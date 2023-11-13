@@ -12,22 +12,36 @@ interface StringResources {
     readonly personLastName: string,
     readonly textEmptyError: string,
     readonly headerSearchBoxPlaceholder: string,
-    readonly search: string
+    readonly search: string,
+    readonly specialProducts: string,
+    readonly addToCart: string,
+    readonly aboutUs: string,
+    readonly aboutShopifyDetail: string,
+    readonly copyright: string,
+    readonly faq: string,
+    readonly userAgreement: string
 }
 
-export const englishStringResources : StringResources = {
+export const ukrainianStringResources : StringResources = {
     email: "Email",
     password: "Password",
-    signUp: "Sign Up",
-    signIn: "Sign In",
+    signUp: "Реєстарація",
+    signIn: "Вхід",
     newToWebsite: "New to website?",
-    invalidEmail: "Enter a valid email",
-    invalidEmailOrPassword: "Invalid email or password",
-    invalidTelNumber: "Invalid tel-number",
-    telephoneNumber: "Telephone number",
-    personFirstName: "First name",
-    personLastName: "Last name",
-    textEmptyError: "Text should not be empty",
-    headerSearchBoxPlaceholder: "Search something",
-    search: "Search"
+    invalidEmail: "Введіть правильний e-mail",
+    invalidEmailOrPassword: "Неправильний email або пароль",
+    invalidTelNumber: "Неправильний номер телефону",
+    telephoneNumber: "Номер телефону",
+    personFirstName: "Ім'я",
+    personLastName: "Прізвище",
+    textEmptyError: "Поле не має бути пустим",
+    headerSearchBoxPlaceholder: "Я шукаю",
+    search: "Пошук",
+    specialProducts: "Спеціальні пропозиції",
+    addToCart: "Додати у кошик",
+    aboutUs: "Про нас",
+    aboutShopifyDetail: "Ми заснували Shopify з однією метою: надавати високоякісні, ретельно розроблені продукти, створені для кожного. Наша пристрасть до досконалості рухала нами з самого початку і продовжує рухати нас вперед. Ми знаємо, що кожний товар має значення, і прагнемо зробити Ваші покупки максимально корисними. Не погоджуйтесь ні на що, окрім найкращого",
+    copyright: "©2023 від Shopify",
+    userAgreement: "Угода користувача",
+    faq: "FAQ"
 }

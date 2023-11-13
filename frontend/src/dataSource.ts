@@ -1,9 +1,11 @@
-import { AuthCreditials, AuthStatusResult, SignUpInfo, SignUpStatusResult } from "./dataModels";
+import { AuthCreditials, AuthStatusResult, ConciseProductInfo, SignUpInfo, SignUpStatusResult, StatusVoidResult } from "./dataModels";
 import { httpFetchAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
     authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult>
     signUpAsync(info: SignUpInfo): Promise<SignUpStatusResult>
+
+    getSpecialProductsAsync(): Promise<ConciseProductInfo[]>
 }
 
 export class ServerDataSource implements DataSource {
@@ -18,8 +20,8 @@ export class ServerDataSource implements DataSource {
     }
 
     async authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult> {
-        const response = await httpFetchAsync<any>({ 
-            method: "POST", 
+        const response = await httpFetchAsync<any>({
+            method: "POST",
             url: this.createUrl(`auth?email=${creds.email}&password=${creds.password}`)
         })
 
@@ -34,4 +36,39 @@ export class ServerDataSource implements DataSource {
 
         return response as SignUpStatusResult
     }
+
+    async getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
+        return await httpFetchAsync<ConciseProductInfo[]>({
+            method: "GET",
+            url: this.createUrl("specialproducts")
+        })
+    }
+}
+
+export class TestDataSource implements DataSource {
+    async authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult> {
+        return { type: "success", value: { accessKey: "" } };
+    }
+
+    async signUpAsync(info: SignUpInfo): Promise<StatusVoidResult> {
+        return { type: "success" };
+    }
+    
+    async getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
+        await new Promise(r => setTimeout(r, 500));
+
+        return [
+            { id: 0, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 1, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 2, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 3, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 4, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 5, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 6, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 7, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 8, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" },
+            { id: 9, imageSource: "/images/test_product_image.png", price: 1000, title: "Product", stripeText: "Stripe" }
+        ]
+    }
+
 }

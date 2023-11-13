@@ -1,5 +1,4 @@
 import "../styles/SearchBar.scss"
-import CloseIcon from "../../public/images/close.svg"
 
 export type SearchBarProps = {
     text?: string,
@@ -19,13 +18,7 @@ export default function SearchBar(props: SearchBarProps) {
               onFocus={() => props.onInputFocusChanged(true)}
               onBlur={() => props.onInputFocusChanged(false)}
               value={props.text}/>
-            <button 
-              type="button" 
-              className="search-bar-clear-query-button"
-              title="Clear"
-              onClick={() => props.onInputTextChanged("")}>
-                <CloseIcon width={16} height={16}/>
-            </button>
+            
             <button
               type="button"
               className="search-bar-search-button primary">

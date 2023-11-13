@@ -2,11 +2,11 @@ import SimpleHeader from "../components/SimpleHeader";
 import AdvancedInput from "../components/AdvancedInput";
 import "../styles/SignInPage.scss";
 import { useMemo, useState } from 'react';
-import { englishStringResources } from "../StringResources";
+import { ukrainianStringResources } from "../StringResources";
 import { validateEmail } from "../utils/dataValidation";
 
 export default function SignInPage() {
-    const strRes = englishStringResources
+    const strRes = ukrainianStringResources
 
     let [email, setEmail] = useState("")
     let [password, setPassword] = useState("")

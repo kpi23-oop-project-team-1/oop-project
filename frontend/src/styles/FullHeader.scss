@@ -1,30 +1,150 @@
 @use "./dimensions.scss";
+@use 'colors';
+@use 'sass:math';
 
 #header {
     display: flex;
+    align-items: center;
+
     position: sticky;
     height: dimensions.$header-height;
-    align-items: center;
-    border-bottom: 1px black solid;
-    background: #fff;
-
-    .search-bar-container {
-        margin-left: 20px;
-        width: 45%;
-    }
+   
+    background: colors.$primary-color;
 }
 
 #dialog-holder.active-dialog:not(.fullscreen) #header {
     z-index: 2;
 }
 
-#header-logo {    
-    margin: 5px;
-    width: dimensions.$header-icon-size;
-    height: dimensions.$header-icon-size;
+#header-logo-block {
+    flex: 0.5;
 }
 
-#header-logo-name {
-    margin-left: 5px;
+#header-logo {    
+    display: block;
+    height: dimensions.$header-height;
+    margin: 0 auto;
+}
+
+#header-search-block {
+    flex: 2;
+
+    display: flex;
+    align-items: center;
+
+    .search-bar-container {
+        width: 70%;
+    }
+}
+
+#header-category-button {
+    $button-width: 40px;
+    $button-height: 32px;
+
+    width: $button-width;
+    height: $button-height;
+    margin-right: 20px;
+
+    svg {
+        transition: fill .2s;
+        width: $button-width;
+        height: $button-height;
+        fill: #fff;
+    }
+
+    &:hover svg {
+        fill: #a7a5a5;
+    }
+}
+
+#header-option-block {
+    margin-right: 40px;
+
+    .header-round-button:not(first) {
+        margin-left: 15px;
+    }
+}
+
+.header-round-button {
+    $button-size: 54px;
+
+    transition: background-color .2s;
     display: inline-block;
+    width: $button-size;
+    height: $button-size;
+    border-radius: $button-size;
+
+    background-color: colors.$surface-color;
+    fill: colors.$color-on-surface;
+
+    svg {
+        $icon-size: 40%;
+
+        position: relative;
+
+        width: $icon-size;
+        height: $icon-size;
+
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &.fill-only svg {
+        fill: colors.$color-on-surface;
+    }
+
+    &.stroke-only svg {
+        stroke: colors.$color-on-surface;
+        fill: none;
+    }
+
+    &:hover {
+        background-color: colors.$surface-hover-color;
+    }
+}
+
+#header-user-button svg {
+    stroke-width: 12px;
+}
+
+#header-cart-button-container {
+    display: inline-block;
+
+    // To align it with round buttons
+    vertical-align: top;
+
+    margin-right: 25px;
+
+    button {
+        $icon-size: 46px;
+
+        width: $icon-size;
+        height: $icon-size;
+
+        display: inline-block;
+        vertical-align: bottom;
+
+        svg {
+            width: $icon-size;
+            height: $icon-size;
+            fill: colors.$color-on-primary;
+            stroke: colors.$color-on-primary;
+            
+            path {
+                stroke-width: 15px;
+            }
+        }
+    }
+
+    p {
+        margin: 0;
+        margin-left: 10px;
+       
+        display: inline-block;
+        color: colors.$color-on-primary;
+       
+
+        font-size: 1.6em;
+    }
 }

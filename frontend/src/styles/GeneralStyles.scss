@@ -50,6 +50,11 @@ button {
         background-color: #bebaba;
         color: #2e2c2c;
     }
+
+    &.icon-button {
+        padding: 0;
+        background-color: transparent;
+    }
 }
 
 //
@@ -63,6 +68,23 @@ a {
 //
 // Paragraph
 //
+
+p {
+    margin: 0;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+h2 {
+    font-weight: normal;
+    margin: 0;
+
+    &.primary {
+        color: colors.$primary-color;
+    }
+}
 
 p.error {
     color: colors.$error-color;

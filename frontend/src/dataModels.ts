@@ -34,3 +34,13 @@ export type SignUpInfo = {
 }
 
 export type SignUpStatusResult = StatusVoidResult
+
+// Product
+
+export type ConciseProductInfo = {
+    id: number,
+    title: string,
+    imageSource: string,
+    stripeText?: string,
+    price: number
+}

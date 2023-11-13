@@ -27,6 +27,6 @@ body.active-full-screen-dialog {
     }
 
     &.under-header {
-        top: dimensions.$header-full-height;
+        top: dimensions.$header-height;
     }
 }

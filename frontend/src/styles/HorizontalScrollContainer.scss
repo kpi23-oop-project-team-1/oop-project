@@ -1,0 +1,38 @@
+.horizontal-scroll-container {
+    display: flex;
+    align-items: center;
+}
+
+.horizontal-scroll-control-button {
+    $size: 32px;
+
+    width: $size;
+    height: $size;
+
+    svg {
+        width: $size;
+        height: $size;
+    }
+}
+
+.horizontal-scroll-control-button-left {
+
+}
+
+.horizontal-scroll-container-content-list {
+    flex: 1;
+
+    display: flex;
+    list-style: none;
+    overflow: hidden;
+    flex-wrap: nowrap;
+
+    scroll-snap-align: center;
+    scroll-snap-type: x mandatory;
+
+    & > * {
+        scroll-snap-align: start;
+
+        flex: 0 0 auto;
+    }
+}
