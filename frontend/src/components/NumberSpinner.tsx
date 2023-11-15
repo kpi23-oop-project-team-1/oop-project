@@ -31,7 +31,7 @@ export default function NumberSpinner(props: NumberSpinnerProps) {
             <button 
               className="number-spinner-control number-spinner-minus icon-button"
               onClick={controlButtonOnClick(-1)}
-              disabled={props.value <= 0}>
+              disabled={props.value <= props.minValue}>
                 <MinusIcon/>
             </button>
 

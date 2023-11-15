@@ -42,14 +42,6 @@ export type ConciseProductInfo = {
     title: string,
     imageSource: string,
     stripeText?: string,
-    price: number
-}
-
-export type CartProductInfo = {
-    id: number,
-    title: string,
-    imageSource: string,
     price: number,
-    quantity: number,
     totalAmount: number
 }

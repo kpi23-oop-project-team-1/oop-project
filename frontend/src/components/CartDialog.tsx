@@ -1,7 +1,6 @@
 import { useContext, useState } from "react"
 import { StringResourcesContext } from "../StringResourcesContext"
-import { CartProductInfo } from "../dataModels"
-import DeferredDataContainer, { DeferredDataState } from "./DeferredDataContainer"
+import DeferredDataContainer from "./DeferredDataContainer"
 import { DiContainerContext } from "../diContainer"
 import { usePopper } from 'react-popper';
 import Menu, { MenuItem } from "./Menu"
@@ -12,8 +11,8 @@ import CloseIcon from "../../public/images/close.svg"
 import TrashIcon from "../../public/images/trash.svg"
 import NumberSpinner from "./NumberSpinner"
 import { formatPriceToString } from "../utils/stringFormatting"
-import { removeElementAndCopy, mutateElementAndCopy } from "../utils/arrayUtils"
 import { Dialog } from "./Dialogs"
+import { CartContext, CartProductInfo } from "../cart"
 
 export type CartDialogProps = {
     onClose: () => void
@@ -21,49 +20,11 @@ export type CartDialogProps = {
 
 export default function CartDialog(props: CartDialogProps) {
     const strRes = useContext(StringResourcesContext)
-    const diContainer = useContext(DiContainerContext)
-    const dataSource = diContainer.dataSource
 
-    let [cartDataState, setCartDataState] = useState<DeferredDataState<CartProductInfo[]>>({ type: 'initialized' })
-
-    function getCartProducts(): CartProductInfo[] {
-        return cartDataState.value ?? []
-    }
-
-    function opportunisticOperation<T>(promise: Promise<T>) {
-        promise.catch(() => {
-            setCartDataState({ type: 'initialized' })
-        })
-    }
-
-    function updateProductQuantity(productId: number, newQuantity: number) {
-        setCartDataState(state => {
-            return { 
-                type: 'success', 
-                value: mutateElementAndCopy(
-                    state.value ?? [],
-                    p => p.id == productId,
-                    p => { return { ...p, quantity: newQuantity } }
-                ) 
-            }
-        })
-        
-        opportunisticOperation(dataSource.updateCartProductQuantity(productId, newQuantity))
-    }
-
-    function removeProduct(productId: number) {
-        setCartDataState(state => {
-            return { 
-                type: 'success',
-                 value: removeElementAndCopy(state.value ?? [], p => p.id == productId) 
-            }
-        })
-
-        opportunisticOperation(dataSource.removeProductFromCart(productId))
-    }
+    let [cartState, cartManager] = useContext(CartContext)
 
     function computeTotalPrice(): number {
-        return getCartProducts().reduce((s, p) => s + p.price * p.quantity, 0)
+        return (cartState.value ?? []).reduce((s, p) => s + p.price * p.quantity, 0)
     }
 
     return (
@@ -75,17 +36,14 @@ export default function CartDialog(props: CartDialogProps) {
                 </button>
             </div>
 
-            <DeferredDataContainer
-              createPromise={() => dataSource.getCartProducts()}
-              state={cartDataState}
-              setState={setCartDataState}>
+            <DeferredDataContainer state={cartState}>
                  <div id="cart-dialog-product-list">
-                    {getCartProducts().map(product => 
+                    {(cartState.value ?? []).map(product => 
                         <CartItem 
-                          product={product}
                           key={product.id}
-                          updateProductAmount={amount => updateProductQuantity(product.id, amount)}
-                          onRemoveSelf={() => removeProduct(product.id)}/>
+                          product={product}
+                          updateProductAmount={amount => cartManager.updateProductQuantity(product.id, amount)}
+                          onRemoveSelf={() => cartManager.removeProduct(product.id)}/>
                     )}
                 </div>
             </DeferredDataContainer>
