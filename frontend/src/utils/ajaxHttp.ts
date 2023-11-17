@@ -18,7 +18,6 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
         }
 
         httpRequest.onload = () => {
-            httpRequest.responseType
             resolve(httpRequest.response)
         }
         httpRequest.onerror = () => {

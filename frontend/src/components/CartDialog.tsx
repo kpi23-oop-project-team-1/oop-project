@@ -1,7 +1,6 @@
 import { useContext, useState } from "react"
 import { StringResourcesContext } from "../StringResourcesContext"
 import DeferredDataContainer from "./DeferredDataContainer"
-import { DiContainerContext } from "../diContainer"
 import { usePopper } from 'react-popper';
 import Menu, { MenuItem } from "./Menu"
 

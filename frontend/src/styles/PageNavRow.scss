@@ -1,0 +1,28 @@
+@use 'colors';
+
+.page-nav-row {
+    $element-size: 40px;
+    vertical-align: middle;
+
+    display: flex;
+    justify-content: center;
+    
+    a {
+        display: inline-block;
+        width: $element-size;
+
+        line-height: $element-size;
+        text-align: center;
+
+        border: 2px solid colors.$primary-color;
+        border-radius: 8px;
+        
+        margin-right: 10px;
+
+        transition: box-shadow linear .2s;
+
+        &:hover {
+            box-shadow: 0 0 5px colors.$primary-color;
+        }
+    }
+}

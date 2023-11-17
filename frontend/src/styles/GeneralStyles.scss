@@ -62,10 +62,7 @@ button {
 
 a {
    text-decoration: none;
-   
-   &:visited {
-       color: inherit;
-   }
+   color: inherit;
 }
 
 a.link-button {
@@ -95,10 +92,13 @@ p {
     text-transform: uppercase;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
 h2 {
     font-weight: normal;
-    margin: 0;
-
+  
     &.primary {
         color: colors.$primary-color;
     }

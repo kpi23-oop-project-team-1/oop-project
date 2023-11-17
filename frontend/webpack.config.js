@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 
-let htmlPageNames = ['signin', 'signup'];
+let htmlPageNames = ['signin', 'signup', 'products'];
 let multipleHtmlPlugins = htmlPageNames.map(name => {
   return new HtmlWebpackPlugin({
     template: `./public/${name}.html`, 
@@ -17,7 +17,8 @@ module.exports = {
   entry: { 
     main: "./src/main.tsx",
     signin: "./src/signin.tsx",
-    signup: "./src/signup.tsx"
+    signup: "./src/signup.tsx",
+    products: "./src/productsPageLoader.tsx"
   },
   target: ["web", "es5"],
   mode: "development",

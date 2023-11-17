@@ -29,3 +29,11 @@ export function mutateElementAndCopy<T>(array: T[], predicate: (element: T) => b
 
     return array
 }
+
+export function addOrRemoveElement<T>(array: T[], value: T, state: boolean): T[] {
+    if (state) {
+        return pushElementAndCopy(array, value)
+    } else {
+        return removeElementAndCopy(array, e => e == value)
+    }
+}

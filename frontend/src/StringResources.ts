@@ -1,3 +1,5 @@
+import { CategoryId, ColorId, ProductStatus, SearchOrder } from "./dataModels"
+
 interface StringResources {
     readonly email: string,
     readonly password: string,
@@ -22,7 +24,19 @@ interface StringResources {
     readonly userAgreement: string,
     readonly cart: string,
     readonly remove: string,
-    readonly checkout: string
+    readonly checkout: string,
+    readonly filters: string,
+    readonly categories: string,
+    readonly price: string,
+    readonly color: string,
+    readonly colorLabels: Record<ColorId, string>,
+    readonly productStatus: string,
+    readonly productStatusLabels: Record<ProductStatus, string>,
+    readonly orderBy: string,
+    readonly searchOrderLabels: Record<SearchOrder, string>,
+    readonly productCountLabel: string,
+    readonly allProductsCategory: string,
+    readonly productCategoryLabels: Record<CategoryId, string>
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -49,5 +63,36 @@ export const ukrainianStringResources : StringResources = {
     faq: "FAQ",
     cart: "Кошик",
     remove: "Видалити",
-    checkout: "Оформити замовлення"
+    checkout: "Оформити замовлення",
+    filters: "Фільтри",
+    categories: "Категорії",
+    price: "Ціна",
+    color: "Колір",
+    colorLabels: {
+        black: "Чорний",
+        white: "Білий",
+        cyan: "Голубий",
+        red: "Червоний",
+        yellow: "Жовтий",
+        multicolor: "Різнокольоровий",
+    },
+    productStatus: "Стан",
+    productStatusLabels: {
+        acceptable: "Задовільний",
+        good: "Хороший",
+        "very-good": "Дуже хороший",
+        ideal: "Ідеальний",
+        new: "Новий",
+    },
+    orderBy: "Сортувати за",
+    searchOrderLabels: {
+        "recomended": "Рекомендовані",
+        "most-expensive": "Найдорожчі",
+        "cheapest": "Найдешевші"
+    },
+    productCountLabel: "Товарів: ",
+    allProductsCategory: "Усі товари",
+    productCategoryLabels: {
+        dress: "Одяг"
+    }
 }
