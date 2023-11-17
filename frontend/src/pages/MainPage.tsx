@@ -6,32 +6,26 @@ import { ConciseProductInfo } from "../dataModels"
 import ProductImageWithStripe from "../components/ProductImageWithStripe"
 import { formatPriceToString } from "../utils/stringFormatting"
 import { StringResourcesContext } from "../StringResourcesContext"
-import { ukrainianStringResources } from "../StringResources"
 import Footer from "../components/Footer"
 import DeferredDataContainer from "../components/DeferredDataContainer"
-import { DiContainerContext, TestDiContainer } from "../diContainer"
 import { CartContext, useCart } from "../cart"
 import { useValueFromDataSource } from "../dataSource.react"
 
 export default function MainPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
-    const cartAndManager = useCart(TestDiContainer.dataSource)
+    const cartAndManager = useCart()
 
     return (
-        <StringResourcesContext.Provider value={ukrainianStringResources}>
-            <DiContainerContext.Provider value={TestDiContainer}>
-                <CartContext.Provider value={cartAndManager}>
-                    <PageWithSearchHeader
-                      dialogSwitch={undefined} 
-                      dialogType={dialogType} 
-                      onChangeDialogType={setDialogType}>
-                        <SpecialProductsBlock/>
-                        <AboutBlock/>
-                        <Footer/>
-                    </PageWithSearchHeader>
-                </CartContext.Provider>
-            </DiContainerContext.Provider>
-        </StringResourcesContext.Provider>
+        <CartContext.Provider value={cartAndManager}>
+            <PageWithSearchHeader
+              dialogSwitch={undefined} 
+              dialogType={dialogType} 
+              onChangeDialogType={setDialogType}>
+                <SpecialProductsBlock/>
+                <AboutBlock/>
+                <Footer/>
+            </PageWithSearchHeader>
+        </CartContext.Provider>
     )
 }
 

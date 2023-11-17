@@ -1,8 +1,9 @@
-import { createContext } from "react"
+import { createContext, useContext } from "react"
 import { DeferredDataState, mutateStateIfSuccess } from "./deferredData"
 import { mutateElementAndCopy, pushElementAndCopy, removeElementAndCopy } from "./utils/arrayUtils"
 import { DataSource } from "./dataSource"
 import { useValueFromDataSource } from "./dataSource.react"
+import { DiContainerContext } from "./diContainer"
 
 export type CartProductInfo = {
     id: number,
@@ -22,8 +23,9 @@ export type CartManager = {
     updateProductQuantity(productId: number, value: number): void
 }
 
-export function useCart(dataSource: DataSource): [DeferredDataState<Cart>, CartManager] {
-    const [cartState, setCartState] = useValueFromDataSource(ds => ds.getCartProductsAsync(), dataSource)
+export function useCart(): [DeferredDataState<Cart>, CartManager] {
+    const dataSource = useContext(DiContainerContext).dataSource
+    const [cartState, setCartState] = useValueFromDataSource(ds => ds.getCartProductsAsync())
 
     function processPromiseErrors<T>(promise: Promise<T>) {
         promise.catch(() => {

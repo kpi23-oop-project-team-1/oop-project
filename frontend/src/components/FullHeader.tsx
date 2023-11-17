@@ -4,17 +4,18 @@ import CategoryIcon from '../../public/images/category.svg'
 import FavoriteIcon from '../../public/images/favorite.svg'
 import CartIcon from '../../public/images/cart.svg'
 import UserIcon from '../../public/images/user.svg'
-import { ukrainianStringResources } from '../StringResources'
 import "../styles/FullHeader.scss"
 import SearchBar from './SearchBar'
 import { CartContext } from '../cart'
+import { Link, To } from 'react-router-dom'
+import { StringResourcesContext } from '../StringResourcesContext'
 
 export type FullHeaderProps = {
     onShowCart: () => void
 };
 
 export default function FullHeader(props: FullHeaderProps) {
-    const strRes = ukrainianStringResources
+    const strRes = useContext(StringResourcesContext)
 
     let [searchQuery, setSearchQuery] = useState("")
     const [cart] = useContext(CartContext)
@@ -40,18 +41,18 @@ export default function FullHeader(props: FullHeaderProps) {
 
             <div id="header-option-block">
                 <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
-                <HeaderLinkRoundButton href='/' icon={<FavoriteIcon/>} type='fill-only'/>
-                <HeaderLinkRoundButton href='/' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
+                <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>
+                <HeaderLinkRoundButton to='/' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
             </div>
         </div>
     )
 }
 
-function HeaderLinkRoundButton(props: { id?: string, href: string, icon: React.ReactElement, type: 'stroke-only' | 'fill-only' }) {
+function HeaderLinkRoundButton(props: { id?: string, to: To, icon: React.ReactElement, type: 'stroke-only' | 'fill-only' }) {
     return (
-        <a href={props.href} className={`header-round-button icon-button ${props.type}`} id={props.id}>
+        <Link to={props.to} className={`header-round-button icon-button ${props.type}`} id={props.id}>
             {props.icon}
-        </a>
+        </Link>
     )
 }
 

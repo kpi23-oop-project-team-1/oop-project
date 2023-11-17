@@ -1,4 +1,42 @@
-import MainPage from "./pages/MainPage";
-import { loadPageToRoot } from "./utils/pageLoading";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-loadPageToRoot(<MainPage/>)
+import { DiContainerContext, TestDiContainer } from "./diContainer";
+import { StringResourcesContext } from "./StringResourcesContext";
+import { ukrainianStringResources } from "./StringResources";
+
+import MainPage from "./pages/MainPage";
+import ProductsPage from "./pages/ProductsPage";
+import SignInPage from "./pages/SignInPage";
+import SignUpPage from "./pages/SignUpPage";
+
+const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <MainPage/>
+    },
+    {
+        path: "/signin",
+        element: <SignInPage/>
+    },
+    {
+        path: "/signup",
+        element: <SignUpPage/>
+    },
+    {
+        path: "/products",
+        element: <ProductsPage/>
+    }
+  ]
+);
+
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+    <React.StrictMode>
+        <StringResourcesContext.Provider value={ukrainianStringResources}>
+            <DiContainerContext.Provider value={TestDiContainer}>
+                <RouterProvider router={router} />
+            </DiContainerContext.Provider>
+        </StringResourcesContext.Provider>
+    </React.StrictMode>
+);

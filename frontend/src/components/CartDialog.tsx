@@ -12,6 +12,7 @@ import NumberSpinner from "./NumberSpinner"
 import { formatPriceToString } from "../utils/stringFormatting"
 import { Dialog } from "./Dialogs"
 import { CartContext, CartProductInfo } from "../cart"
+import { Link } from "react-router-dom";
 
 export type CartDialogProps = {
     onClose: () => void
@@ -52,7 +53,7 @@ export default function CartDialog(props: CartDialogProps) {
                     {formatPriceToString(computeTotalPrice())}
                 </p>
                 
-                <a href="/" id="cart-dialog-buy-button" className="link-button primary">{strRes.checkout}</a>
+                <Link to="/" id="cart-dialog-buy-button" className="link-button primary">{strRes.checkout}</Link>
             </div>
         </Dialog>
     )
@@ -97,7 +98,8 @@ function CartItemMainInfo(props: CartItemMainInfoProps) {
     return (
         <div className="cart-item-main-info">
             <img src={props.product.imageSource}/>
-            <a className="cart-item-title" href="/">{props.product.title}</a>
+            <Link className="cart-item-title" to="/">{props.product.title}</Link>
+
             <button 
               className="cart-item-options-button icon-button"
               ref={setOptionsButtonElement}

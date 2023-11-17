@@ -1,14 +1,14 @@
 import '../styles/SignUpPage.scss'
 import UaFlag from '../../public/images/ua_flag.svg'
-import { useMemo, useState } from "react";
-import { ukrainianStringResources } from "../StringResources";
+import { useContext, useMemo, useState } from "react";
 import AdvancedInput from "../components/AdvancedInput";
 import SimpleHeader from "../components/SimpleHeader";
 import { validateEmail, validateTelNumber } from "../utils/dataValidation";
 import Footer from '../components/Footer';
+import { StringResourcesContext } from '../StringResourcesContext';
 
 export default function SignUpPage() {
-    const strRes = ukrainianStringResources
+    const strRes = useContext(StringResourcesContext)
 
     let [firstName, setFirstName]= useState("")
     let [lastName, setLastName] = useState("")

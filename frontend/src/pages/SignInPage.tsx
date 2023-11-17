@@ -1,12 +1,13 @@
 import SimpleHeader from "../components/SimpleHeader";
 import AdvancedInput from "../components/AdvancedInput";
 import "../styles/SignInPage.scss";
-import { useMemo, useState } from 'react';
-import { ukrainianStringResources } from "../StringResources";
+import { useContext, useMemo, useState } from 'react';
 import { validateEmail } from "../utils/dataValidation";
+import { Link } from "react-router-dom";
+import { StringResourcesContext } from "../StringResourcesContext";
 
 export default function SignInPage() {
-    const strRes = ukrainianStringResources
+    const strRes = useContext(StringResourcesContext)
 
     let [email, setEmail] = useState("")
     let [password, setPassword] = useState("")
@@ -34,7 +35,7 @@ export default function SignInPage() {
 
                         <div id="signup-block">
                             <p>{strRes.newToWebsite}</p>
-                            <a href="/signup.html">{strRes.signUp}</a>
+                            <Link to="signup">{strRes.signUp}</Link>
                         </div>
                     </div>
 

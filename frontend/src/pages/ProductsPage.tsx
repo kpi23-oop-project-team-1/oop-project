@@ -1,9 +1,7 @@
 import "../styles/ProductsPage.scss"
 import { useContext, useEffect, useState } from "react"
-import { ukrainianStringResources } from "../StringResources"
 import { StringResourcesContext } from "../StringResourcesContext"
 import { CartContext, useCart } from "../cart"
-import { DiContainerContext, TestDiContainer } from "../diContainer"
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader"
 import SearchFilterPanel from "../components/SearchFilterPanel"
 import { CategoryId, ColorId, ConciseProductInfo, ProductStatus, SearchFilter, SearchOrder, allCategoryIds, allColorIds, allProductStatuses, allSearchOrders, parseNumberRange, searchFilterToSearchParams } from "../dataModels"
@@ -15,10 +13,11 @@ import { Dropdown } from "../components/Dropdown"
 import PageNavRow from "../components/PageNavRow"
 import Footer from "../components/Footer"
 import { isValidNumber } from "../utils/dataValidation"
+import { Link } from "react-router-dom"
 
 export default function ProductsPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
-    const cartAndManager = useCart(TestDiContainer.dataSource)
+    const cartAndManager = useCart()
 
     const [filter, setFilter] = useState<SearchFilter>(extractSearchFilterFromSearchParams())
     const [commitedFilter, setCommitedFilter] = useState(filter)
@@ -27,10 +26,8 @@ export default function ProductsPage() {
         updateUrl(commitedFilter)
     }, [commitedFilter])
 
-    const dataSource = TestDiContainer.dataSource
-
-    const [filterDescState] = useValueFromDataSource(ds => ds.getSearchFilterDescAsync(filter.category), dataSource)
-    const [searchResultState] = useValueFromDataSource(ds => ds.getConciseProductsBySearch(commitedFilter), dataSource, [commitedFilter])
+    const [filterDescState] = useValueFromDataSource(ds => ds.getSearchFilterDescAsync(filter.category))
+    const [searchResultState] = useValueFromDataSource(ds => ds.getConciseProductsBySearch(commitedFilter), [commitedFilter])
     const searchResult = searchResultState.value
 
     const strRes = useContext(StringResourcesContext)
@@ -41,49 +38,39 @@ export default function ProductsPage() {
     }
 
     return (
-        <StringResourcesContext.Provider value={ukrainianStringResources}>
-            <DiContainerContext.Provider value={TestDiContainer}>
-                <CartContext.Provider value={cartAndManager}>
-                    <PageWithSearchHeader
-                      dialogType={dialogType}
-                      onChangeDialogType={setDialogType}>
-
-                        <div id="products-page-filter-and-grid">
-                            <DeferredDataContainer state={filterDescState}>
-                                <SearchFilterPanel 
-                                  filterDesc={filterDescState?.value} 
-                                  filter={filter} 
-                                  onChanged={setFilter}
-                                  urlFactory={createSearchFilterUrl}
-                                  commitFilter={setCommitedFilter}/>
-                            </DeferredDataContainer>
-
-                            <div id="products-page-right-side">
-                                <h2>{filter.category ? strRes.productCategoryLabels[filter.category] : strRes.allProductsCategory}</h2>
-
-                                <ProductsGridHeader
-                                  totalProductCount={searchResult?.totalProductCount}
-                                  searchOrder={filter.order ?? 'recomended'}
-                                  onSearchOrderChanged={order => setFilterAndCommit({ ...filter, order })}/>
-
-                                <DeferredDataContainer state={searchResultState}>
-                                    <ProductsGrid products={searchResult?.products ?? []}/>
-                                </DeferredDataContainer>
-
-                                {searchResult && searchResult.pageCount > 1 &&
-                                    <PageNavRow 
-                                      pageCount={searchResult.pageCount} 
-                                      createLink={i => createSearchFilterUrl({ ...commitedFilter, page: i })}
-                                      onNavigateLink={i => setFilterAndCommit({ ...filter, page: i })}/>
-                                }
-                            </div>
-                        </div>
-
-                        <Footer/>
-                    </PageWithSearchHeader>
-                </CartContext.Provider>
-            </DiContainerContext.Provider>
-        </StringResourcesContext.Provider>
+        <CartContext.Provider value={cartAndManager}>
+            <PageWithSearchHeader
+              dialogType={dialogType}
+              onChangeDialogType={setDialogType}>
+                <div id="products-page-filter-and-grid">
+                    <DeferredDataContainer state={filterDescState}>
+                        <SearchFilterPanel 
+                          filterDesc={filterDescState?.value} 
+                          filter={filter} 
+                          onChanged={setFilter}
+                          urlFactory={createSearchFilterUrl}
+                          commitFilter={setCommitedFilter}/>
+                    </DeferredDataContainer>
+                    <div id="products-page-right-side">
+                        <h2>{filter.category ? strRes.productCategoryLabels[filter.category] : strRes.allProductsCategory}</h2>
+                        <ProductsGridHeader
+                          totalProductCount={searchResult?.totalProductCount}
+                          searchOrder={filter.order ?? 'recomended'}
+                          onSearchOrderChanged={order => setFilterAndCommit({ ...filter, order })}/>
+                        <DeferredDataContainer state={searchResultState}>
+                            <ProductsGrid products={searchResult?.products ?? []}/>
+                        </DeferredDataContainer>
+                        {searchResult && searchResult.pageCount > 1 &&
+                            <PageNavRow 
+                              pageCount={searchResult.pageCount} 
+                              createLink={i => createSearchFilterUrl({ ...commitedFilter, page: i })}
+                              onNavigateLink={i => setFilterAndCommit({ ...filter, page: i })}/>
+                        }
+                    </div>
+                </div>
+                <Footer/>
+            </PageWithSearchHeader>
+        </CartContext.Provider>
     )
 }
 
@@ -92,7 +79,7 @@ function updateUrl(filter: SearchFilter) {
 }
 
 function createSearchFilterUrl(filter: SearchFilter) {
-    return `${window.location.protocol}//${window.location.host}/products.html${searchFilterToSearchParams(filter)}`
+    return `${window.location.protocol}//${window.location.host}/products${searchFilterToSearchParams(filter)}`
 }
 
 function navigateToUrl(url: string) {
@@ -175,13 +162,13 @@ function ProductView(props: ProductViewProps) {
     const product = props.product
 
     return (
-        <a className="products-grid-view" href="/">
+        <Link className="products-grid-view" to="/">
             <ProductImageWithStripe
               imageSource={product.imageSource}
               stripeText={product.stripeText}/>
 
             <p className="products-grid-view-title">{product.title}</p>
             <p className="products-grid-view-price">{formatPriceToString(product.price)}</p>
-        </a>
+        </Link>
     )
 }

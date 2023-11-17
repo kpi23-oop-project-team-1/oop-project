@@ -22,6 +22,8 @@
     "react-dom": "^18.2.0",
     "react-jsx": "^1.0.0",
     "react-popper": "^2.3.0",
+    "react-router": "^6.19.0",
+    "react-router-dom": "^6.19.0",
     "react-svg-loader": "^3.0.0",
     "sass": "^1.69.5",
     "sass-loader": "^13.3.2",
