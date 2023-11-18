@@ -10,6 +10,7 @@ import Footer from "../components/Footer"
 import DeferredDataContainer from "../components/DeferredDataContainer"
 import { CartContext, useCart } from "../cart"
 import { useValueFromDataSource } from "../dataSource.react"
+import { Link } from "react-router-dom"
 
 export default function MainPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
@@ -60,21 +61,26 @@ function SpecialProduct(props: SpecialProductProps) {
         cartManager.addProduct({ ...product, quantity: 1 })
     }
 
-    return (<div className="special-product">
-        <ProductImageWithStripe imageSource={product.imageSource} stripeText={product.stripeText}/>
-        <p className="special-product-title">{product.title}</p>
-        <p className="special-product-price">{formatPriceToString(product.price)}</p>
-        
-        {
-            !cartManager.isProductInCart(product.id) ?
-                <button 
-                  className="special-product-add-to-cart primary"
-                  onClick={addProductToCart}>
-                    {strRes.addToCart}
-                </button>
-                : undefined
-        }
-    </div>)
+    return (
+        <div className="special-product">
+            <Link className="special-product-link-block" to={`/product/${product.id}/`}>
+                <ProductImageWithStripe imageSource={product.imageSource} stripeText={product.stripeText}/>
+                <p className="special-product-title">{product.title}</p>
+                <p className="special-product-price">{formatPriceToString(product.price)}</p>
+            </Link>
+            
+            {
+                !cartManager.isProductInCart(product.id) ?
+                    <button 
+                      className="special-product-add-to-cart primary"
+                      onClick={addProductToCart}>
+                        {strRes.addToCart}
+                    </button>
+                    : undefined
+            }
+            
+        </div>
+    )
 }
 
 function AboutBlock() {

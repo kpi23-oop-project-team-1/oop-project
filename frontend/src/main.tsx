@@ -6,10 +6,12 @@ import { DiContainerContext, TestDiContainer } from "./diContainer";
 import { StringResourcesContext } from "./StringResourcesContext";
 import { ukrainianStringResources } from "./StringResources";
 
+import "./styles/GeneralStyles.scss";
 import MainPage from "./pages/MainPage";
 import ProductsPage from "./pages/ProductsPage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
+import ProductInfoPage from "./pages/ProductInfoPage";
 
 const router = createBrowserRouter([
     {
@@ -27,6 +29,10 @@ const router = createBrowserRouter([
     {
         path: "/products",
         element: <ProductsPage/>
+    },
+    {
+        path: "/product/:productId/",
+        element: <ProductInfoPage/>
     }
   ]
 );

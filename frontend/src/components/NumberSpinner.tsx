@@ -2,6 +2,7 @@ import "../styles/NumberSpinner.scss"
 import MinusIcon from "../../public/images/minus.svg"
 import PlusIcon from "../../public/images/plus.svg"
 import { isValidNumber } from "../utils/dataValidation"
+import NumberInput from "./NumberInput"
 
 export type NumberSpinnerProps = {
     value: number,
@@ -14,17 +15,6 @@ export default function NumberSpinner(props: NumberSpinnerProps) {
     function controlButtonOnClick(delta: number): () => void {
         return () => props.onValueChanged(props.value + delta)
     }
-
-    function onInput(e: React.ChangeEvent<HTMLInputElement>) {
-        const newText = e.target.value
-        if (isValidNumber(newText)) {
-            const newValue = parseInt(newText)
-
-            if (newValue >= props.minValue && newValue <= props.maxValue) {
-                props.onValueChanged(newValue)
-            }
-        }
-    }
     
     return (
         <div className="number-spinner-container">
@@ -35,7 +25,10 @@ export default function NumberSpinner(props: NumberSpinnerProps) {
                 <MinusIcon/>
             </button>
 
-            <input value={props.value.toString()} onChange={onInput}/>
+            <NumberInput 
+              value={props.value} 
+              onChanged={props.onValueChanged} 
+              validateNumber={value => value >= props.minValue && value <= props.maxValue}/>
 
             <button 
               className="number-spinner-control number-spinner-plus icon-button"

@@ -1,19 +1,42 @@
 @use "./colors.scss";
 
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+
 //
 // Input
 //
 
-$input-hover-background: #b1b1b1;
+$input-border-color: #c3c3c3;
+$input-hover-border-color: #b1b1b1;
+$input-focus-border-color: #909090;
 
-input {
+input[type=text] {
     box-sizing: border-box;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;  
-}
 
-input:focus {
-    outline-width: 0;
+    padding: 10px;
+
+    border: 1px solid $input-border-color;
+
+    &:hover {
+        border-color: $input-hover-border-color;
+    }
+
+    &:focus {
+        border-color: $input-hover-border-color;
+        outline-width: 0;
+    }
 }
 
 //
@@ -28,8 +51,13 @@ button {
     border-radius: $button-round-radius;
     padding: 15px 25px;
     margin: 0;
+    background-color: colors.$surface-dark-color;
 
     transition: background-color .2s;
+
+    &:hover {
+        background-color: colors.$surface-dark-hover-color;
+    }
 
     &.primary {
         background-color: colors.$primary-color;
@@ -40,7 +68,6 @@ button {
         box-shadow: 0 0 3px colors.$primary-color;
     }
 
-    
     &.primary:hover {
         background-color: colors.$primary-dark-color;
     }

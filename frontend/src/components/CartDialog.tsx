@@ -98,7 +98,7 @@ function CartItemMainInfo(props: CartItemMainInfoProps) {
     return (
         <div className="cart-item-main-info">
             <img src={props.product.imageSource}/>
-            <Link className="cart-item-title" to="/">{props.product.title}</Link>
+            <Link className="cart-item-title" to={`/product/${props.product.id}/`}>{props.product.title}</Link>
 
             <button 
               className="cart-item-options-button icon-button"

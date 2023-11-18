@@ -1,5 +1,5 @@
 import { CartProductInfo } from "./cart";
-import { AuthCreditials, AuthStatusResult, CategoryId, ConciseProductInfo, SearchConciseProductsResult as SearchProductsResult, SearchFilter, SearchFilterDesc, SignUpInfo, SignUpStatusResult, StatusVoidResult, searchFilterToSearchParams } from "./dataModels";
+import { AuthCreditials, AuthStatusResult, CategoryId, ConciseProductInfo, SearchConciseProductsResult as SearchProductsResult, SearchFilter, SearchFilterDesc, SignUpInfo, SignUpStatusResult, StatusVoidResult, searchFilterToSearchParams, ProductInfo } from "./dataModels";
 import { httpFetchAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
@@ -15,6 +15,7 @@ export interface DataSource {
 
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc>
     getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchProductsResult>
+    getProductInfo(id: number): Promise<ProductInfo>
 }
 
 export class ServerDataSource implements DataSource {
@@ -94,12 +95,19 @@ export class ServerDataSource implements DataSource {
             url: this.createUrl("api/products") + searchFilterToSearchParams(filter),  
         })
     }
+
+    getProductInfo(id: number): Promise<ProductInfo> {
+        return httpFetchAsync<ProductInfo>({
+            method: "GET",
+            url: this.createUrl(`api/product?id=${id}`)
+        })
+    }
 }
 
 export class TestDataSource implements DataSource {
     private readonly cart: CartProductInfo[] = [
-        { id: 0, imageSource: "/images/test_product_image.png", price: 1000, title: "Product 1", quantity: 1, totalAmount: 3 },
-        { id: 1, imageSource: "/images/test_product_image.png", price: 1000, title: "Product 2", quantity: 1, totalAmount: 5 }
+        { id: 1, imageSource: "/images/test_product_image.png", price: 1000, title: "Product 1", quantity: 1, totalAmount: 3 },
+        { id: 2, imageSource: "/images/test_product_image.png", price: 1000, title: "Product 2", quantity: 1, totalAmount: 5 }
     ]
 
     async authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult> {
@@ -174,6 +182,42 @@ export class TestDataSource implements DataSource {
                 title: "Product " + id,
                 totalAmount: id * 2
             })),
+        }
+    }
+
+    async getProductInfo(id: number): Promise<ProductInfo> {
+        await new Promise(r => setTimeout(r, 1000));
+
+        return {
+            id,
+            title: "Product " + id,
+            category: "dress",
+            color: 'black',
+            imageSources: ["/images/placeholder-1.png", "/images/placeholder-2.png", "/images/placeholder-3.png"],
+            price: 100,
+            status: 'good',
+            totalAmount: 5,
+            description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            comments: [
+                {
+                    user: {
+                        id: 1,
+                        displayName: "Display name"
+                    },
+                    rating: 4,
+                    text: "Comment text",
+                    dateString: "2023-11-18"
+                },
+                {
+                    user: {
+                        id: 2,
+                        displayName: "Display name"
+                    },
+                    rating: 5,
+                    text: "Comment text 2",
+                    dateString: "2023-11-19"
+                }
+            ]
         }
     }
 

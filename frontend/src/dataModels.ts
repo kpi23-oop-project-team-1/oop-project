@@ -149,6 +149,13 @@ export type SignUpInfo = {
 }
 
 export type SignUpStatusResult = StatusVoidResult
+
+// User
+
+export type ConciseUserInfo = {
+    id: number,
+    displayName: string,
+}
  
 // Product
 
@@ -165,4 +172,26 @@ export type SearchConciseProductsResult = {
     totalProductCount: number,
     pageCount: number,
     products: ConciseProductInfo[]
+}
+
+export type ProductComment = {
+    user: ConciseUserInfo,
+    rating: number,
+    text: string,
+    dateString: string
+}
+
+export type ProductInfo = {
+    id: number,
+    title: string,
+    imageSources: string[],
+    stripeText?: string,
+    price: number,
+    totalAmount: number,
+    description: string,
+    comments: ProductComment[],
+    category: CategoryId,
+    status: ProductStatus,
+    color: ColorId,
+    
 }

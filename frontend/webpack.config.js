@@ -13,7 +13,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "build"),
     filename: "[name].js",
-    clean: true
+    clean: true,
+    publicPath: '/'
   },
   resolve: {
     extensions: [".js", ".ts", ".tsx"],
@@ -69,7 +70,6 @@ module.exports = {
     ],
   },
   plugins: [
-
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "public", "index.html"),
       filename: `index.html`,
@@ -79,7 +79,7 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css",
     }),
-  ].concat(multipleHtmlPlugins),
+  ],
   optimization: {
     minimizer: [
       new CssMinimizerPlugin(),

@@ -162,7 +162,7 @@ function ProductView(props: ProductViewProps) {
     const product = props.product
 
     return (
-        <Link className="products-grid-view" to="/">
+        <Link className="products-grid-view" to={`/product/${product.id}/`}>
             <ProductImageWithStripe
               imageSource={product.imageSource}
               stripeText={product.stripeText}/>

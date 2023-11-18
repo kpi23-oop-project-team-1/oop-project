@@ -26,6 +26,7 @@ interface StringResources {
     readonly remove: string,
     readonly checkout: string,
     readonly filters: string,
+    readonly category: string,
     readonly categories: string,
     readonly price: string,
     readonly color: string,
@@ -36,7 +37,13 @@ interface StringResources {
     readonly searchOrderLabels: Record<SearchOrder, string>,
     readonly productCountLabel: string,
     readonly allProductsCategory: string,
-    readonly productCategoryLabels: Record<CategoryId, string>
+    readonly productCategoryLabels: Record<CategoryId, string>,
+    readonly description: string,
+    readonly characteristics: string,
+    readonly productComments: string,
+    readonly writeComment: string,
+    readonly quantity: string,
+    readonly productAlreadyInCart: string,
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -65,6 +72,7 @@ export const ukrainianStringResources : StringResources = {
     remove: "Видалити",
     checkout: "Оформити замовлення",
     filters: "Фільтри",
+    category: "Категорія",
     categories: "Категорії",
     price: "Ціна",
     color: "Колір",
@@ -94,5 +102,11 @@ export const ukrainianStringResources : StringResources = {
     allProductsCategory: "Усі товари",
     productCategoryLabels: {
         dress: "Одяг"
-    }
+    },
+    description: "Опис",
+    characteristics: "Характеристики",
+    productComments: "Відгуки покупців",
+    writeComment: "Написати відгук",
+    quantity: "Кількість",
+    productAlreadyInCart: "Вже в корзині"
 }

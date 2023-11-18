@@ -1,0 +1,124 @@
+@use 'colors';
+
+#product-info-content {
+    width: 60%;
+    margin: 10px auto;
+ 
+    .image-carousel-container {
+        width: 100%;
+    }
+
+    h2 {
+        margin-top: 20px;
+        font-size: 1.4em;
+    }
+}
+
+// Grid
+
+#product-info-content-grid {
+    display: flex;
+    margin-top: 30px;
+}
+
+#product-info-content-left-side {
+    flex: .8;
+}
+
+#product-info-content-right-side {
+    flex: .2;
+    margin-left: 40px;
+}
+
+// Characteristic
+
+.product-info-characteristic {
+    font-size: 1.2em;
+}
+
+.product-info-characteristic-name {
+    color: colors.$color-on-surface-light;
+}
+
+.product-info-characteristic-value {
+    display: inline-block;
+    margin-left: 16px;
+}
+
+.product-info-section-content {
+    margin-top: 15px;
+    margin-left: 8px;
+}
+
+// Quantity
+
+#product-info-quantity-label {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: colors.$color-on-surface-light;
+}
+
+#product-info-quantity-input {
+    width: 80px;
+}
+
+// Comments
+
+.product-info-comment-container {
+    &:not(:first-child) {
+        margin-top: 20px;
+    }
+
+    .product-info-comment-display-name {
+        display: inline-block;
+
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+
+    .product-info-comment-date {
+        float: right;
+
+        color: colors.$color-on-surface-light;
+    }
+
+    .star-rating-container {
+        margin-top: 5px;
+    }
+
+    .product-info-comment-text {
+        margin-top: 8px;
+        font-size: 1.2em;
+    }
+}
+
+// Other
+
+#product-info-price {
+    color: colors.$color-on-surface-light;
+    font-size: 2em;
+}
+
+#product-info-add-to-cart {
+    display: block;
+    margin-top: 20px;
+    border-radius: 0;
+}
+
+#product-info-write-comment {
+    margin-top: 20px;
+}
+
+#product-info-title {
+    font-size: 2em;
+    color: colors.$color-on-surface-light;
+}
+
+#product-info-description {
+    font-size: 1.2em;
+}
+
+#product-info-in-cart-label {
+    margin-top: 15px;
+    font-size: 1.4em;
+}
