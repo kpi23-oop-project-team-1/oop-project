@@ -1,0 +1,13 @@
+@use "./dimensions.scss";
+
+#header {
+    display: flex;
+    height: dimensions.$header-height;
+    align-items: center;
+    border-bottom: 1px black solid;
+}
+
+#header-logo {    
+    margin: 5px;
+    
+}

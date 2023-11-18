@@ -1,0 +1,13 @@
+@use 'sass:math';
+@use 'colors';
+
+.advanced-input-error {
+    visibility: hidden;
+ 
+    margin: 5px 0 0 10px;
+    height: 25px;
+}
+
+.advanced-input-container.in-error-state .advanced-input-error {
+    visibility: visible;
+}

@@ -1,0 +1,63 @@
+@use "./dimensions.scss";
+
+$login-form-width: 50%;
+
+#main-content {
+    position: relative;
+    height: calc(100vh - (dimensions.$header-height + 1px)); 
+}
+
+#root {
+    height: 100vh;
+}
+
+#signin-form {
+    width: $login-form-width;
+   
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 20px;
+    border-radius: 10px;
+    border: black 1px solid;
+
+    .advanced-input-container {
+        width: 100%;
+        margin-top: 5px;
+
+        input {
+            width: 100%;
+        }
+    }
+}
+
+#user-info-block {
+    width: 80%;
+    position: relative;
+    margin: 0 auto;
+}
+
+#signin-button {
+    //margin-top: 20px;
+    
+    position: relative;
+    margin: 20px auto;
+    width: 50%;
+    padding: 20px 10px 20px 10px;
+
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#signup-block {
+    p {
+        display: inline-block;
+    }
+
+    a {
+        display: inline-block;
+        margin-left: 5px;
+    }
+}

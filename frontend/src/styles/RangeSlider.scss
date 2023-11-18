@@ -1,0 +1,45 @@
+@use 'colors';
+@use 'sass:math';
+
+$rail-height: 8px;
+$thumb-size: 16px;
+$rail-h-margin: math.div($thumb-size, 2);
+
+.range-slider {
+    position: relative;
+    height: $thumb-size;
+}
+
+.range-slider-rail, .range-slider-track {
+    position: absolute;
+    top: math.div($thumb-size - $rail-height, 2);
+    
+    
+    height: $rail-height;
+    border-radius: $rail-height;
+    display: block;
+}
+
+.range-slider-rail {
+    background-color: colors.$primary-light-color;
+    width: 100%;
+}
+
+.range-slider-track {
+    background-color: colors.$primary-color;
+}
+
+.range-slider-thumb {
+    $shadow-color: rgba(colors.$primary-light-color, 0.4);
+
+    background-color: colors.$primary-color;
+
+    position: absolute;
+    top: 0;
+    width: $thumb-size;
+    height: $thumb-size;
+    transform: translateX(-50%);
+
+    border-radius: $thumb-size;
+    cursor: pointer;
+}

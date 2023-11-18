@@ -1,0 +1,50 @@
+@use 'colors';
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-header {
+    p {
+        vertical-align: middle;
+        display: inline-block;
+        user-select: none;
+
+        font-size: 1.2em;
+       
+    }
+    svg {
+        $size: 16px;
+        display: inline-block;
+        vertical-align: middle;
+
+        margin-left: 8px;
+
+        width: $size;
+        height: $size;
+    }
+}
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background-color: colors.$surface-color;
+    box-shadow: #000 0 2px 5px;
+
+    &.expanded {
+        display: block;
+    }
+
+    p {
+        padding: 10px;
+        font-size: 1.2em;
+
+        user-select: none;
+        transition: background-color linear .2s;
+
+        &:hover {
+            background-color: colors.$surface-hover-color;
+        }
+    }
+}

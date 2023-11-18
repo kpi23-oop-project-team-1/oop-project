@@ -1,0 +1,64 @@
+@use 'sass:math';
+
+#products-page-filter-and-grid {
+    $panel-width-percent: 0.25;
+    display: flex;
+
+    .search-filter-panel {
+        width: 220px;
+    }
+
+    #products-page-right-side {
+        width: 100%;
+    }
+}
+
+#products-grid {
+    $columns: 5;
+    $gap: 15px;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 15px;
+    gap: $gap;
+
+    .products-grid-view {
+        border: #000 solid 1px;
+        width: calc(math.div(100%, $columns) - $gap);
+    }
+
+    .products-grid-view-title {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+    .products-grid-view-price {
+        margin: 10px;
+    }
+}
+
+#product-grid-order-block {
+    float: right;
+    margin-right: 15px;
+    vertical-align: middle;
+
+    > p {
+        margin-right: 10px;
+        display: inline-block;
+        font-size: 1.2em;
+    }
+
+    .dropdown {
+       
+        float: right;
+    }
+}
+
+#products-grid-product-count {
+    display: inline-block;
+    margin-left: 15px;
+    color: #575757;
+    font-size: 1.15em;
+    vertical-align: sub;
+}

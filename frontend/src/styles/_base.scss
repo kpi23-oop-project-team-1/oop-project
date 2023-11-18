@@ -1,0 +1,3 @@
+@mixin var-color-border($type, $thickness, $color) {
+    border: #{$type} #{$thickness} #{$color};
+}

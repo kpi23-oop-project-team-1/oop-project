@@ -1,0 +1,38 @@
+@use 'colors';
+
+$search-bar-round-radius: 20px;
+
+.search-bar-container {
+    border-radius: $search-bar-round-radius;
+    display: flex;
+    background-color: colors.$surface-color;
+
+    input {
+        outline-width: 0;
+        border: none;
+        border-style: none;
+        vertical-align: middle;
+        background: transparent;
+        margin: 0px 5px;
+        margin-left: 10px;
+        padding-left: 10px;
+        width: 100%;
+    }
+
+    .search-bar-search-button {
+        $horizontal-padding: 35px;
+
+        height: 100%;
+       
+        border-radius: $search-bar-round-radius;
+        box-sizing: border-box;
+        background-color: colors.$primary-light-color;
+        padding: 15px $horizontal-padding;
+
+        box-shadow: none !important;
+    }
+
+    .search-bar-search-button:hover {
+        background-color: darken(colors.$primary-light-color, 10%);
+    }
+}

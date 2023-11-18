@@ -1,0 +1,34 @@
+@use 'dimensions';
+
+body.active-full-screen-dialog {
+    overflow: hidden;
+}
+
+#dialog-holder.active-dialog #dialog-overlay {
+    background: #000000aa;
+    position: absolute;
+    z-index: 1;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+}
+
+.dialog {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: fit-content;
+}
+
+#dialog-holder.fullscreen .dialog {
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#dialog-holder.under-header .dialog {
+    top: dimensions.$header-height;
+}

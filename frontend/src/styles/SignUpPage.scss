@@ -1,0 +1,44 @@
+#signup-form {
+    position: relative;
+    margin: 100px auto;
+
+    //transform: translate(-50%, -50%);
+    width: 60%;
+    padding: 20px;
+
+    border: black 1px solid;
+
+    .advanced-input-container {
+        width: 100%;
+
+        input {
+            width: 100%;
+        }
+    }
+}
+
+#signup-button {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%, 0);
+    margin: auto 0;
+    padding: 15px 40px;
+}
+
+#sign-up-form-ua-flag, #sign-up-form-country-code {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#sign-up-form-country-code {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+#sign-up-form-telnum-block {
+    .advanced-input-container {
+        display: inline-block;
+        width: auto;
+        vertical-align: middle;
+    }
+}

@@ -1,0 +1,127 @@
+@use 'colors';
+@use 'sass:math';
+
+#cart-dialog {
+    width: 70%;
+    max-height: 80%;
+    overflow: auto;
+
+    background-color: colors.$surface-color;
+    border-radius: 10px;
+
+    padding: 10px 0;
+}
+
+#cart-dialog-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 0.5px #bebebe solid;
+
+    padding: 0 10px;
+}
+
+#cart-dialog-title {
+    flex: 1;
+
+    font-size: 2em;
+    font-weight: bold;
+}
+
+#cart-dialog-close {
+    $size: 20px;
+
+    width: $size;
+    height: $size;
+    
+    svg {
+        width: $size;
+        height: $size;
+        stroke: colors.$color-on-surface;
+    }
+}
+
+#cart-dialog-product-list {
+    overflow: auto;
+}
+
+.cart-item-container {
+    padding: 15px;
+
+    &:not(:last-child) {
+        border-bottom: 1px #bebebe solid;
+    }
+
+    .cart-item-main-info {
+        display: flex;
+
+        img {
+            height: 128px;
+        }
+
+        a {
+            flex: 1;
+            flex-basis: 0;
+            height: fit-content;
+
+            margin-left: 10px;
+            margin-right: 10px;
+
+            font-size: 1.2em;
+        }
+
+        .cart-item-options-button {
+            $size: 32px;
+            $icon-size: 16px;
+
+            width: $size;
+            height: $size;
+            
+            svg {
+                width: $icon-size;
+                height: $icon-size;
+                stroke: colors.$color-on-surface;
+                position: relative;
+
+                margin-top: math.div($size - $icon-size, 2);
+            }
+        } 
+    }
+
+    .cart-item-price-amount {
+        display: flex;
+        align-content: center;
+        justify-content: right;
+
+        .number-spinner-container {
+            margin-right: 25px;
+        }
+
+        .cart-item-price {
+            align-self: center;
+            min-height: 0;
+            font-size: 1.4em;
+        }
+    }
+}
+
+.cart-item-options-menu .menu {
+    box-shadow: 0 1px 2px #636363;
+}
+
+#cart-dialog-buy-container {
+    display: flex;
+    
+
+    float: right;
+    padding: 20px;
+    border: 1px solid colors.$primary-color;
+    
+    margin-right: 20px;
+    margin-top: 20px;
+
+    #cart-dialog-total-price {
+        align-self: center;
+        margin-right: 15px;
+        font-size: 2em;
+    }
+}

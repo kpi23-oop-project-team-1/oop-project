@@ -1,0 +1,100 @@
+@use 'colors';
+@use 'sass:math';
+
+.image-carousel-content-with-controls {
+    width: 100%;
+    height: 100%;   
+    position: relative;
+}
+
+$control-button-h-margin: 5px;
+
+.image-carousel-control-button {
+    $size: 32px;
+    $icon-size: 16px;
+
+    position: absolute;
+    background-color: colors.$surface-color !important;
+    border-color: 50%;
+
+    width: $size;
+    height: $size;
+
+    svg {
+        width: $icon-size;
+        height: $icon-size;
+
+        position: relative;
+        top: 50%;
+        transform: translateY(-100%);
+    }
+}
+
+.image-carousel-left-button {
+    left: $control-button-h-margin;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+.image-carousel-right-button {
+    left: calc(100% - $control-button-h-margin);
+    top: 50%;
+    transform: translate(-100%, -50%);
+}
+
+.image-carousel-content {
+    display: flex;
+    list-style: none;
+    overflow: hidden;
+    flex-wrap: nowrap;
+    flex-direction: row;
+
+    padding: 0;
+    margin: 0;
+
+    ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    li {
+        list-style: none;
+        flex-shrink: 0;
+        background-color: colors.$surface-dark-color;
+
+        img {
+            position: relative;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}
+
+.image-carousel-dots {
+    width: fit-content;
+    position: relative;
+    margin: 0 auto;
+    margin-top: 8px;
+
+    .image-carousel-dot {
+        $size: 8px;
+
+        display: inline-block;
+        width: $size;
+        height: $size;
+
+        border: 1px solid colors.$color-on-surface;
+
+        border-radius: 50%;
+        margin-right: 4px;
+
+        &.selected-dot {
+            background-color: colors.$color-on-surface;
+        }
+    }
+}
+
+.image-carousel-control-button {
+    position: absolute;
+}

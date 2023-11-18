@@ -1,0 +1,24 @@
+@use 'colors';
+
+$star-default-color: colors.$surface-dark-color;
+$star-filled-color: #E0BB28;
+
+.star-rating-container {
+
+}
+
+.star {
+    $size: 24px;
+
+    width: $size;
+    height: $size;
+
+    display: inline-block;
+    margin-right: 5px;
+
+    fill: $star-default-color;
+
+    &.filled-star {
+        fill: $star-filled-color;
+    }
+}
