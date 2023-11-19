@@ -2,6 +2,7 @@
 
 import { isValidNumber } from "./utils/dataValidation"
 import { UrlSearchParamsBuilder } from "./utils/urlUtils"
+import { ConciseUserInfo } from './user';
 
 export type NumberRange = { start: number, end: number }
 
@@ -113,31 +114,6 @@ export type SearchFilterDesc = {
     availStatuses: ProductStatus[]
 }
 
-export type AuthSuccessResult = {
-    type: 'success',
-    accessKey: string
-}
-
-export type FailStatusResult = { type: 'fail', reason?: string }
-export type SuccessVoidStatusResult = { type: 'success' }
-export type SuccessStatusValueResult<T> = SuccessVoidStatusResult & { value: T }
-
-export type StatusValueResult<T> = SuccessStatusValueResult<T> | FailStatusResult
-export type StatusVoidResult = SuccessVoidStatusResult | FailStatusResult
-
-// Auth
-
-export type AuthResult = { 
-    accessKey: string
-}
-
-export type AuthStatusResult = StatusValueResult<AuthResult>
-
-export type AuthCreditials = { 
-    email: string,
-    password: string
-}
-
 // Sign up
 
 export type SignUpInfo = {
@@ -146,15 +122,6 @@ export type SignUpInfo = {
     telNumber: string
     email: string,
     password: string,
-}
-
-export type SignUpStatusResult = StatusVoidResult
-
-// User
-
-export type ConciseUserInfo = {
-    id: number,
-    displayName: string,
 }
  
 // Product

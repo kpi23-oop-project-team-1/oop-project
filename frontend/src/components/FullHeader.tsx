@@ -9,6 +9,7 @@ import SearchBar from './SearchBar'
 import { CartContext } from '../cart'
 import { Link, To } from 'react-router-dom'
 import { StringResourcesContext } from '../StringResourcesContext'
+import { UserTypeContext } from '../user.react'
 
 export type FullHeaderProps = {
     onShowCart: () => void
@@ -16,6 +17,7 @@ export type FullHeaderProps = {
 
 export default function FullHeader(props: FullHeaderProps) {
     const strRes = useContext(StringResourcesContext)
+    const userType = useContext(UserTypeContext)
 
     let [searchQuery, setSearchQuery] = useState("")
     const [cart] = useContext(CartContext)
@@ -40,8 +42,14 @@ export default function FullHeader(props: FullHeaderProps) {
             </div>
 
             <div id="header-option-block">
-                <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
-                <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>
+                {
+                    userType == 'buyer-seller' ?
+                    <>
+                        <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
+                        <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>
+                    </>
+                    : undefined
+                }
                 <HeaderLinkRoundButton to='/' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
             </div>
         </div>

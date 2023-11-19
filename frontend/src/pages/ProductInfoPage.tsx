@@ -12,6 +12,7 @@ import { StarRating } from "../components/StarRating";
 import "../styles/ProductInfoPage.scss"
 import NumberInput from "../components/NumberInput";
 import Footer from "../components/Footer";
+import { UserTypeContext } from "../user.react";
 
 export default function ProductInfoPage() {
     const productId = useProductId() ?? 0
@@ -64,30 +65,35 @@ export default function ProductInfoPage() {
                             <p id="product-info-price">{product ? formatPriceToString(product.price) : ""}</p>
 
                             {
-                                isProductInCart ? 
-                                <p id="product-info-in-cart-label">{strRes.productAlreadyInCart}</p> 
-                                :  
-                                <div>
-                                    <p id="product-info-quantity-label">{strRes.quantity}</p>
-                                    <NumberInput 
-                                      id="product-info-quantity-input"
-                                      value={quantity}
-                                      onChanged={setQuantity}
-                                      validateNumber={value => value >= 1 && value <= (product?.totalAmount ?? 1)}/>
-                                    <button 
-                                      id="product-info-add-to-cart"
-                                      className="primary"
-                                      onClick={addToCart}>
-                                        {strRes.addToCart}
-                                    </button>
-                                </div>
-                            }
+                                useContext(UserTypeContext) != 'buyer-seller' ?
+                                undefined 
+                                :
+                                <>
+                                    {isProductInCart ? 
+                                        <p id="product-info-in-cart-label">{strRes.productAlreadyInCart}</p> 
+                                        :  
+                                        <>
+                                            <p id="product-info-quantity-label">{strRes.quantity}</p>
+                                            <NumberInput 
+                                              id="product-info-quantity-input"
+                                              value={quantity}
+                                              onChanged={setQuantity}
+                                              validateNumber={value => value >= 1 && value <= (product?.totalAmount ?? 1)}/>
+                                            <button 
+                                              id="product-info-add-to-cart"
+                                              className="primary"
+                                              onClick={addToCart}>
+                                                {strRes.addToCart}
+                                            </button>
+                                    </>}
 
-                            <button 
-                              id="product-info-write-comment"
-                              onClick={() => {}}>
-                                {strRes.writeComment}
-                            </button>
+                                    <button 
+                                      id="product-info-write-comment"
+                                      onClick={() => {}}>
+                                        {strRes.writeComment}
+                                    </button>
+                                </>
+                            }
                         </div>
                     </div>
                 </div> 

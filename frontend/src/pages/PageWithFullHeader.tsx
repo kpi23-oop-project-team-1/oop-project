@@ -1,6 +1,8 @@
+import { useContext } from "react"
 import CartDialog from "../components/CartDialog"
 import { DialogHolder, DialogInfo, DialogSwitch } from "../components/Dialogs"
 import FullHeader from "../components/FullHeader"
+import { UserTypeContext, useUserType } from "../user.react"
 
 export type PageWithFullHeaderDialogType = 'cart'
 
@@ -24,14 +26,19 @@ export default function PageWithSearchHeader<T>(props: PageWithFullHeaderProps<T
         }
     }
 
+    const userType = useUserType()
+
     return (
-        <DialogHolder<PageWithFullHeaderDialogType | T> 
-          dialogType={props.dialogType}
-          dialogSwitch={dialogSwitch}
-          onHideDialog={() => props.onChangeDialogType(undefined)}>
-            <FullHeader onShowCart={() => props.onChangeDialogType('cart')} />
-            
-            {props.children}
-        </DialogHolder>
+        <UserTypeContext.Provider value={userType.value}>
+            <DialogHolder<PageWithFullHeaderDialogType | T> 
+              dialogType={props.dialogType}
+              dialogSwitch={dialogSwitch}
+              onHideDialog={() => props.onChangeDialogType(undefined)}>
+                <FullHeader onShowCart={() => props.onChangeDialogType('cart')}/>
+
+                {props.children}
+            </DialogHolder>
+        </UserTypeContext.Provider>
+        
     )
 }

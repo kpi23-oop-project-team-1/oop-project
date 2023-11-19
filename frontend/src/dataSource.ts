@@ -1,21 +1,33 @@
 import { CartProductInfo } from "./cart";
-import { AuthCreditials, AuthStatusResult, CategoryId, ConciseProductInfo, SearchConciseProductsResult as SearchProductsResult, SearchFilter, SearchFilterDesc, SignUpInfo, SignUpStatusResult, StatusVoidResult, searchFilterToSearchParams, ProductInfo } from "./dataModels";
+import { 
+    CategoryId, 
+    ConciseProductInfo,
+    SearchConciseProductsResult,
+    SearchFilter, 
+    SearchFilterDesc, 
+    SignUpInfo, 
+    searchFilterToSearchParams, 
+    ProductInfo, 
+} from "./dataModels";
+import { UserCreditials, UserType } from "./user";
 import { httpFetchAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
-    authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult>
-    signUpAsync(info: SignUpInfo): Promise<SignUpStatusResult>
+    authenticateAsync(creds: UserCreditials): Promise<undefined>
+    signUpAsync(info: SignUpInfo): Promise<undefined>
 
     getSpecialProductsAsync(): Promise<ConciseProductInfo[]>
 
-    getCartProductsAsync(): Promise<CartProductInfo[]>
-    addProductToCartAsync(id: number): Promise<undefined>
-    updateCartProductQuantityAsync(productId: number, newAmount: number): Promise<undefined>
-    removeProductFromCartAsync(productId: number): Promise<undefined>
+    getCartProductsAsync(creds: UserCreditials): Promise<CartProductInfo[]>
+    addProductToCartAsync(id: number, creds: UserCreditials): Promise<undefined>
+    updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCreditials): Promise<undefined>
+    removeProductFromCartAsync(productId: number, creds: UserCreditials): Promise<undefined>
 
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc>
-    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchProductsResult>
+    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult>
     getProductInfo(id: number): Promise<ProductInfo>
+
+    getUserType(creds: UserCreditials): Promise<UserType>
 }
 
 export class ServerDataSource implements DataSource {
@@ -29,22 +41,21 @@ export class ServerDataSource implements DataSource {
         return `${this.serverUrl}/${query}`
     }
 
-    async authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult> {
-        const response = await httpFetchAsync<any>({
-            method: "POST",
-            url: this.createUrl(`api/auth?email=${creds.email}&password=${creds.password}`)
+    async authenticateAsync(creds: UserCreditials): Promise<undefined> {
+        await httpFetchAsync<any>({
+            method: "GET",
+            creaditials: creds,
+            url: this.createUrl(`api/auth`)
         })
-
-        return response as AuthStatusResult
+        return undefined
     }
 
-    async signUpAsync(info: SignUpInfo): Promise<SignUpStatusResult> {
-        const response = await httpFetchAsync<any>({
+    async signUpAsync(info: SignUpInfo): Promise<undefined> {
+        await httpFetchAsync<any>({
             method: "POST",
             url: this.createUrl(`api/signUp?firstName=${info.firstName}`)
         })
-
-        return response as SignUpStatusResult
+        return undefined
     }
 
     async getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
@@ -54,30 +65,34 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    async getCartProductsAsync(): Promise<CartProductInfo[]> {
+    async getCartProductsAsync(creds: UserCreditials): Promise<CartProductInfo[]> {
         return await httpFetchAsync<CartProductInfo[]>({
             method: "GET",
+            creaditials: creds,
             url: this.createUrl("api/cartproducts")
         })
     }
 
-    async addProductToCartAsync(id: number): Promise<undefined> {
+    async addProductToCartAsync(id: number, creds: UserCreditials): Promise<undefined> {
         return await httpFetchAsync<undefined>({
             method: "POST",
+            creaditials: creds,
             url: this.createUrl(`api/addcartproduct?id=${id}`)
         })
     }
 
-    async updateCartProductQuantityAsync(productId: number, newAmount: number): Promise<undefined> {
+    async updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCreditials): Promise<undefined> {
         return await httpFetchAsync<undefined>({
             method: "POST",
+            creaditials: creds,
             url: this.createUrl(`api/cartproductamount?id=${productId}&amount=${newAmount}`)
         })
     }
 
-    async removeProductFromCartAsync(productId: number): Promise<undefined> {
+    async removeProductFromCartAsync(productId: number, creds: UserCreditials): Promise<undefined> {
         return await httpFetchAsync<undefined>({
             method: "DELETE",
+            creaditials: creds,
             url: this.createUrl(`api/cartproduct?id=${productId}`)
         })
     }
@@ -89,8 +104,8 @@ export class ServerDataSource implements DataSource {
         })    
     }
 
-    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchProductsResult> {
-        return httpFetchAsync<SearchProductsResult>({
+    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult> {
+        return httpFetchAsync<SearchConciseProductsResult>({
             method: "GET",
             url: this.createUrl("api/products") + searchFilterToSearchParams(filter),  
         })
@@ -102,6 +117,14 @@ export class ServerDataSource implements DataSource {
             url: this.createUrl(`api/product?id=${id}`)
         })
     }
+
+    getUserType(creds: UserCreditials): Promise<UserType> {
+        return httpFetchAsync<UserType>({
+            method: "GET",
+            creaditials: creds,
+            url: this.createUrl("api/usertype")
+        })    
+    }
 }
 
 export class TestDataSource implements DataSource {
@@ -110,12 +133,12 @@ export class TestDataSource implements DataSource {
         { id: 2, imageSource: "/images/test_product_image.png", price: 1000, title: "Product 2", quantity: 1, totalAmount: 5 }
     ]
 
-    async authenticateAsync(creds: AuthCreditials): Promise<AuthStatusResult> {
-        return { type: "success", value: { accessKey: "" } };
+    async authenticateAsync(): Promise<undefined> {
+        return undefined
     }
 
-    async signUpAsync(info: SignUpInfo): Promise<StatusVoidResult> {
-        return { type: "success" };
+    async signUpAsync(): Promise<undefined> {
+        return undefined
     }
     
     async getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
@@ -139,7 +162,7 @@ export class TestDataSource implements DataSource {
         return this.cart
     }
 
-    async addProductToCartAsync(id: number): Promise<undefined> {
+    async addProductToCartAsync(): Promise<undefined> {
         return undefined
     }
 
@@ -169,7 +192,7 @@ export class TestDataSource implements DataSource {
         }
     }
 
-    async getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchProductsResult> {
+    async getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult> {
         await new Promise(r => setTimeout(r, 1000));
 
         return {
@@ -219,6 +242,10 @@ export class TestDataSource implements DataSource {
                 }
             ]
         }
+    }
+
+    async getUserType(creds: UserCreditials): Promise<UserType> {
+        return 'buyer-seller' 
     }
 
 }

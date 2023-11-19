@@ -1,6 +1,15 @@
+import { UserCreditials } from "../user";
+import { encodeBase64 } from "../utils/base64";
+
 export type HttpMethod = 'GET' | 'POST' | 'DELETE';
 
-export type HttpBaseFetchInfo<M extends HttpMethod> = { method: M, url: string, timeout?: number }
+export type HttpBaseFetchInfo<M extends HttpMethod> = {
+    method: M, 
+    url: string, 
+    creaditials?: UserCreditials
+    timeout?: number 
+}
+
 export type HttpBodyFetchInfo<M extends HttpMethod> = HttpBaseFetchInfo<M> & { body?: string }
 
 export type HttpGetFetchInfo = HttpBaseFetchInfo<'GET'>
@@ -15,6 +24,13 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
 
         if (info.timeout != undefined) {
             httpRequest.timeout = info.timeout
+        }
+
+        const creds = info.creaditials
+        if (creds) { 
+            const encoded = encodeBase64(creds.email + ":" + creds.password)
+
+            httpRequest.setRequestHeader("Authorization", encoded)
         }
 
         httpRequest.onload = () => {

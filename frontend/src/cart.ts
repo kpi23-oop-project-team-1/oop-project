@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react"
+import { createContext, useContext, useMemo } from "react"
 import { DeferredDataState, mutateStateIfSuccess } from "./deferredData"
 import { mutateElementAndCopy, pushElementAndCopy, removeElementAndCopy } from "./utils/arrayUtils"
 import { DataSource } from "./dataSource"
@@ -24,8 +24,13 @@ export type CartManager = {
 }
 
 export function useCart(): [DeferredDataState<Cart>, CartManager] {
-    const dataSource = useContext(DiContainerContext).dataSource
-    const [cartState, setCartState] = useValueFromDataSource(ds => ds.getCartProductsAsync())
+    const diContainer = useContext(DiContainerContext)
+    const dataSource = diContainer.dataSource
+    
+    const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCrediatials(), [])
+    const [cartState, setCartState] = useValueFromDataSource(
+        async ds => userCreds ? await ds.getCartProductsAsync(userCreds) : [], 
+    )
 
     function processPromiseErrors<T>(promise: Promise<T>) {
         promise.catch(() => {
@@ -46,21 +51,21 @@ export function useCart(): [DeferredDataState<Cart>, CartManager] {
                 return
             }
 
-            if (cartState.type != 'error') {
+            if (cartState.type != 'error' && userCreds) {
                 mutateCartIfSuccess(products => pushElementAndCopy(products, product))
 
-                processPromiseErrors(dataSource.addProductToCartAsync(product.id))
+                processPromiseErrors(dataSource.addProductToCartAsync(product.id, userCreds))
             }
         },
         removeProduct(productId) {
-            if (this.isProductInCart(productId)) {
+            if (this.isProductInCart(productId) && userCreds) {
                 mutateCartIfSuccess(products => removeElementAndCopy(products, p => p.id == productId))
 
-                processPromiseErrors(dataSource.removeProductFromCartAsync(productId))
+                processPromiseErrors(dataSource.removeProductFromCartAsync(productId, userCreds))
             }
         },
         updateProductQuantity(productId, value) {
-            if (this.isProductInCart(productId)) {
+            if (this.isProductInCart(productId) && userCreds) {
                 mutateCartIfSuccess(products => 
                     mutateElementAndCopy(
                         products, 
@@ -69,7 +74,7 @@ export function useCart(): [DeferredDataState<Cart>, CartManager] {
                     )
                 )
 
-                processPromiseErrors(dataSource.updateCartProductQuantityAsync(productId, value))
+                processPromiseErrors(dataSource.updateCartProductQuantityAsync(productId, value, userCreds))
             }
         },
     }

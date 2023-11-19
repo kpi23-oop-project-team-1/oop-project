@@ -11,6 +11,7 @@ import DeferredDataContainer from "../components/DeferredDataContainer"
 import { CartContext, useCart } from "../cart"
 import { useValueFromDataSource } from "../dataSource.react"
 import { Link } from "react-router-dom"
+import { UserTypeContext } from "../user.react"
 
 export default function MainPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
@@ -56,6 +57,7 @@ function SpecialProduct(props: SpecialProductProps) {
 
     const strRes = useContext(StringResourcesContext)
     const [_, cartManager] = useContext(CartContext)
+    const userType = useContext(UserTypeContext)
 
     function addProductToCart() {
         cartManager.addProduct({ ...product, quantity: 1 })
@@ -70,7 +72,7 @@ function SpecialProduct(props: SpecialProductProps) {
             </Link>
             
             {
-                !cartManager.isProductInCart(product.id) ?
+                !cartManager.isProductInCart(product.id) && userType == 'buyer-seller' ?
                     <button 
                       className="special-product-add-to-cart primary"
                       onClick={addProductToCart}>
