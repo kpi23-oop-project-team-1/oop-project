@@ -26,19 +26,15 @@ export default function PageWithSearchHeader<T>(props: PageWithFullHeaderProps<T
         }
     }
 
-    const userType = useUserType()
+    
 
     return (
-        <UserTypeContext.Provider value={userType.value}>
-            <DialogHolder<PageWithFullHeaderDialogType | T> 
-              dialogType={props.dialogType}
-              dialogSwitch={dialogSwitch}
-              onHideDialog={() => props.onChangeDialogType(undefined)}>
-                <FullHeader onShowCart={() => props.onChangeDialogType('cart')}/>
-
-                {props.children}
-            </DialogHolder>
-        </UserTypeContext.Provider>
-        
+        <DialogHolder<PageWithFullHeaderDialogType | T> 
+          dialogType={props.dialogType}
+          dialogSwitch={dialogSwitch}
+          onHideDialog={() => props.onChangeDialogType(undefined)}>
+            <FullHeader onShowCart={() => props.onChangeDialogType('cart')}/>
+            {props.children}
+        </DialogHolder>
     )
 }

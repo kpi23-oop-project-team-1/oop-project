@@ -6,7 +6,7 @@ export type HttpMethod = 'GET' | 'POST' | 'DELETE';
 export type HttpBaseFetchInfo<M extends HttpMethod> = {
     method: M, 
     url: string, 
-    creaditials?: UserCreditials
+    creditials?: UserCreditials
     timeout?: number 
 }
 
@@ -26,7 +26,7 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
             httpRequest.timeout = info.timeout
         }
 
-        const creds = info.creaditials
+        const creds = info.creditials
         if (creds) { 
             const encoded = encodeBase64(creds.email + ":" + creds.password)
 

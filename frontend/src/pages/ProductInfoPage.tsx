@@ -12,7 +12,7 @@ import { StarRating } from "../components/StarRating";
 import "../styles/ProductInfoPage.scss"
 import NumberInput from "../components/NumberInput";
 import Footer from "../components/Footer";
-import { UserTypeContext } from "../user.react";
+import { UserTypeContext, useUserType } from "../user.react";
 
 export default function ProductInfoPage() {
     const productId = useProductId() ?? 0
@@ -26,6 +26,7 @@ export default function ProductInfoPage() {
     const product = productState.value
 
     const isProductInCart = useMemo(() => cartManager.isProductInCart(productId), [cart])
+    const userType = useUserType()
 
     function addToCart() {
         if (product) {
@@ -34,6 +35,7 @@ export default function ProductInfoPage() {
     }
 
     return (
+        <UserTypeContext.Provider value={userType.value}>
         <CartContext.Provider value={[cart, cartManager]}>
             <PageWithSearchHeader 
               dialogType={dialogType} 
@@ -65,7 +67,7 @@ export default function ProductInfoPage() {
                             <p id="product-info-price">{product ? formatPriceToString(product.price) : ""}</p>
 
                             {
-                                useContext(UserTypeContext) != 'buyer-seller' ?
+                                userType.value != 'buyer-seller' ?
                                 undefined 
                                 :
                                 <>
@@ -99,8 +101,8 @@ export default function ProductInfoPage() {
                 </div> 
                 <Footer/>
             </PageWithSearchHeader>
-              
         </CartContext.Provider>
+        </UserTypeContext.Provider>
     )
 }
 

@@ -44,6 +44,13 @@ interface StringResources {
     readonly writeComment: string,
     readonly quantity: string,
     readonly productAlreadyInCart: string,
+    readonly uploadImages: string,
+    readonly describeProduct: string,
+    readonly productTitle: string,
+    readonly productTitlePlaceholder: string
+    readonly productDescriptionPlaceholder: string,
+    readonly selectPlaceholder: string,
+    readonly addProduct: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -108,5 +115,12 @@ export const ukrainianStringResources : StringResources = {
     productComments: "Відгуки покупців",
     writeComment: "Написати відгук",
     quantity: "Кількість",
-    productAlreadyInCart: "Вже в корзині"
+    productAlreadyInCart: "Вже в корзині",
+    uploadImages: "Завантажте фото",
+    describeProduct: "Опишіть вашу річ",
+    productTitle: "Назва",
+    productTitlePlaceholder: "Наприклад: Супер плаття в горошок Zara",
+    productDescriptionPlaceholder: "Приклад: в цій блузці ви будете виглядати як зірка",
+    selectPlaceholder: "Виберіть",
+    addProduct: "Додати річ"
 }

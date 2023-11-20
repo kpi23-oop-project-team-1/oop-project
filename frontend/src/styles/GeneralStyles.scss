@@ -27,7 +27,29 @@ input[type=text] {
 
     padding: 10px;
 
+    display: block;
     border: 1px solid $input-border-color;
+
+    &:hover {
+        border-color: $input-hover-border-color;
+    }
+
+    &:focus {
+        border-color: $input-hover-border-color;
+        outline-width: 0;
+    }
+}
+
+textarea {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;  
+
+    padding: 10px;
+
+    display: block;
+    border: 1px solid $input-border-color;
+    resize: none;
 
     &:hover {
         border-color: $input-hover-border-color;

@@ -3,6 +3,7 @@ import ErrorOutlineIcon from '../../public/images/error_outline.svg'
 import "../styles/AdvancedInputField.scss"
 
 export type AdvancedInputProps = {
+    id?: string,
     placeholder: string,
     inputType?: HTMLInputTypeAttribute, 
     onTextChanged?: (newText: string) => void,
@@ -36,7 +37,7 @@ export default function AdvancedInputField(props: AdvancedInputProps) {
     }
 
     return (
-        <div className={createContainerClass()}>
+        <div className={createContainerClass()} id={props.id}>
             <p className="advanced-input-field-placeholder">{props.placeholder}</p>
             <input 
               type={props.inputType} 

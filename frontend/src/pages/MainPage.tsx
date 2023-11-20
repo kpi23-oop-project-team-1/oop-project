@@ -11,23 +11,26 @@ import DeferredDataContainer from "../components/DeferredDataContainer"
 import { CartContext, useCart } from "../cart"
 import { useValueFromDataSource } from "../dataSource.react"
 import { Link } from "react-router-dom"
-import { UserTypeContext } from "../user.react"
+import { UserTypeContext, useUserType } from "../user.react"
 
 export default function MainPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
+    const userType = useUserType()
 
     return (
-        <CartContext.Provider value={cartAndManager}>
-            <PageWithSearchHeader
-              dialogSwitch={undefined} 
-              dialogType={dialogType} 
-              onChangeDialogType={setDialogType}>
-                <SpecialProductsBlock/>
-                <AboutBlock/>
-                <Footer/>
-            </PageWithSearchHeader>
-        </CartContext.Provider>
+        <UserTypeContext.Provider value={userType.value}>
+            <CartContext.Provider value={cartAndManager}>
+                <PageWithSearchHeader
+                  dialogSwitch={undefined} 
+                  dialogType={dialogType} 
+                  onChangeDialogType={setDialogType}>
+                    <SpecialProductsBlock/>
+                    <AboutBlock/>
+                    <Footer/>
+                </PageWithSearchHeader>
+            </CartContext.Provider>
+        </UserTypeContext.Provider>
     )
 }
 

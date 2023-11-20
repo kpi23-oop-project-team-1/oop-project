@@ -14,10 +14,12 @@ import PageNavRow from "../components/PageNavRow"
 import Footer from "../components/Footer"
 import { isValidNumber } from "../utils/dataValidation"
 import { Link } from "react-router-dom"
+import { UserTypeContext, useUserType } from "../user.react"
 
 export default function ProductsPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
+    const userType = useUserType()
 
     const [filter, setFilter] = useState<SearchFilter>(extractSearchFilterFromSearchParams())
     const [commitedFilter, setCommitedFilter] = useState(filter)
@@ -38,6 +40,7 @@ export default function ProductsPage() {
     }
 
     return (
+        <UserTypeContext.Provider value={userType.value}>
         <CartContext.Provider value={cartAndManager}>
             <PageWithSearchHeader
               dialogType={dialogType}
@@ -71,6 +74,7 @@ export default function ProductsPage() {
                 <Footer/>
             </PageWithSearchHeader>
         </CartContext.Provider>
+        </UserTypeContext.Provider>
     )
 }
 

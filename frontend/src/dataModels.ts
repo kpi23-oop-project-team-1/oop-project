@@ -160,5 +160,15 @@ export type ProductInfo = {
     category: CategoryId,
     status: ProductStatus,
     color: ColorId,
-    
+}
+
+export type NewProductInfo = {
+    title: string,
+    images: File[]
+    price: number,
+    totalAmount: number,
+    description: string,
+    category: CategoryId,
+    status: ProductStatus,
+    color: ColorId,
 }

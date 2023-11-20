@@ -12,6 +12,7 @@ import ProductsPage from "./pages/ProductsPage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import ProductInfoPage from "./pages/ProductInfoPage";
+import AddProductPage from "./pages/AddProductPage";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
     {
         path: "/product/:productId/",
         element: <ProductInfoPage/>
+    },
+    {
+        path: "/addproduct",
+        element: <AddProductPage/>
     }
   ]
 );

@@ -7,10 +7,12 @@ import {
     SearchFilterDesc, 
     SignUpInfo, 
     searchFilterToSearchParams, 
-    ProductInfo, 
+    ProductInfo,
+    NewProductInfo, 
 } from "./dataModels";
 import { UserCreditials, UserType } from "./user";
 import { httpFetchAsync } from "./utils/ajaxHttp";
+import { encodeBase64 } from "./utils/base64";
 
 export interface DataSource {
     authenticateAsync(creds: UserCreditials): Promise<undefined>
@@ -28,6 +30,8 @@ export interface DataSource {
     getProductInfo(id: number): Promise<ProductInfo>
 
     getUserType(creds: UserCreditials): Promise<UserType>
+
+    addProduct(info: NewProductInfo, creds: UserCreditials): Promise<undefined>
 }
 
 export class ServerDataSource implements DataSource {
@@ -44,7 +48,7 @@ export class ServerDataSource implements DataSource {
     async authenticateAsync(creds: UserCreditials): Promise<undefined> {
         await httpFetchAsync<any>({
             method: "GET",
-            creaditials: creds,
+            creditials: creds,
             url: this.createUrl(`api/auth`)
         })
         return undefined
@@ -68,7 +72,7 @@ export class ServerDataSource implements DataSource {
     async getCartProductsAsync(creds: UserCreditials): Promise<CartProductInfo[]> {
         return await httpFetchAsync<CartProductInfo[]>({
             method: "GET",
-            creaditials: creds,
+            creditials: creds,
             url: this.createUrl("api/cartproducts")
         })
     }
@@ -76,7 +80,7 @@ export class ServerDataSource implements DataSource {
     async addProductToCartAsync(id: number, creds: UserCreditials): Promise<undefined> {
         return await httpFetchAsync<undefined>({
             method: "POST",
-            creaditials: creds,
+            creditials: creds,
             url: this.createUrl(`api/addcartproduct?id=${id}`)
         })
     }
@@ -84,7 +88,7 @@ export class ServerDataSource implements DataSource {
     async updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCreditials): Promise<undefined> {
         return await httpFetchAsync<undefined>({
             method: "POST",
-            creaditials: creds,
+            creditials: creds,
             url: this.createUrl(`api/cartproductamount?id=${productId}&amount=${newAmount}`)
         })
     }
@@ -92,7 +96,7 @@ export class ServerDataSource implements DataSource {
     async removeProductFromCartAsync(productId: number, creds: UserCreditials): Promise<undefined> {
         return await httpFetchAsync<undefined>({
             method: "DELETE",
-            creaditials: creds,
+            creditials: creds,
             url: this.createUrl(`api/cartproduct?id=${productId}`)
         })
     }
@@ -121,9 +125,34 @@ export class ServerDataSource implements DataSource {
     getUserType(creds: UserCreditials): Promise<UserType> {
         return httpFetchAsync<UserType>({
             method: "GET",
-            creaditials: creds,
+            creditials: creds,
             url: this.createUrl("api/usertype")
         })    
+    }
+
+    async addProduct(info: NewProductInfo, creds: UserCreditials): Promise<undefined> {
+        const formData = new FormData()
+        formData.set('title', info.title)
+        formData.set('description', info.description)
+        formData.set('price', info.price.toString())
+        formData.set('amount', info.totalAmount.toString())
+        formData.set('category', info.category)
+        formData.set('status', info.status)
+        formData.set('color', info.color)
+        
+        for (const file of info.images) {
+            formData.append('image', file)
+        }
+
+        await fetch(this.createUrl("api/addproduct"), {
+            method: "POST",
+            headers: [
+                ['Authorization', encodeBase64(`${creds.email}:${creds.password}`)]
+            ],
+            body: formData
+        })
+
+        return undefined
     }
 }
 
@@ -248,4 +277,7 @@ export class TestDataSource implements DataSource {
         return 'buyer-seller' 
     }
 
+    async addProduct(): Promise<undefined> {
+        return undefined
+    }
 }
