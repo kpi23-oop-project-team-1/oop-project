@@ -3,7 +3,7 @@ package com.mkr.datastore.inFile;
 import java.util.ArrayList;
 
 public class ByteArrayBuilder {
-    ArrayList<Byte> bytes;
+    private final ArrayList<Byte> bytes;
 
     public ByteArrayBuilder() {
         bytes = new ArrayList<>();

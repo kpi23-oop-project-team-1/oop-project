@@ -43,6 +43,6 @@ public class InFileEntityScheme {
             return STRING_CODE;
         }
 
-        throw new UnsupportedValueTypeException("This value type is not supported: %s".formatted(valueType));
+        throw new UnsupportedValueTypeException(valueType);
     }
 }

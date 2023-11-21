@@ -2,7 +2,6 @@ package com.mkr.datastore.utils;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.Charset;
 
 public final class FileUtils {
     public static boolean readBoolAtPos(RandomAccessFile raf, long pos) {
@@ -30,7 +29,7 @@ public final class FileUtils {
                 bytes[i] = raf.readByte();
             }
         } catch(IOException e) {
-            // TODO: throw smt idk
+            throw new RuntimeException(e);  // TODO: better exception handling
         }
 
         return bytes;
@@ -41,7 +40,19 @@ public final class FileUtils {
             raf.seek(pos);
             raf.write(bytes);
         } catch(IOException e) {
-            // TODO: throw smt idk
+            throw new RuntimeException(e);  // TODO: better exception handling
         }
+    }
+
+    public static long getFileLength(RandomAccessFile raf) {
+        long fileLength;
+
+        try {
+            fileLength = raf.length();
+        } catch (IOException e) {
+            throw new RuntimeException(e);  // TODO: better exception handling
+        }
+
+        return fileLength;
     }
 }

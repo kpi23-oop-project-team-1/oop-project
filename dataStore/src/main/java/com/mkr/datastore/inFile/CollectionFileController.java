@@ -16,10 +16,10 @@ public class CollectionFileController<E> {
     private final DataStoreCollectionDescriptor<E> descriptor;
     private final RandomAccessFile raf;
 
-    private InFileEntityScheme inFileScheme;
-
-    private int chunkSize = 32;
     private final long firstEntityPos;
+    private InFileEntityScheme inFileScheme;
+    private int chunkSize = 32;
+
 
     public CollectionFileController(File file, DataStoreCollectionDescriptor<E> descriptor) throws FileNotFoundException {
         this.descriptor = descriptor;
@@ -96,7 +96,7 @@ public class CollectionFileController<E> {
                 } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.STRING_CODE)) {
                     elementsData.add(ByteUtils.stringToBytes((String) element, StandardCharsets.UTF_8));
                 } else {
-                    throwUnexpectedValueTypeCodeException(key.valueTypeCode());
+                    throw new UnsupportedValueTypeException(key.valueTypeCode());
                 }
             }
 
@@ -106,16 +106,17 @@ public class CollectionFileController<E> {
         byte[] entityBytes = entityData.build();
 
         // Write entity bytes
-        boolean createNewRecord;
         long offset = pos;
+        long fileLength = FileUtils.getFileLength(raf);
+        boolean createNewRecord;
 
-        if (pos >= getFileLength()) {  // No old record at this pos
+        if (pos >= fileLength) {  // No old record at this pos
             createNewRecord = true;
         } else {  // There is an old record at this pos
             createNewRecord = entityBytes.length > readEntitySizeAtPos(pos);
             if (createNewRecord) {
                 writeEntityIsActiveAtPos(false, pos);  // Deactivate old record
-                offset = getFileLength();  // Go to the end of file
+                offset = fileLength;  // Go to the end of file
             }
         }
 
@@ -200,21 +201,9 @@ public class CollectionFileController<E> {
                 ByteUtils.INT32_SIZE +
                 FileUtils.readInt32AtPos(raf, currentEntityPos + ByteUtils.BOOLEAN_SIZE);
 
-        if (nextEntityPos > getFileLength()) return -1;
+        if (nextEntityPos > FileUtils.getFileLength(raf)) return -1;
 
         return nextEntityPos;
-    }
-
-    public long getFileLength() {
-        long fileLength;
-
-        try {
-            fileLength = raf.length();
-        } catch (IOException e) {
-            throw new RuntimeException(e);  // TODO: better exception handling
-        }
-
-        return fileLength;
     }
 
     private void writeInFileScheme() {
@@ -300,12 +289,6 @@ public class CollectionFileController<E> {
             return new String[elementCount];
         }
 
-        throwUnexpectedValueTypeCodeException(valueTypeCode);
-        return null;
-    }
-
-    private void throwUnexpectedValueTypeCodeException(String valueTypeCode) {
-        throw new UnsupportedValueTypeCodeException(
-                "This value type code is not supported: \"%s\"".formatted(valueTypeCode));
+        throw new UnsupportedValueTypeException(valueTypeCode);
     }
 }

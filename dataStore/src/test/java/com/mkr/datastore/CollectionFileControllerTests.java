@@ -17,6 +17,8 @@ public class CollectionFileControllerTests {
     @BeforeEach
     public void setup() throws IOException {
         file = new File("tmp.bin");
+        file.deleteOnExit();
+
         controller = new CollectionFileController<>(file, TestDataStoreCollections.testObjectWithArrays);
     }
 
