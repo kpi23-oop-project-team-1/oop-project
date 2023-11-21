@@ -2,12 +2,12 @@ package com.mkr.datastore;
 
 public final class TestObject {
     private String string;
-    private int integer;
+    private Integer integer;
 
     public TestObject() {
     }
 
-    public TestObject(String string, int integer) {
+    public TestObject(String string, Integer integer) {
         this.string = string;
         this.integer = integer;
     }
@@ -16,7 +16,7 @@ public final class TestObject {
         return string;
     }
 
-    public int getInteger() {
+    public Integer getInteger() {
         return integer;
     }
 
@@ -24,7 +24,7 @@ public final class TestObject {
         this.string = string;
     }
 
-    public void setInteger(int integer) {
+    public void setInteger(Integer integer) {
         this.integer = integer;
     }
 
@@ -32,11 +32,15 @@ public final class TestObject {
     public boolean equals(Object obj) {
         return obj instanceof TestObject other &&
             string.equals(other.string) &&
-            integer == other.integer;
+            integer.equals(other.integer);
     }
 
     @Override
     public int hashCode() {
         return string.hashCode() * 31 + integer;
+    }
+
+    public String toString() {
+        return "{%s, %d}".formatted(string, integer);
     }
 }

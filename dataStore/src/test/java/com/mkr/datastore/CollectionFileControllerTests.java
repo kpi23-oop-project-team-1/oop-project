@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +14,7 @@ public class CollectionFileControllerTests {
     private File file;
     
     @BeforeEach
-    public void setup() throws IOException {
+    public void setup() {
         file = new File("tmp.bin");
         file.deleteOnExit();
 

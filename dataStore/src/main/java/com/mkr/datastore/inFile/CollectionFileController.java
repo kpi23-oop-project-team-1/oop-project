@@ -7,6 +7,7 @@ import com.mkr.datastore.utils.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class CollectionFileController<E> {
@@ -21,22 +22,30 @@ public class CollectionFileController<E> {
     private int chunkSize = 32;
 
 
-    public CollectionFileController(File file, DataStoreCollectionDescriptor<E> descriptor) throws FileNotFoundException {
+    public CollectionFileController(File file, DataStoreCollectionDescriptor<E> descriptor) {
         this.descriptor = descriptor;
 
         boolean fileExists = file.exists();
 
-        raf = new RandomAccessFile(file, "rw");
+        try {
+            raf = new RandomAccessFile(file, "rw");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);  // TODO: better exception handling
+        }
 
         if (fileExists) {  // Read existing
             readInFileScheme();
-        } else {  // Create new
+        } else {  // Write new
             inFileScheme = new InFileEntityScheme(descriptor.getScheme());
             writeVersion(0);
             writeInFileScheme();
         }
 
         firstEntityPos = findFirstEntityPos();
+    }
+
+    public DataStoreCollectionDescriptor<E> getDescriptor() {
+        return descriptor;
     }
 
     public int getChunkSize() {
@@ -107,7 +116,7 @@ public class CollectionFileController<E> {
 
         // Write entity bytes
         long offset = pos;
-        long fileLength = FileUtils.getFileLength(raf);
+        long fileLength = findFileEndPos();
         boolean createNewRecord;
 
         if (pos >= fileLength) {  // No old record at this pos
@@ -120,18 +129,26 @@ public class CollectionFileController<E> {
             }
         }
 
-        if (createNewRecord) {
+        if (createNewRecord) {  // Write isActive
             FileUtils.writeBoolAtPos(raf, true, offset);
         }
         offset += ByteUtils.BOOLEAN_SIZE;
 
-        if (createNewRecord) {
-            int fullSize = (int) Math.ceil((double) entityBytes.length / chunkSize) * chunkSize;
+        if (createNewRecord) {  // Write size
+            int fullSize = calculateFullSize(entityBytes.length);
             FileUtils.writeBytesAtPos(raf, ByteUtils.int32ToBytes(fullSize), offset);
         }
         offset += ByteUtils.INT32_SIZE;
 
-        FileUtils.writeBytesAtPos(raf, entityBytes, offset);
+        FileUtils.writeBytesAtPos(raf, entityBytes, offset);  // Write entity bytes
+        offset += entityBytes.length;
+
+        if (createNewRecord) {  // Write additional bytes to fill the chunk
+            int fullSize = calculateFullSize(entityBytes.length);
+            byte[] additionalBytes = new byte[fullSize - entityBytes.length];
+            Arrays.fill(additionalBytes, (byte) 0);
+            FileUtils.writeBytesAtPos(raf, additionalBytes, offset);
+        }
     }
 
     public E readEntityAtPos(long pos) {
@@ -140,7 +157,7 @@ public class CollectionFileController<E> {
         long offset = pos;
 
         // Read isActive
-        boolean isActive = ByteUtils.bytesToBoolean(FileUtils.readNBytesAtPos(raf, ByteUtils.BOOLEAN_SIZE, pos));
+        boolean isActive = readEntityIsActiveAtPos(offset);
         offset += ByteUtils.BOOLEAN_SIZE;
 
         if (!isActive) return null;
@@ -201,9 +218,13 @@ public class CollectionFileController<E> {
                 ByteUtils.INT32_SIZE +
                 FileUtils.readInt32AtPos(raf, currentEntityPos + ByteUtils.BOOLEAN_SIZE);
 
-        if (nextEntityPos > FileUtils.getFileLength(raf)) return -1;
+        if (nextEntityPos >= findFileEndPos()) return -1;
 
         return nextEntityPos;
+    }
+
+    public long findFileEndPos() {
+        return FileUtils.getFileLength(raf);
     }
 
     private void writeInFileScheme() {
@@ -290,5 +311,9 @@ public class CollectionFileController<E> {
         }
 
         throw new UnsupportedValueTypeException(valueTypeCode);
+    }
+
+    private int calculateFullSize(int size) {
+        return (int) Math.ceil((double) size / chunkSize) * chunkSize;
     }
 }
