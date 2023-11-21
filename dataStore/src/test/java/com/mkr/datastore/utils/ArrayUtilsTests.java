@@ -1,4 +1,4 @@
-package com.mkr.datastore;
+package com.mkr.datastore.utils;
 
 import com.mkr.datastore.utils.ArrayUtils;
 import org.junit.jupiter.params.ParameterizedTest;
