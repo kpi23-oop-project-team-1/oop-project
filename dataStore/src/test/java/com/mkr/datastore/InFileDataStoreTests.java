@@ -23,7 +23,7 @@ public class InFileDataStoreTests {
     public void setup() {
         dataStore = new InFileDataStore(dataStoreConfig, filePathProvider);
 
-        // Make sure all files will be deleted after all tests
+        // Make sure files will be deleted even if tests fail
         for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
             var file = new File(filePathProvider.apply(descriptor));
             file.deleteOnExit();
@@ -32,7 +32,7 @@ public class InFileDataStoreTests {
 
     @AfterEach
     public void deleteFiles() {
-        // Make sure all files will be deleted after each tests
+        // Make sure files will be deleted after each test
         for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
             var file = new File(filePathProvider.apply(descriptor));
             file.delete();

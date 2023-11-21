@@ -31,6 +31,7 @@ public class CollectionFileControllerTests {
         int version = 10;
 
         controller.writeVersion(version);
+
         int actualVersion = controller.readVersion();
 
         assertEquals(version, actualVersion);

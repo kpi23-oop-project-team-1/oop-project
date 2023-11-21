@@ -4,12 +4,12 @@ import com.mkr.datastore.DataStoreCollection;
 import com.mkr.datastore.DataStoreCollectionDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 
 public class InFileCollection<E> implements DataStoreCollection<E> {
@@ -37,23 +37,9 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
     public Stream<E> data() {
         readLock.lock();
 
-        ArrayList<E> entities = new ArrayList<>();
+        var spliterator = new InFileCollectionSpliterator<>(fileController);
 
-        long offset = fileController.getFirstEntityPos();
-
-        while (offset >= 0) {
-            boolean isActive = fileController.readEntityIsActiveAtPos(offset);
-
-            if (isActive) {
-                E entity = fileController.readEntityAtPos(offset);
-
-                entities.add(entity);
-            }
-
-            offset = fileController.findNextEntityPos(offset);
-        }
-
-        return entities.stream().onClose(readLock::unlock);
+        return StreamSupport.stream(spliterator, false).onClose(readLock::unlock);
     }
 
     @SafeVarargs
