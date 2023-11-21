@@ -8,7 +8,11 @@ import {
     SignUpInfo, 
     searchFilterToSearchParams, 
     ProductInfo,
-    NewProductInfo, 
+    NewProductInfo,
+    UserProductSearchFilter,
+    userProductSearchFilterToSearchParams,
+    ProductStatus,
+    UserProductSearchDesc, 
 } from "./dataModels";
 import { UserCreditials, UserType } from "./user";
 import { httpFetchAsync } from "./utils/ajaxHttp";
@@ -32,6 +36,10 @@ export interface DataSource {
     getUserType(creds: UserCreditials): Promise<UserType>
 
     addProduct(info: NewProductInfo, creds: UserCreditials): Promise<undefined>
+
+    getUserProductsSearchDesc(status: ProductStatus, creds: UserCreditials): Promise<UserProductSearchDesc>
+    getUserProducts(filter: UserProductSearchFilter, creds: UserCreditials): Promise<ConciseProductInfo[]>
+    deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined>
 }
 
 export class ServerDataSource implements DataSource {
@@ -137,7 +145,7 @@ export class ServerDataSource implements DataSource {
         formData.set('price', info.price.toString())
         formData.set('amount', info.totalAmount.toString())
         formData.set('category', info.category)
-        formData.set('status', info.status)
+        formData.set('state', info.state)
         formData.set('color', info.color)
         
         for (const file of info.images) {
@@ -153,6 +161,31 @@ export class ServerDataSource implements DataSource {
         })
 
         return undefined
+    }
+
+    getUserProductsSearchDesc(status: ProductStatus, creds: UserCreditials): Promise<UserProductSearchDesc> {
+        return httpFetchAsync<UserProductSearchDesc>({
+            method: "GET",
+            creditials: creds,
+            url: this.createUrl(`api/userproductssearchdesc?status=${status}`)
+        })
+    }
+
+    getUserProducts(filter: UserProductSearchFilter, creds: UserCreditials): Promise<ConciseProductInfo[]> {
+        return httpFetchAsync<ConciseProductInfo[]>({
+            method: "GET",
+            url: this.createUrl("api/userproducts") + userProductSearchFilterToSearchParams(filter),
+            creditials: creds
+        })
+    }
+
+    deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined> {
+        return httpFetchAsync<undefined>({
+            method: "DELETE",
+            url: this.createUrl("/api/product"),
+            creditials: creds,
+            body: JSON.stringify(ids)
+        })    
     }
 }
 
@@ -216,7 +249,7 @@ export class TestDataSource implements DataSource {
 
         return {
             availColorIds: ['black', 'white', 'cyan'],
-            availStatuses: ['acceptable', 'good', 'ideal', 'new', 'very-good'],
+            availStates: ['acceptable', 'good', 'ideal', 'new', 'very-good'],
             limitingPriceRange: { start: 100, end: 1000 }
         }
     }
@@ -247,7 +280,7 @@ export class TestDataSource implements DataSource {
             color: 'black',
             imageSources: ["/images/placeholder-1.png", "/images/placeholder-2.png", "/images/placeholder-3.png"],
             price: 100,
-            status: 'good',
+            state: 'good',
             totalAmount: 5,
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             comments: [
@@ -278,6 +311,26 @@ export class TestDataSource implements DataSource {
     }
 
     async addProduct(): Promise<undefined> {
+        return undefined
+    }
+
+    async getUserProductsSearchDesc(): Promise<UserProductSearchDesc> {
+        return { totalPages: 10 }
+    }
+
+    async getUserProducts(filter: UserProductSearchFilter): Promise<ConciseProductInfo[]> {
+        await new Promise(r => setTimeout(r, 1000));
+
+        return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(i => i + ((filter?.page ?? 1) - 1) * 10).map(id => ({
+            id,
+            imageSource: "./images/test_product_image.png",
+            price: id * 100,
+            title: "Product " + id,
+            totalAmount: id * 2
+        }))
+    }
+
+    async deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined> {
         return undefined
     }
 }

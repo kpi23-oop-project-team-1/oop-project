@@ -53,7 +53,7 @@ export default function ProductInfoPage() {
 
                             <Section header={strRes.characteristics}>
                                 <Characteristic name={strRes.category} value={product?.category} valueToTextMap={strRes.productCategoryLabels}/>
-                                <Characteristic name={strRes.productStatus} value={product?.status} valueToTextMap={strRes.productStatusLabels}/>
+                                <Characteristic name={strRes.productState} value={product?.state} valueToTextMap={strRes.productStateLabels}/>
                                 <Characteristic name={strRes.color} value={product?.color} valueToTextMap={strRes.colorLabels}/>
                             </Section>
 

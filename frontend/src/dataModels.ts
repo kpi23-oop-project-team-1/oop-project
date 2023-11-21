@@ -25,6 +25,16 @@ export function parseNumberRange(text: string): NumberRange | undefined {
     return { start: parseInt(startStr), end: parseInt(endStr) }
 }
 
+export const allProductStatuses = [
+    'active',
+    'on-moderation',
+    'declined',
+    'sold',
+    'deleted'
+] as const
+
+export type ProductStatus = (typeof allProductStatuses)[number]
+
 export const allColorIds = [
     'black', 
     'white', 
@@ -36,7 +46,7 @@ export const allColorIds = [
 
 export type ColorId = (typeof allColorIds)[number] 
 
-export const allProductStatuses = [
+export const allProductStates = [
     'new', 
     'ideal',
     'very-good',
@@ -44,7 +54,7 @@ export const allProductStatuses = [
     'acceptable'
 ] as const
 
-export type ProductStatus = (typeof allProductStatuses)[number]
+export type ProductState = (typeof allProductStates)[number]
 
 export const allCategoryIds = [
     'dress'
@@ -67,7 +77,7 @@ export type SearchFilter = {
     order?: SearchOrder,
     priceRange?: NumberRange,
     colorIds?: ColorId[],
-    statuses?: ProductStatus[],
+    states?: ProductState[],
 }
 
 export function searchFilterToSearchParams(filter: SearchFilter | undefined): string {
@@ -101,8 +111,8 @@ export function searchFilterToSearchParams(filter: SearchFilter | undefined): st
         builder.appendStringArray('colors', filter.colorIds)
     }
 
-    if (filter.statuses) {
-        builder.appendStringArray('statuses', filter.statuses)
+    if (filter.states) {
+        builder.appendStringArray('states', filter.states)
     }
 
     return builder.result()
@@ -111,7 +121,7 @@ export function searchFilterToSearchParams(filter: SearchFilter | undefined): st
 export type SearchFilterDesc = {
     limitingPriceRange: NumberRange,
     availColorIds: ColorId[],
-    availStatuses: ProductStatus[]
+    availStates: ProductState[]
 }
 
 // Sign up
@@ -158,7 +168,7 @@ export type ProductInfo = {
     description: string,
     comments: ProductComment[],
     category: CategoryId,
-    status: ProductStatus,
+    state: ProductState,
     color: ColorId,
 }
 
@@ -169,6 +179,30 @@ export type NewProductInfo = {
     totalAmount: number,
     description: string,
     category: CategoryId,
-    status: ProductStatus,
+    state: ProductState,
     color: ColorId,
+}
+
+export type UserProductSearchFilter = {
+    status: ProductStatus,
+    page: number
+}
+
+export type UserProductSearchDesc = {
+    totalPages: number
+}
+
+export function userProductSearchFilterToSearchParams(filter: UserProductSearchFilter | undefined): string {
+    if (!filter) {
+        return ""
+    }
+
+    const builder = new UrlSearchParamsBuilder()
+    builder.appendString("status", filter.status)
+
+    if (filter.page != 1) {
+        builder.appendPrimitive("page", filter.page)
+    }
+    
+    return builder.result()
 }

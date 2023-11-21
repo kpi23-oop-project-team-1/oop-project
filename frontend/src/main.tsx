@@ -13,6 +13,7 @@ import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import ProductInfoPage from "./pages/ProductInfoPage";
 import AddProductPage from "./pages/AddProductPage";
+import MyProductsPage from "./pages/MyProductsPage";
 
 const router = createBrowserRouter([
     {
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
     {
         path: "/addproduct",
         element: <AddProductPage/>
+    },
+    {
+        path: "/myproducts",
+        element: <MyProductsPage/>
     }
   ]
 );

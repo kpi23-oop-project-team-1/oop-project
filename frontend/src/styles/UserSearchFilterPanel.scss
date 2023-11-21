@@ -1,0 +1,32 @@
+@use 'colors';
+@use 'sass:math';
+
+.user-search-filter-panel {
+    .user-search-filter-panel-section {
+        width: 100%;
+    }
+
+    h2 {
+        font-weight: normal;
+    }
+
+    p {
+        $vertical-padding: 12px;
+        $font-size: 1.1em;
+
+        background-color: colors.$surface-color;
+        margin-top: 8px;
+
+        padding: $vertical-padding 16px;
+        font-size: $font-size;
+        
+        user-select: none;
+        border-radius: calc(math.div($font-size, 2) + $vertical-padding);
+
+        transition: background-color linear .2s;
+       
+        &.selected-item {
+            background-color: colors.$surface-dark-color;
+        }
+    }
+}

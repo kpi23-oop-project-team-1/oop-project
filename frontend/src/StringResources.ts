@@ -1,4 +1,4 @@
-import { CategoryId, ColorId, ProductStatus, SearchOrder } from "./dataModels"
+import { CategoryId, ColorId, ProductState, ProductStatus, SearchOrder } from "./dataModels"
 
 interface StringResources {
     readonly email: string,
@@ -31,8 +31,8 @@ interface StringResources {
     readonly price: string,
     readonly color: string,
     readonly colorLabels: Record<ColorId, string>,
-    readonly productStatus: string,
-    readonly productStatusLabels: Record<ProductStatus, string>,
+    readonly productState: string,
+    readonly productStateLabels: Record<ProductState, string>,
     readonly orderBy: string,
     readonly searchOrderLabels: Record<SearchOrder, string>,
     readonly productCountLabel: string,
@@ -50,7 +50,13 @@ interface StringResources {
     readonly productTitlePlaceholder: string
     readonly productDescriptionPlaceholder: string,
     readonly selectPlaceholder: string,
-    readonly addProduct: string
+    readonly addProduct: string,
+    readonly byStatus: string,
+    readonly myProductsTitle: string,
+    readonly selectAll: string,
+    readonly edit: string,
+    readonly productStatusLabels: Record<ProductStatus, string>
+    readonly delete: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -91,8 +97,8 @@ export const ukrainianStringResources : StringResources = {
         yellow: "Жовтий",
         multicolor: "Різнокольоровий",
     },
-    productStatus: "Стан",
-    productStatusLabels: {
+    productState: "Стан",
+    productStateLabels: {
         acceptable: "Задовільний",
         good: "Хороший",
         "very-good": "Дуже хороший",
@@ -122,5 +128,17 @@ export const ukrainianStringResources : StringResources = {
     productTitlePlaceholder: "Наприклад: Супер плаття в горошок Zara",
     productDescriptionPlaceholder: "Приклад: в цій блузці ви будете виглядати як зірка",
     selectPlaceholder: "Виберіть",
-    addProduct: "Додати річ"
+    addProduct: "Додати річ",
+    myProductsTitle: "Мої речі",
+    byStatus: "За статусом",
+    selectAll: "Вибрати все",
+    edit: "Редагувати",
+    productStatusLabels: {
+        active: "Активні",
+        'on-moderation': "На модерації",
+        declined: "Відхилені",
+        sold: "Продані",
+        deleted: "Видалені",
+    },
+    delete: "Видалити"
 }

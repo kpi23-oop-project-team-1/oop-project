@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import { StringResourcesContext } from "../StringResourcesContext";
-import { UserTypeContext, useUserType } from "../user.react";
+import { UserTypeContext, navigateToMainPageIfNotBuyerSeller, useUserType } from "../user.react";
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader";
 import { CartContext, useCart } from "../cart";
 import FileImageLoaderView from "../components/FileImageLoaderView";
 import "../styles/AddProductPage.scss"
-import { CategoryId, ColorId, NewProductInfo, ProductStatus, allCategoryIds, allColorIds, allProductStatuses } from "../dataModels";
+import { CategoryId, ColorId, NewProductInfo, ProductState, allCategoryIds, allColorIds, allProductStates } from "../dataModels";
 import AdvancedInputField from "../components/AdvancedInputField";
 import { Dropdown } from "../components/Dropdown";
 import NumberInput from "../components/NumberInput";
@@ -17,6 +17,7 @@ export default function AddProductPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const strRes = useContext(StringResourcesContext)
     const diContainer = useContext(DiContainerContext)
+
     const dataSource = diContainer.dataSource
     const userCreds = diContainer.userCredsStore.getCurrentUserCrediatials()
 
@@ -24,15 +25,13 @@ export default function AddProductPage() {
     const userType = useUserType()
     const navigate = useNavigate()
 
-    if (((userType.type == 'success' && userType.value != 'buyer-seller') || userType.type == 'error')) {
-        navigate('/')
-    }
+    navigateToMainPageIfNotBuyerSeller(userType, navigate)
 
     const [showTextInputErrors, setShowTextInputErrors] = useState(false)
 
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
-    const [status, setStatus] = useState<ProductStatus | undefined>()
+    const [state, setState] = useState<ProductState | undefined>()
     const [category, setCategory] = useState<CategoryId | undefined>()
     const [color, setColor] = useState<ColorId | undefined>()
     const [amount, setAmount] = useState<number | undefined>(1)
@@ -40,20 +39,20 @@ export default function AddProductPage() {
     const [imageFiles, setImageFiles] = useState<File[]>([])
     const [isSubmitInProgress, setSubmitInProgress] = useState(false)
 
-    const isSubmitEnabled = status && category && amount && price && imageFiles.length > 0
+    const isSubmitEnabled = state && category && amount && price && imageFiles.length > 0
 
     function submit() {
         if (!userCreds) {
             return
         }
 
-        if (title.length == 0 || description.length == 0 || !status || !category || !amount || !price || !color) {
+        if (title.length == 0 || description.length == 0 || !state || !category || !amount || !price || !color) {
             setShowTextInputErrors(true)
             return
         } 
 
         const product: NewProductInfo = {
-            title, description, status, category, color, price, 
+            title, description, state: state, category, color, price, 
             totalAmount: amount, 
             images: imageFiles
         }
@@ -94,10 +93,10 @@ export default function AddProductPage() {
                   errorText={showTextInputErrors && description.length == 0 ? strRes.textEmptyError : undefined}/>
 
                 <LabeledDropdownInput
-                  selectedValue={status}
-                  onSelected={setStatus}
-                  entries={allProductStatuses.map(id => ({ id, label: strRes.productStatusLabels[id] }))}
-                  label={strRes.productStatus}/>
+                  selectedValue={state}
+                  onSelected={setState}
+                  entries={allProductStates.map(id => ({ id, label: strRes.productStateLabels[id] }))}
+                  label={strRes.productState}/>
 
                 <LabeledDropdownInput
                   selectedValue={color}

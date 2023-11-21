@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react"
 import Checkbox from "./Checkbox"
 import RangeSlider from "./RangeSlider"
 import { addOrRemoveElement } from "../utils/arrayUtils"
-import { CategoryId, ColorId, NumberRange, ProductStatus, SearchFilter, SearchFilterDesc, allCategoryIds } from "../dataModels"
+import { CategoryId, ColorId, NumberRange, ProductState, SearchFilter, SearchFilterDesc, allCategoryIds } from "../dataModels"
 import { StringResourcesContext } from "../StringResourcesContext"
 import PlusIcon from "../../public/images/plus_thin.svg"
 import MinusIcon from "../../public/images/minus_thin.svg"
@@ -29,7 +29,7 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
 
     const priceRange = filter.priceRange ?? filterDesc.limitingPriceRange
     const colorIds = filter.colorIds ?? []
-    const statuses = filter.statuses ?? []
+    const states = filter.states ?? []
 
     function changeAndCommitFilter(filter: SearchFilter) {
         props.onChanged(filter)
@@ -48,8 +48,8 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
         changeAndCommitFilter({ ...filter, colorIds: addOrRemoveElement(colorIds, id, state)})
     }
 
-    function onProductStatusSelectedStateChanged(id: ProductStatus, state: boolean) {
-        changeAndCommitFilter({...filter, statuses: addOrRemoveElement(statuses, id, state)})
+    function onProductStateSelectedStateChanged(id: ProductState, state: boolean) {
+        changeAndCommitFilter({...filter, states: addOrRemoveElement(states, id, state)})
     }
 
     function onCategoryLinkClick(category: CategoryId | undefined) {
@@ -91,11 +91,11 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
                       onChoiceSelectedStateChanged={onColorSelectedStateChanged}/>
                 </SearchFilterPropertyBlock>
 
-                <SearchFilterPropertyBlock title={strRes.productStatus}>
+                <SearchFilterPropertyBlock title={strRes.productState}>
                     <ChoiceList
-                      choices={filterDesc.availStatuses.map(id => ({ id, label: strRes.productStatusLabels[id] }))}
-                      selectedValueIds={statuses}
-                      onChoiceSelectedStateChanged={onProductStatusSelectedStateChanged}/>
+                      choices={filterDesc.availStates.map(id => ({ id, label: strRes.productStateLabels[id] }))}
+                      selectedValueIds={states}
+                      onChoiceSelectedStateChanged={onProductStateSelectedStateChanged}/>
                 </SearchFilterPropertyBlock>
             </SearchFilterSection>
         </div>

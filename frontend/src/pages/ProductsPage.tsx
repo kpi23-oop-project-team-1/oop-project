@@ -4,7 +4,7 @@ import { StringResourcesContext } from "../StringResourcesContext"
 import { CartContext, useCart } from "../cart"
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader"
 import SearchFilterPanel from "../components/SearchFilterPanel"
-import { CategoryId, ColorId, ConciseProductInfo, ProductStatus, SearchFilter, SearchOrder, allCategoryIds, allColorIds, allProductStatuses, allSearchOrders, parseNumberRange, searchFilterToSearchParams } from "../dataModels"
+import { CategoryId, ColorId, ConciseProductInfo, ProductState, SearchFilter, SearchOrder, allCategoryIds, allColorIds, allProductStates, allSearchOrders, parseNumberRange, searchFilterToSearchParams } from "../dataModels"
 import ProductImageWithStripe from "../components/ProductImageWithStripe"
 import { formatPriceToString, splitToTypedStringArray } from "../utils/stringFormatting"
 import { useValueFromDataSource } from "../dataSource.react"
@@ -113,12 +113,12 @@ function extractSearchFilterFromSearchParams(): SearchFilter {
     const priceRangeStr = params.get("price") 
     const priceRange = priceRangeStr != null ? parseNumberRange(priceRangeStr) : undefined
     const colorIdsStr = params.get("colors")
-    const statusesStr = params.get("statuses")
+    const statesStr = params.get("states")
 
     const colorIds = colorIdsStr != null ? splitToTypedStringArray<ColorId>(colorIdsStr, ';', allColorIds) : undefined
-    const statuses = statusesStr != null ? splitToTypedStringArray<ProductStatus>(statusesStr, ';', allProductStatuses) : undefined
+    const states = statesStr != null ? splitToTypedStringArray<ProductState>(statesStr, ';', allProductStates) : undefined
 
-    return { query, category, order, priceRange, colorIds, statuses, page }
+    return { query, category, order, priceRange, colorIds, states, page }
 }
 
 type ProductsGridHeaderProps = {
