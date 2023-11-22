@@ -1,42 +1,27 @@
-package com.mkr.datastore;
+package com.mkr.datastore.inMemory;
 
-import com.mkr.datastore.inFile.InFileDataStore;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import com.mkr.datastore.DataStore;
+import com.mkr.datastore.DataStoreConfiguration;
+import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestObject;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.util.function.Function;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-
-public class InFileDataStoreTests {
+public class InMemoryDataStoreTests {
     private static final DataStoreConfiguration dataStoreConfig = DataStoreConfiguration.builder()
         .addCollection(TestDataStoreCollections.testObject)
         .build();
 
-    private static final Function<DataStoreCollectionDescriptor<?>, String> filePathProvider = d -> d.getName() + ".bin";
+    private static DataStore inMemoryDataStore(TestObject... objects) {
+        var dataStore = new InMemoryDataStore(dataStoreConfig);
 
-    private static InFileDataStore dataStore;
-
-    @BeforeEach
-    public void setup() {
-        dataStore = new InFileDataStore(dataStoreConfig, filePathProvider);
-
-        // Make sure files will be deleted even if tests fail
-        for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
-            var file = new File(filePathProvider.apply(descriptor));
-            file.deleteOnExit();
+        if (objects.length > 0) {
+            dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
         }
-    }
 
-    @AfterEach
-    public void deleteFiles() {
-        // Make sure files will be deleted after each test
-        for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
-            var file = new File(filePathProvider.apply(descriptor));
-            file.delete();
-        }
+        return dataStore;
     }
 
     @Test
@@ -46,6 +31,7 @@ public class InFileDataStoreTests {
             new TestObject("2", 2)
         };
 
+        var dataStore = inMemoryDataStore();
         dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
 
         TestObject[] actualResult = dataStore
@@ -64,7 +50,7 @@ public class InFileDataStoreTests {
             new TestObject("3", 2)
         };
 
-        dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
+        var dataStore = inMemoryDataStore(objects);
 
         dataStore
             .getCollection(TestDataStoreCollections.testObject)
@@ -90,7 +76,7 @@ public class InFileDataStoreTests {
             new TestObject("3", 2)
         };
 
-        dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
+        var dataStore = inMemoryDataStore(objects);
 
         dataStore
             .getCollection(TestDataStoreCollections.testObject)

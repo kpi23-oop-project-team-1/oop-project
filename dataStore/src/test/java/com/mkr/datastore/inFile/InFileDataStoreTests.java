@@ -1,27 +1,45 @@
-package com.mkr.datastore;
+package com.mkr.datastore.inFile;
 
-import com.mkr.datastore.inMemory.InMemoryDataStore;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+import com.mkr.datastore.DataStoreCollectionDescriptor;
+import com.mkr.datastore.DataStoreConfiguration;
+import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Spliterator;
-import java.util.stream.StreamSupport;
+import java.io.File;
+import java.util.function.Function;
 
-public class InMemoryDataStoreTests {
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+
+public class InFileDataStoreTests {
     private static final DataStoreConfiguration dataStoreConfig = DataStoreConfiguration.builder()
         .addCollection(TestDataStoreCollections.testObject)
         .build();
 
-    private static DataStore inMemoryDataStore(TestObject... objects) {
-        var dataStore = new InMemoryDataStore(dataStoreConfig);
+    private static final Function<DataStoreCollectionDescriptor<?>, String> filePathProvider = d -> d.getName() + ".bin";
 
-        if (objects.length > 0) {
-            dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
+    private static InFileDataStore dataStore;
+
+    @BeforeEach
+    public void setup() {
+        dataStore = new InFileDataStore(dataStoreConfig, filePathProvider);
+
+        // Make sure files will be deleted even if tests fail
+        for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
+            var file = new File(filePathProvider.apply(descriptor));
+            file.deleteOnExit();
         }
+    }
 
-        return dataStore;
+    @AfterEach
+    public void deleteFiles() {
+        // Make sure files will be deleted after each test
+        for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
+            var file = new File(filePathProvider.apply(descriptor));
+            file.delete();
+        }
     }
 
     @Test
@@ -31,7 +49,6 @@ public class InMemoryDataStoreTests {
             new TestObject("2", 2)
         };
 
-        var dataStore = inMemoryDataStore();
         dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
 
         TestObject[] actualResult = dataStore
@@ -50,7 +67,7 @@ public class InMemoryDataStoreTests {
             new TestObject("3", 2)
         };
 
-        var dataStore = inMemoryDataStore(objects);
+        dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
 
         dataStore
             .getCollection(TestDataStoreCollections.testObject)
@@ -76,7 +93,7 @@ public class InMemoryDataStoreTests {
             new TestObject("3", 2)
         };
 
-        var dataStore = inMemoryDataStore(objects);
+        dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
 
         dataStore
             .getCollection(TestDataStoreCollections.testObject)

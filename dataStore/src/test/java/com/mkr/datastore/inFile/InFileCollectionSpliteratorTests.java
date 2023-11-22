@@ -1,7 +1,7 @@
-package com.mkr.datastore;
+package com.mkr.datastore.inFile;
 
-import com.mkr.datastore.inFile.CollectionFileController;
-import com.mkr.datastore.inFile.InFileCollectionSpliterator;
+import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

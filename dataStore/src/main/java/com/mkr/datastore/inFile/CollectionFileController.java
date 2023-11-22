@@ -15,33 +15,18 @@ public class CollectionFileController<E> {
     static final long SCHEME_POS = ByteUtils.INT32_SIZE;
 
     private final DataStoreCollectionDescriptor<E> descriptor;
-    private final RandomAccessFile raf;
 
-    private final long firstEntityPos;
+    private RandomAccessFile raf;
+    private File file;
+
     private InFileEntityScheme inFileScheme;
+    private long firstEntityPos;
     private int chunkSize = 32;
-
+    private float fragmentationThreshold = 0.5f;
 
     public CollectionFileController(File file, DataStoreCollectionDescriptor<E> descriptor) {
         this.descriptor = descriptor;
-
-        boolean fileExists = file.exists();
-
-        try {
-            raf = new RandomAccessFile(file, "rw");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);  // TODO: better exception handling
-        }
-
-        if (fileExists) {  // Read existing
-            readInFileScheme();
-        } else {  // Write new
-            inFileScheme = new InFileEntityScheme(descriptor.getScheme());
-            writeVersion(0);
-            writeInFileScheme();
-        }
-
-        firstEntityPos = findFirstEntityPos();
+        setFile(file);
     }
 
     public DataStoreCollectionDescriptor<E> getDescriptor() {
@@ -54,6 +39,14 @@ public class CollectionFileController<E> {
 
     public void setChunkSize(int value) {
         chunkSize = value;
+    }
+
+    public float getFragmentationThreshold() {
+        return fragmentationThreshold;
+    }
+
+    public void setFragmentationThreshold(float value) {
+        fragmentationThreshold = value;
     }
 
     public long getFirstEntityPos() {
@@ -195,6 +188,60 @@ public class CollectionFileController<E> {
         return entity;
     }
 
+    public void defragmentIfNeeded() {
+        float fragmentationCoefficient = calculateFragmentationCoefficient();
+
+        if (fragmentationCoefficient < fragmentationThreshold) return;
+
+        defragment();
+    }
+
+    public void defragment() {
+        // Create new collection file
+        var tmpFile = new File(file.getName() + "1");
+        var tmpFileController = new CollectionFileController<>(tmpFile, descriptor);
+
+        // Write only active entities
+        long offset = getFirstEntityPos();
+        while (offset >= 0) {
+            boolean isActive = readEntityIsActiveAtPos(offset);
+
+            if (isActive) {
+                E entity = readEntityAtPos(offset);
+
+                tmpFileController.writeEntityAtPos(entity, tmpFileController.findFileEndPos());
+            }
+
+            offset = findNextEntityPos(offset);
+        }
+
+        // Delete old file and rename a new one
+        String oldPath = file.getPath();
+
+        file.delete();
+
+        tmpFile.renameTo(new File(oldPath));
+
+        setFile(new File(oldPath));
+    }
+
+    public float calculateFragmentationCoefficient() {
+        long unusedBytes = 0;
+
+        long offset = getFirstEntityPos();
+        while (offset >= 0) {
+            boolean isActive = readEntityIsActiveAtPos(offset);
+
+            if (!isActive) {
+                unusedBytes += readEntitySizeAtPos(offset);
+            }
+
+            offset = findNextEntityPos(offset);
+        }
+
+        return (float) unusedBytes / findFileEndPos();
+    }
+
     public int countEntitiesFromPos(long pos) {
         long offset = pos;
         int count = 0;
@@ -225,6 +272,28 @@ public class CollectionFileController<E> {
 
     public long findFileEndPos() {
         return FileUtils.getFileLength(raf);
+    }
+
+    private void setFile(File file) {
+        this.file = file;
+
+        boolean fileExists = file.exists();
+
+        try {
+            raf = new RandomAccessFile(file, "rw");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);  // TODO: better exception handling
+        }
+
+        if (fileExists) {  // Read existing
+            readInFileScheme();
+        } else {  // Write new
+            inFileScheme = new InFileEntityScheme(descriptor.getScheme());
+            writeVersion(0);
+            writeInFileScheme();
+        }
+
+        firstEntityPos = findFirstEntityPos();
     }
 
     private void writeInFileScheme() {
@@ -313,7 +382,7 @@ public class CollectionFileController<E> {
         throw new UnsupportedValueTypeException(valueTypeCode);
     }
 
-    private int calculateFullSize(int size) {
-        return (int) Math.ceil((double) size / chunkSize) * chunkSize;
+    private int calculateFullSize(int entitySize) {
+        return (int) Math.ceil((double) entitySize / chunkSize) * chunkSize;
     }
 }

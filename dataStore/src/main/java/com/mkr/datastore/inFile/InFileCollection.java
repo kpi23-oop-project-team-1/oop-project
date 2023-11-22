@@ -78,6 +78,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
 
                 offset = fileController.findNextEntityPos(offset);
             }
+
+            fileController.defragmentIfNeeded();
         } finally {
             writeLock.unlock();
         }
@@ -99,6 +101,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
 
                 offset = fileController.findNextEntityPos(offset);
             }
+
+            fileController.defragmentIfNeeded();
         } finally {
             writeLock.unlock();
         }
