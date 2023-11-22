@@ -93,7 +93,9 @@ public class CollectionFileController<E> {
             }
 
             for (var element : elements) {
-                if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.INT_CODE)) {
+                if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.BOOL_CODE)) {
+                    elementsData.add(ByteUtils.booleanToBytes((Boolean) element));
+                } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.INT_CODE)) {
                     elementsData.add(ByteUtils.int32ToBytes((Integer) element));
                 } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.STRING_CODE)) {
                     elementsData.add(ByteUtils.stringToBytes((String) element, StandardCharsets.UTF_8));
@@ -170,7 +172,10 @@ public class CollectionFileController<E> {
 
             Object[] elements = instantiateArrayByTypeCode(key.valueTypeCode(), elementCount);
             for (int i = 0; i < elementCount; i++) {
-                if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.INT_CODE)) {
+                if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.BOOL_CODE)) {
+                    elements[i] = FileUtils.readBoolAtPos(raf, offset);
+                    offset += ByteUtils.BOOLEAN_SIZE;
+                } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.INT_CODE)) {
                     elements[i] = FileUtils.readInt32AtPos(raf, offset);
                     offset += ByteUtils.INT32_SIZE;
                 } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.STRING_CODE)) {
@@ -373,7 +378,9 @@ public class CollectionFileController<E> {
     }
 
     private Object[] instantiateArrayByTypeCode(String valueTypeCode, int elementCount) {
-        if (Objects.equals(valueTypeCode, InFileEntityScheme.INT_CODE)) {
+        if (Objects.equals(valueTypeCode, InFileEntityScheme.BOOL_CODE)) {
+            return new Boolean[elementCount];
+        } else if (Objects.equals(valueTypeCode, InFileEntityScheme.INT_CODE)) {
             return new Integer[elementCount];
         } else if (Objects.equals(valueTypeCode, InFileEntityScheme.STRING_CODE)) {
             return new String[elementCount];

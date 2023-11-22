@@ -5,6 +5,7 @@ import com.mkr.datastore.EntitySchemeKey;
 import java.util.Arrays;
 
 public class InFileEntityScheme {
+    public static final String BOOL_CODE = "bool";
     public static final String INT_CODE = "int";
     public static final String STRING_CODE = "str";
 
@@ -37,7 +38,9 @@ public class InFileEntityScheme {
     }
 
     private String getValueTypeCode(Class<?> valueType) {
-        if (valueType.equals(Integer.class)) {
+        if (valueType.equals(Boolean.class)) {
+            return BOOL_CODE;
+        } else if (valueType.equals(Integer.class)) {
             return INT_CODE;
         } else if (valueType.equals(String.class)) {
             return STRING_CODE;

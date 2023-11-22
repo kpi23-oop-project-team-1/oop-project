@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class CollectionFileControllerTests {
     private CollectionFileController<TestObjectWithArrays> fileController;
     private File file;
-    
+
     @BeforeEach
     public void setup() {
         file = new File("tmp.bin");
@@ -42,11 +42,13 @@ public class CollectionFileControllerTests {
     @Test
     public void changeEntityToShorterTest() {
         TestObjectWithArrays testObjectShorter = new TestObjectWithArrays(
+                true,
                 "",
                 0,
                 new String[] {},
                 new Integer[] {});
         TestObjectWithArrays testObjectLonger = new TestObjectWithArrays(
+                false,
                 "test",
                 128,
                 new String[] {"array1", "array2"},
@@ -65,11 +67,13 @@ public class CollectionFileControllerTests {
     @Test
     public void changeEntityToLongerTest() {
         TestObjectWithArrays testObjectShorter = new TestObjectWithArrays(
+                true,
                 "",
                 0,
                 new String[] {},
                 new Integer[] {});
         TestObjectWithArrays testObjectLonger = new TestObjectWithArrays(
+                false,
                 "test",
                 128,
                 new String[] {"array1", "array2"},
@@ -95,6 +99,7 @@ public class CollectionFileControllerTests {
         var testObjects = new TestObjectWithArrays[testObjectsCount];
         for (int i = 0; i < testObjectsCount; i++) {
             testObjects[i] = new TestObjectWithArrays(
+                    i % 2 == 0,
                     String.valueOf(i),
                     i,
                     new String[] {},

@@ -3,6 +3,7 @@ package com.mkr.datastore;
 import java.util.Arrays;
 
 public final class TestObjectWithArrays {
+    private Boolean bool;
     private String string;
     private Integer integer;
     private String[] strings;
@@ -11,11 +12,16 @@ public final class TestObjectWithArrays {
     public TestObjectWithArrays() {
     }
 
-    public TestObjectWithArrays(String string, Integer integer, String[] strings, Integer[] integers) {
+    public TestObjectWithArrays(Boolean bool, String string, Integer integer, String[] strings, Integer[] integers) {
+        this.bool = bool;
         this.string = string;
         this.integer = integer;
         this.strings = strings;
         this.integers = integers;
+    }
+
+    public Boolean getBool() {
+        return bool;
     }
 
     public String getString() {
@@ -32,6 +38,10 @@ public final class TestObjectWithArrays {
 
     public Integer[] getIntegers() {
         return integers;
+    }
+
+    public void setBool(Boolean bool) {
+        this.bool = bool;
     }
 
     public void setString(String string) {
@@ -53,6 +63,7 @@ public final class TestObjectWithArrays {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof TestObjectWithArrays other &&
+                bool.equals(other.bool) &&
                 string.equals(other.string) &&
                 integer.equals(other.integer) &&
                 Arrays.equals(strings, other.strings) &&
@@ -61,6 +72,6 @@ public final class TestObjectWithArrays {
 
     @Override
     public int hashCode() {
-        return string.hashCode() * 31 + integer + Arrays.hashCode(strings) * 71 + Arrays.hashCode(integers) * 11;
+        return string.hashCode() * 31 + integer + Arrays.hashCode(strings) * 71 + Arrays.hashCode(integers) * 11 + bool.hashCode();
     }
 }
