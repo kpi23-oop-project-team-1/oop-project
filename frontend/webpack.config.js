@@ -4,17 +4,17 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = {
+module.exports = env => ({
   entry: { 
-    main: "./src/main.tsx"
+    main: path.resolve(__dirname, `src`, 'main.tsx')
   },
   target: ["web", "es5"],
   mode: "development",
   output: {
-    path: path.resolve(__dirname, "build"),
+    path: env.output ?? path.resolve(__dirname, "build"),
     filename: "[name].js",
     clean: true,
-    publicPath: '/'
+    publicPath: env.springBuild ? '/static/' : '/'
   },
   resolve: {
     extensions: [".js", ".ts", ".tsx"],
@@ -88,4 +88,4 @@ module.exports = {
       }),
     ],
   },
-};
+});
