@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +27,12 @@ public class FileUtilsTests {
 
         for (int i = 0; i < bytes.length; i++) {
             assertEquals(bytes[i], actualBytes[i]);
+        }
+
+        try {
+            raf.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -22,10 +22,14 @@ public class CollectionFileControllerTests {
         file.deleteOnExit();
 
         fileController = new CollectionFileController<>(fileName, TestDataStoreCollections.testObjectWithArrays);
+
+        fileController.openFile();
     }
 
     @AfterEach
     public void deleteFile() {
+        fileController.closeFile();
+
         File file = new File(fileName);
         FileUtils.tryDelete(file);
     }
@@ -34,13 +38,9 @@ public class CollectionFileControllerTests {
     public void writeReadVersionTest() {
         int version = 10;
 
-        fileController.openFile();
-
         fileController.writeVersion(version);
 
         int actualVersion = fileController.readVersion();
-
-        fileController.closeFile();
 
         assertEquals(version, actualVersion);
     }
@@ -60,16 +60,12 @@ public class CollectionFileControllerTests {
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
 
-        fileController.openFile();
-
         long pos = fileController.getFirstEntityPos();
         fileController.setChunkSize(16);
         fileController.writeEntityAtPos(testObjectLonger, pos);
         fileController.writeEntityAtPos(testObjectShorter, pos);  // Should make a new record in the same place
 
         TestObjectWithArrays actualObject = fileController.readEntityAtPos(pos);
-
-        fileController.closeFile();
 
         assertEquals(testObjectShorter, actualObject);
     }
@@ -89,8 +85,6 @@ public class CollectionFileControllerTests {
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
 
-        fileController.openFile();
-
         long pos = fileController.getFirstEntityPos();
         fileController.setChunkSize(16);
         fileController.writeEntityAtPos(testObjectShorter, pos);
@@ -99,15 +93,11 @@ public class CollectionFileControllerTests {
         long nextPos = fileController.findNextEntityPos(pos);
         TestObjectWithArrays actualObject = fileController.readEntityAtPos(nextPos);
 
-        fileController.closeFile();
-
         assertEquals(testObjectLonger, actualObject);
     }
 
     @Test
     public void defragmentTest() {
-        fileController.openFile();
-
         fileController.setChunkSize(16);
         fileController.setFragmentationThreshold(0.25f);
 
@@ -143,7 +133,5 @@ public class CollectionFileControllerTests {
 
         // Make sure that fragmentation coefficient is now zero
         assertEquals(0, fileController.calculateFragmentationCoefficient());
-
-        fileController.closeFile();
     }
 }

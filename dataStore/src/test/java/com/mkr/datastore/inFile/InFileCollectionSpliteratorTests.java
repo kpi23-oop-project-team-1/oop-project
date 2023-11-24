@@ -23,10 +23,14 @@ public class InFileCollectionSpliteratorTests {
         file.deleteOnExit();
 
         fileController = new CollectionFileController<>(fileName, TestDataStoreCollections.testObject);
+
+        fileController.openFile();
     }
 
     @AfterEach
     public void deleteFile() {
+        fileController.closeFile();
+
         File file = new File(fileName);
         FileUtils.tryDelete(file);
     }
@@ -37,8 +41,6 @@ public class InFileCollectionSpliteratorTests {
 
         var objects = new TestObject[objectsCount];
         Arrays.setAll(objects, i -> new TestObject(String.valueOf(i), i));
-
-        fileController.openFile();
 
         // Write objects and deactivate (delete) the first one
         writeEntities(objects);
@@ -53,8 +55,6 @@ public class InFileCollectionSpliteratorTests {
             if (!spliterator.tryAdvance(actualObjects::add)) break;
         }
 
-        fileController.closeFile();
-
         // Expect to get the same objects (except for the deleted one)
         assertEquals(objectsCount - 1, actualObjects.size());
         for (int i = 1; i < objectsCount; i++) {
@@ -68,8 +68,6 @@ public class InFileCollectionSpliteratorTests {
 
         var objects = new TestObject[objectsCount];
         Arrays.setAll(objects, i -> new TestObject(String.valueOf(i), i));
-
-        fileController.openFile();
 
         // Write objects
         writeEntities(objects);
@@ -88,8 +86,6 @@ public class InFileCollectionSpliteratorTests {
         while (true) {
             if (!spliterator2.tryAdvance(actualObjects2::add)) break;
         }
-
-        fileController.closeFile();
 
         // Expect spliterator 2 to contain the first half of elements
         assertEquals(objectsCount / 2, actualObjects2.size());

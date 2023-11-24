@@ -52,12 +52,11 @@ public class InFileDataStoreTests {
 
         dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
 
-        TestObject[] actualResult = dataStore
-            .getCollection(TestDataStoreCollections.testObject)
-            .data()
-            .toArray(TestObject[]::new);
+        try (var stream = dataStore.getCollection(TestDataStoreCollections.testObject).data()) {
+            TestObject[] actualResult = stream.toArray(TestObject[]::new);
 
-        assertArrayEquals(objects, actualResult);
+            assertArrayEquals(objects, actualResult);
+        }
     }
 
     @Test
@@ -74,16 +73,15 @@ public class InFileDataStoreTests {
             .getCollection(TestDataStoreCollections.testObject)
             .delete(o -> o.getInteger() == 1);
 
-        TestObject[] actualResult = dataStore
-            .getCollection(TestDataStoreCollections.testObject)
-            .data()
-            .toArray(TestObject[]::new);
+        try (var stream = dataStore.getCollection(TestDataStoreCollections.testObject).data()) {
+            TestObject[] actualResult = stream.toArray(TestObject[]::new);
 
-        var expectedResult = new TestObject[]{
-            new TestObject("3", 2)
-        };
+            var expectedResult = new TestObject[]{
+                    new TestObject("3", 2)
+            };
 
-        assertArrayEquals(expectedResult, actualResult);
+            assertArrayEquals(expectedResult, actualResult);
+        }
     }
 
     @Test
@@ -103,17 +101,16 @@ public class InFileDataStoreTests {
                 o -> new TestObject(o.getString() + "0", o.getInteger())
             );
 
-        TestObject[] actualResult = dataStore
-            .getCollection(TestDataStoreCollections.testObject)
-            .data()
-            .toArray(TestObject[]::new);
+        try (var stream = dataStore.getCollection(TestDataStoreCollections.testObject).data()) {
+            TestObject[] actualResult = stream.toArray(TestObject[]::new);
 
-        var expectedResult = new TestObject[]{
-            new TestObject("10", 1),
-            new TestObject("20", 1),
-            new TestObject("3", 2)
-        };
+            var expectedResult = new TestObject[]{
+                    new TestObject("10", 1),
+                    new TestObject("20", 1),
+                    new TestObject("3", 2)
+            };
 
-        assertArrayEquals(expectedResult, actualResult);
+            assertArrayEquals(expectedResult, actualResult);
+        }
     }
 }

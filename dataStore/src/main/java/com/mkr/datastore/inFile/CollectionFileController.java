@@ -239,7 +239,6 @@ public class CollectionFileController<E> {
         tmpFileController.closeFile();
 
         // Delete old file and rename a new one
-
         File currentFile = new File(filePath);
         File tmpFile = new File(tmpFilePath);
 

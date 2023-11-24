@@ -55,9 +55,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             for (var entity : values) {
                 fileController.writeEntityAtPos(entity, fileController.findFileEndPos());
             }
-
-            fileController.closeFile();
         } finally {
+            fileController.closeFile();
             writeLock.unlock();
         }
     }
@@ -78,7 +77,7 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             for (int i = 0; i < entitiesCount; i++) {
                 E entity = fileController.readEntityAtPos(offset);
 
-                if (predicate.test(entity)) {
+                if (entity != null && predicate.test(entity)) {
                     E newEntity = transformEntity.apply(entity);
 
                     fileController.writeEntityAtPos(newEntity, offset);
@@ -88,9 +87,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             }
 
             fileController.defragmentIfNeeded();
-
-            fileController.closeFile();
         } finally {
+            fileController.closeFile();
             writeLock.unlock();
         }
     }
@@ -107,7 +105,7 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             while (offset >= 0) {
                 E entity = fileController.readEntityAtPos(offset);
 
-                if (predicate.test(entity)) {
+                if (entity != null && predicate.test(entity)) {
                     fileController.writeEntityIsActiveAtPos(false, offset);
                 }
 
@@ -115,9 +113,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             }
 
             fileController.defragmentIfNeeded();
-
-            fileController.closeFile();
         } finally {
+            fileController.closeFile();
             writeLock.unlock();
         }
     }
