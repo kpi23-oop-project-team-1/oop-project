@@ -177,4 +177,12 @@ public class EntitySchemeTests {
 
         assertEquals(2, instance.field2);
     }
+
+    @Test
+    public void getIdForSubclassTest() {
+        EntityScheme<TestClass1> scheme = testClass1Scheme();
+
+        assertEquals("testClass1", scheme.getIdForSubclass(TestClass1.class));
+        assertEquals("testClass2", scheme.getIdForSubclass(TestClass2.class));
+    }
 }
