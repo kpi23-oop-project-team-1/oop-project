@@ -37,9 +37,11 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
     public Stream<E> data() {
         readLock.lock();
 
+        fileController.openFile();
+
         var spliterator = new InFileCollectionSpliterator<>(fileController);
 
-        return StreamSupport.stream(spliterator, false).onClose(readLock::unlock);
+        return StreamSupport.stream(spliterator, false).onClose(this::OnStreamClose);
     }
 
     @SafeVarargs
@@ -48,9 +50,13 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
         writeLock.lock();
 
         try {
+            fileController.openFile();
+
             for (var entity : values) {
                 fileController.writeEntityAtPos(entity, fileController.findFileEndPos());
             }
+
+            fileController.closeFile();
         } finally {
             writeLock.unlock();
         }
@@ -64,6 +70,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
         writeLock.lock();
 
         try {
+            fileController.openFile();
+
             long offset = fileController.getFirstEntityPos();
             int entitiesCount = fileController.countEntitiesFromPos(offset);
 
@@ -80,6 +88,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             }
 
             fileController.defragmentIfNeeded();
+
+            fileController.closeFile();
         } finally {
             writeLock.unlock();
         }
@@ -90,6 +100,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
         writeLock.lock();
 
         try {
+            fileController.openFile();
+
             long offset = fileController.getFirstEntityPos();
 
             while (offset >= 0) {
@@ -103,8 +115,15 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             }
 
             fileController.defragmentIfNeeded();
+
+            fileController.closeFile();
         } finally {
             writeLock.unlock();
         }
+    }
+
+    private void OnStreamClose() {
+        fileController.closeFile();
+        readLock.unlock();
     }
 }

@@ -2,6 +2,7 @@ package com.mkr.datastore.inFile;
 
 import com.mkr.datastore.TestDataStoreCollections;
 import com.mkr.datastore.TestObjectWithArrays;
+import com.mkr.datastore.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,28 +14,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CollectionFileControllerTests {
     private CollectionFileController<TestObjectWithArrays> fileController;
-    private File file;
+    private final String fileName = "tmp.bin";
 
     @BeforeEach
     public void setup() {
-        file = new File("tmp.bin");
+        File file = new File(fileName);
         file.deleteOnExit();
 
-        fileController = new CollectionFileController<>(file, TestDataStoreCollections.testObjectWithArrays);
+        fileController = new CollectionFileController<>(fileName, TestDataStoreCollections.testObjectWithArrays);
     }
 
     @AfterEach
     public void deleteFile() {
-        file.delete();
+        File file = new File(fileName);
+        FileUtils.tryDelete(file);
     }
 
     @Test
     public void writeReadVersionTest() {
         int version = 10;
 
+        fileController.openFile();
+
         fileController.writeVersion(version);
 
         int actualVersion = fileController.readVersion();
+
+        fileController.closeFile();
 
         assertEquals(version, actualVersion);
     }
@@ -54,12 +60,16 @@ public class CollectionFileControllerTests {
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
 
+        fileController.openFile();
+
         long pos = fileController.getFirstEntityPos();
         fileController.setChunkSize(16);
         fileController.writeEntityAtPos(testObjectLonger, pos);
         fileController.writeEntityAtPos(testObjectShorter, pos);  // Should make a new record in the same place
 
         TestObjectWithArrays actualObject = fileController.readEntityAtPos(pos);
+
+        fileController.closeFile();
 
         assertEquals(testObjectShorter, actualObject);
     }
@@ -79,6 +89,8 @@ public class CollectionFileControllerTests {
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
 
+        fileController.openFile();
+
         long pos = fileController.getFirstEntityPos();
         fileController.setChunkSize(16);
         fileController.writeEntityAtPos(testObjectShorter, pos);
@@ -87,11 +99,15 @@ public class CollectionFileControllerTests {
         long nextPos = fileController.findNextEntityPos(pos);
         TestObjectWithArrays actualObject = fileController.readEntityAtPos(nextPos);
 
+        fileController.closeFile();
+
         assertEquals(testObjectLonger, actualObject);
     }
 
     @Test
     public void defragmentTest() {
+        fileController.openFile();
+
         fileController.setChunkSize(16);
         fileController.setFragmentationThreshold(0.25f);
 
@@ -127,5 +143,7 @@ public class CollectionFileControllerTests {
 
         // Make sure that fragmentation coefficient is now zero
         assertEquals(0, fileController.calculateFragmentationCoefficient());
+
+        fileController.closeFile();
     }
 }

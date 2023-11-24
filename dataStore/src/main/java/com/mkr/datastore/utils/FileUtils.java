@@ -1,5 +1,6 @@
 package com.mkr.datastore.utils;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -54,5 +55,15 @@ public final class FileUtils {
         }
 
         return fileLength;
+    }
+
+    public static void tryDelete(File file) {
+        if (file.delete()) return;
+        throw new RuntimeException("Failed to delete file: \"%s\"".formatted(file.getName()));
+    }
+
+    public static void tryRename(File file, File newFile) {
+        if (file.renameTo(newFile)) return;
+        throw new RuntimeException("Failed to rename file: \"%s\"".formatted(file.getName()));
     }
 }

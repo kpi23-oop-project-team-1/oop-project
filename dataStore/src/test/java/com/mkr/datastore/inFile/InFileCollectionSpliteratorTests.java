@@ -2,6 +2,7 @@ package com.mkr.datastore.inFile;
 
 import com.mkr.datastore.TestDataStoreCollections;
 import com.mkr.datastore.TestObject;
+import com.mkr.datastore.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,19 +15,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InFileCollectionSpliteratorTests {
     private CollectionFileController<TestObject> fileController;
-    private File file;
+    private final String fileName = "tmp.bin";
 
     @BeforeEach
     public void setup() {
-        file = new File("tmp.bin");
+        File file = new File(fileName);
         file.deleteOnExit();
 
-        fileController = new CollectionFileController<>(file, TestDataStoreCollections.testObject);
+        fileController = new CollectionFileController<>(fileName, TestDataStoreCollections.testObject);
     }
 
     @AfterEach
     public void deleteFile() {
-        file.delete();
+        File file = new File(fileName);
+        FileUtils.tryDelete(file);
     }
 
     @Test
@@ -35,6 +37,8 @@ public class InFileCollectionSpliteratorTests {
 
         var objects = new TestObject[objectsCount];
         Arrays.setAll(objects, i -> new TestObject(String.valueOf(i), i));
+
+        fileController.openFile();
 
         // Write objects and deactivate (delete) the first one
         writeEntities(objects);
@@ -49,6 +53,8 @@ public class InFileCollectionSpliteratorTests {
             if (!spliterator.tryAdvance(actualObjects::add)) break;
         }
 
+        fileController.closeFile();
+
         // Expect to get the same objects (except for the deleted one)
         assertEquals(objectsCount - 1, actualObjects.size());
         for (int i = 1; i < objectsCount; i++) {
@@ -62,6 +68,8 @@ public class InFileCollectionSpliteratorTests {
 
         var objects = new TestObject[objectsCount];
         Arrays.setAll(objects, i -> new TestObject(String.valueOf(i), i));
+
+        fileController.openFile();
 
         // Write objects
         writeEntities(objects);
@@ -80,6 +88,8 @@ public class InFileCollectionSpliteratorTests {
         while (true) {
             if (!spliterator2.tryAdvance(actualObjects2::add)) break;
         }
+
+        fileController.closeFile();
 
         // Expect spliterator 2 to contain the first half of elements
         assertEquals(objectsCount / 2, actualObjects2.size());

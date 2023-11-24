@@ -4,6 +4,7 @@ import com.mkr.datastore.DataStoreCollectionDescriptor;
 import com.mkr.datastore.DataStoreConfiguration;
 import com.mkr.datastore.TestDataStoreCollections;
 import com.mkr.datastore.TestObject;
+import com.mkr.datastore.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ public class InFileDataStoreTests {
         // Make sure files will be deleted after each test
         for (var descriptor: dataStoreConfig.getCollectionDescriptors()) {
             var file = new File(filePathProvider.apply(descriptor));
-            file.delete();
+            FileUtils.tryDelete(file);
         }
     }
 

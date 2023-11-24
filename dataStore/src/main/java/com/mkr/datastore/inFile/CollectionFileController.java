@@ -14,19 +14,22 @@ public class CollectionFileController<E> {
     static final long VERSION_POS = 0;
     static final long SCHEME_POS = ByteUtils.INT32_SIZE;
 
+    private final String filePath;
     private final DataStoreCollectionDescriptor<E> descriptor;
 
     private RandomAccessFile raf;
-    private File file;
+    private boolean isOpen;
 
     private InFileEntityScheme inFileScheme;
     private long firstEntityPos;
+
     private int chunkSize = 32;
     private float fragmentationThreshold = 0.5f;
 
-    public CollectionFileController(File file, DataStoreCollectionDescriptor<E> descriptor) {
+    public CollectionFileController(String filePath, DataStoreCollectionDescriptor<E> descriptor) {
+        this.filePath = filePath;
         this.descriptor = descriptor;
-        setFile(file);
+        isOpen = false;
     }
 
     public DataStoreCollectionDescriptor<E> getDescriptor() {
@@ -54,26 +57,33 @@ public class CollectionFileController<E> {
     }
 
     public void writeVersion(int version) {
+        verifyIsOpen();
         FileUtils.writeInt32AtPos(raf, version, VERSION_POS);
     }
 
     public int readVersion() {
+        verifyIsOpen();
         return FileUtils.readInt32AtPos(raf, VERSION_POS);
     }
 
     public void writeEntityIsActiveAtPos(boolean isActive, long pos) {
+        verifyIsOpen();
         FileUtils.writeBoolAtPos(raf, isActive, pos);
     }
 
     public boolean readEntityIsActiveAtPos(long pos) {
+        verifyIsOpen();
         return FileUtils.readBoolAtPos(raf, pos);
     }
 
     public int readEntitySizeAtPos(long pos) {
+        verifyIsOpen();
         return FileUtils.readInt32AtPos(raf, pos + ByteUtils.BOOLEAN_SIZE);
     }
 
     public void writeEntityAtPos(E entity, long pos) {
+        verifyIsOpen();
+
         EntityScheme<E> scheme = descriptor.getScheme();
 
         // Build entity bytes
@@ -147,6 +157,8 @@ public class CollectionFileController<E> {
     }
 
     public E readEntityAtPos(long pos) {
+        verifyIsOpen();
+
         EntityScheme<E> scheme = descriptor.getScheme();
 
         long offset = pos;
@@ -202,11 +214,15 @@ public class CollectionFileController<E> {
     }
 
     public void defragment() {
+        verifyIsOpen();
+
         // Create new collection file
-        var tmpFile = new File(file.getName() + "1");
-        var tmpFileController = new CollectionFileController<>(tmpFile, descriptor);
+        var tmpFilePath = filePath + "1";
+        var tmpFileController = new CollectionFileController<>(tmpFilePath, descriptor);
 
         // Write only active entities
+        tmpFileController.openFile();
+
         long offset = getFirstEntityPos();
         while (offset >= 0) {
             boolean isActive = readEntityIsActiveAtPos(offset);
@@ -220,17 +236,22 @@ public class CollectionFileController<E> {
             offset = findNextEntityPos(offset);
         }
 
+        tmpFileController.closeFile();
+
         // Delete old file and rename a new one
-        String oldPath = file.getPath();
 
-        file.delete();
+        File currentFile = new File(filePath);
+        File tmpFile = new File(tmpFilePath);
 
-        tmpFile.renameTo(new File(oldPath));
-
-        setFile(new File(oldPath));
+        closeFile();
+        FileUtils.tryDelete(currentFile);
+        FileUtils.tryRename(tmpFile, new File(filePath));
+        openFile();
     }
 
     public float calculateFragmentationCoefficient() {
+        verifyIsOpen();
+
         long unusedBytes = 0;
 
         long offset = getFirstEntityPos();
@@ -248,6 +269,8 @@ public class CollectionFileController<E> {
     }
 
     public int countEntitiesFromPos(long pos) {
+        verifyIsOpen();
+
         long offset = pos;
         int count = 0;
 
@@ -265,6 +288,8 @@ public class CollectionFileController<E> {
     }
 
     public long findNextEntityPos(long currentEntityPos) {
+        verifyIsOpen();
+
         long nextEntityPos = currentEntityPos +
                 ByteUtils.BOOLEAN_SIZE +
                 ByteUtils.INT32_SIZE +
@@ -276,16 +301,20 @@ public class CollectionFileController<E> {
     }
 
     public long findFileEndPos() {
+        verifyIsOpen();
         return FileUtils.getFileLength(raf);
     }
 
-    private void setFile(File file) {
-        this.file = file;
+    public void openFile() {
+        if (isOpen) return;
+
+        File file = new File(filePath);
 
         boolean fileExists = file.exists();
 
         try {
             raf = new RandomAccessFile(file, "rw");
+            isOpen = true;
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);  // TODO: better exception handling
         }
@@ -299,6 +328,17 @@ public class CollectionFileController<E> {
         }
 
         firstEntityPos = findFirstEntityPos();
+    }
+
+    public void closeFile() {
+        if (!isOpen) return;
+
+        try {
+            raf.close();
+            isOpen = false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);  // TODO: better exception handling
+        }
     }
 
     private void writeInFileScheme() {
@@ -391,5 +431,10 @@ public class CollectionFileController<E> {
 
     private int calculateFullSize(int entitySize) {
         return (int) Math.ceil((double) entitySize / chunkSize) * chunkSize;
+    }
+
+    private void verifyIsOpen() {
+        if (isOpen) return;
+        throw new CollectionFileIsClosedException("Can't read/write while the file is closed");
     }
 }

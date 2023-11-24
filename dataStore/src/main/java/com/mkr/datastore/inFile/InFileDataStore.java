@@ -6,7 +6,6 @@ import com.mkr.datastore.DataStoreCollection;
 import com.mkr.datastore.DataStoreCollectionDescriptor;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -25,9 +24,7 @@ public final class InFileDataStore implements DataStore {
 
         collectionMap = new HashMap<>();
         for (DataStoreCollectionDescriptor<?> descriptor : descriptors) {
-            var file = new File(getFilePath(descriptor));
-
-            var fileController = new CollectionFileController<>(file, descriptor);
+            var fileController = new CollectionFileController<>(getFilePath(descriptor), descriptor);
             // TODO: set chunk size and fragmentation threshold
 
             var document = new InFileCollection<>(fileController);
