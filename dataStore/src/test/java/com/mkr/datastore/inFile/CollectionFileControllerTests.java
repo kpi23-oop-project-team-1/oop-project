@@ -1,6 +1,7 @@
 package com.mkr.datastore.inFile;
 
 import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestObject;
 import com.mkr.datastore.TestObjectWithArrays;
 import com.mkr.datastore.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -13,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CollectionFileControllerTests {
-    private CollectionFileController<TestObjectWithArrays> fileController;
+    private CollectionFileController<TestObject> fileController;
     private final String fileName = "tmp.bin";
 
     @BeforeEach
@@ -21,7 +22,7 @@ public class CollectionFileControllerTests {
         File file = new File(fileName);
         file.deleteOnExit();
 
-        fileController = new CollectionFileController<>(fileName, TestDataStoreCollections.testObjectWithArrays);
+        fileController = new CollectionFileController<>(fileName, TestDataStoreCollections.testObject);
 
         fileController.openFile();
     }
@@ -47,13 +48,13 @@ public class CollectionFileControllerTests {
 
     @Test
     public void changeEntityToShorterTest() {
-        TestObjectWithArrays testObjectShorter = new TestObjectWithArrays(
+        TestObject testObjectShorter = new TestObjectWithArrays(
                 true,
                 "",
                 0,
                 new String[] {},
                 new Integer[] {});
-        TestObjectWithArrays testObjectLonger = new TestObjectWithArrays(
+        TestObject testObjectLonger = new TestObjectWithArrays(
                 false,
                 "test",
                 128,
@@ -65,20 +66,20 @@ public class CollectionFileControllerTests {
         fileController.writeEntityAtPos(testObjectLonger, pos);
         fileController.writeEntityAtPos(testObjectShorter, pos);  // Should make a new record in the same place
 
-        TestObjectWithArrays actualObject = fileController.readEntityAtPos(pos);
+        TestObject actualObject = fileController.readEntityAtPos(pos);
 
         assertEquals(testObjectShorter, actualObject);
     }
 
     @Test
     public void changeEntityToLongerTest() {
-        TestObjectWithArrays testObjectShorter = new TestObjectWithArrays(
+        TestObject testObjectShorter = new TestObjectWithArrays(
                 true,
                 "",
                 0,
                 new String[] {},
                 new Integer[] {});
-        TestObjectWithArrays testObjectLonger = new TestObjectWithArrays(
+        TestObject testObjectLonger = new TestObjectWithArrays(
                 false,
                 "test",
                 128,
@@ -91,7 +92,7 @@ public class CollectionFileControllerTests {
         fileController.writeEntityAtPos(testObjectLonger, pos);  // Should make a new record next to the old one
 
         long nextPos = fileController.findNextEntityPos(pos);
-        TestObjectWithArrays actualObject = fileController.readEntityAtPos(nextPos);
+        TestObject actualObject = fileController.readEntityAtPos(nextPos);
 
         assertEquals(testObjectLonger, actualObject);
     }

@@ -40,7 +40,7 @@ public class InFileCollectionSpliteratorTests {
         int objectsCount = 5;
 
         var objects = new TestObject[objectsCount];
-        Arrays.setAll(objects, i -> new TestObject(String.valueOf(i), i));
+        Arrays.setAll(objects, i -> new TestObject(i % 2 == 0, String.valueOf(i), i));
 
         // Write objects and deactivate (delete) the first one
         writeEntities(objects);
@@ -67,7 +67,7 @@ public class InFileCollectionSpliteratorTests {
         int objectsCount = 5;
 
         var objects = new TestObject[objectsCount];
-        Arrays.setAll(objects, i -> new TestObject(String.valueOf(i), i));
+        Arrays.setAll(objects, i -> new TestObject(i % 2 == 0, String.valueOf(i), i));
 
         // Write objects
         writeEntities(objects);

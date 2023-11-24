@@ -8,31 +8,27 @@ import com.mkr.datastore.utils.FileUtils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Objects;
 
-public class CollectionFileController<E> {
+public class CollectionFileController<T> {
     static final long VERSION_POS = 0;
-    static final long SCHEME_POS = ByteUtils.INT32_SIZE;
+    static final long ENTITIES_POS = ByteUtils.INT32_SIZE;
 
     private final String filePath;
-    private final DataStoreCollectionDescriptor<E> descriptor;
+    private final DataStoreCollectionDescriptor<T> descriptor;
 
     private RandomAccessFile raf;
     private boolean isOpen;
 
-    private InFileEntityScheme inFileScheme;
-    private long firstEntityPos;
-
     private int chunkSize = 32;
     private float fragmentationThreshold = 0.5f;
 
-    public CollectionFileController(String filePath, DataStoreCollectionDescriptor<E> descriptor) {
+    public CollectionFileController(String filePath, DataStoreCollectionDescriptor<T> descriptor) {
         this.filePath = filePath;
         this.descriptor = descriptor;
         isOpen = false;
     }
 
-    public DataStoreCollectionDescriptor<E> getDescriptor() {
+    public DataStoreCollectionDescriptor<T> getDescriptor() {
         return descriptor;
     }
 
@@ -53,7 +49,7 @@ public class CollectionFileController<E> {
     }
 
     public long getFirstEntityPos() {
-        return firstEntityPos;
+        return ENTITIES_POS;
     }
 
     public void writeVersion(int version) {
@@ -81,21 +77,32 @@ public class CollectionFileController<E> {
         return FileUtils.readInt32AtPos(raf, pos + ByteUtils.BOOLEAN_SIZE);
     }
 
-    public void writeEntityAtPos(E entity, long pos) {
+    public <E extends T> void writeEntityAtPos(E entity, long pos) {
         verifyIsOpen();
 
-        EntityScheme<E> scheme = descriptor.getScheme();
+        EntityScheme<T> scheme = descriptor.getScheme();
+        Class<? extends T> entityClass = (Class<? extends T>) entity.getClass();
 
         // Build entity bytes
         ByteArrayBuilder entityData = new ByteArrayBuilder();
 
-        for (InFileEntitySchemeKey key : inFileScheme.getKeys()) {
-            Object value = scheme.getKeyValue(entity, scheme.findKeyByName(key.name()));
+        entityData.add(
+                ByteUtils.stringToBytes(
+                        scheme.getIdForSubclass(entityClass),
+                        StandardCharsets.US_ASCII
+                )
+        );
+
+        for (var key : scheme.getKeysForSubclass(entityClass)) {
+            Object value = scheme.getKeyValue(entity, key);
+
+            Class<?> valueType = key.valueType();
+            Class<?> valueElementType = valueType.isArray() ? valueType.getComponentType() : valueType;
 
             ByteArrayBuilder elementsData = new ByteArrayBuilder();
 
             Object[] elements;
-            if (key.isArray()) {
+            if (valueType.isArray()) {
                 elements = (Object[]) value;
                 elementsData.add(ByteUtils.int32ToBytes(elements.length));
             } else {
@@ -103,14 +110,14 @@ public class CollectionFileController<E> {
             }
 
             for (var element : elements) {
-                if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.BOOL_CODE)) {
+                if (valueElementType == Boolean.class) {
                     elementsData.add(ByteUtils.booleanToBytes((Boolean) element));
-                } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.INT_CODE)) {
+                } else if (valueElementType == Integer.class) {
                     elementsData.add(ByteUtils.int32ToBytes((Integer) element));
-                } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.STRING_CODE)) {
+                } else if (valueElementType == String.class) {
                     elementsData.add(ByteUtils.stringToBytes((String) element, StandardCharsets.UTF_8));
                 } else {
-                    throw new UnsupportedValueTypeException(key.valueTypeCode());
+                    throw new UnsupportedValueTypeException(valueElementType);
                 }
             }
 
@@ -156,10 +163,10 @@ public class CollectionFileController<E> {
         }
     }
 
-    public E readEntityAtPos(long pos) {
+    public T readEntityAtPos(long pos) {
         verifyIsOpen();
 
-        EntityScheme<E> scheme = descriptor.getScheme();
+        EntityScheme<T> scheme = descriptor.getScheme();
 
         long offset = pos;
 
@@ -173,24 +180,34 @@ public class CollectionFileController<E> {
         offset += ByteUtils.INT32_SIZE;
 
         // Read entity
-        E entity = scheme.createInstance(scheme.getEntityClass());
+        int classIdBytesSize = FileUtils.readInt32AtPos(raf, offset);
+        offset += ByteUtils.INT32_SIZE;
+        byte[] classIdBytes = FileUtils.readNBytesAtPos(raf, classIdBytesSize, offset);
+        offset += classIdBytes.length;
+        String entityClassId = new String(classIdBytes, StandardCharsets.US_ASCII);
+        Class<? extends T> entityClass = scheme.resolveClassById(entityClassId);
 
-        for (InFileEntitySchemeKey key : inFileScheme.getKeys()) {
+        T entity = scheme.createInstance(entityClass);
+
+        for (var key : scheme.getKeysForSubclass(entityClass)) {
+            Class<?> valueType = key.valueType();
+            Class<?> valueElementType = valueType.isArray() ? valueType.getComponentType() : valueType;
+
             int elementCount = 1;
-            if (key.isArray()) {
+            if (valueType.isArray()) {
                 elementCount = FileUtils.readInt32AtPos(raf, offset);
                 offset += ByteUtils.INT32_SIZE;
             }
 
-            Object[] elements = instantiateArrayByTypeCode(key.valueTypeCode(), elementCount);
+            Object[] elements = instantiateArrayByElementType(valueElementType, elementCount);
             for (int i = 0; i < elementCount; i++) {
-                if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.BOOL_CODE)) {
+                if (valueElementType == Boolean.class) {
                     elements[i] = FileUtils.readBoolAtPos(raf, offset);
                     offset += ByteUtils.BOOLEAN_SIZE;
-                } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.INT_CODE)) {
+                } else if (valueElementType == Integer.class) {
                     elements[i] = FileUtils.readInt32AtPos(raf, offset);
                     offset += ByteUtils.INT32_SIZE;
-                } else if (Objects.equals(key.valueTypeCode(), InFileEntityScheme.STRING_CODE)) {
+                } else if (valueElementType == String.class) {
                     int stringBytesSize = FileUtils.readInt32AtPos(raf, offset);
                     offset += ByteUtils.INT32_SIZE;
                     byte[] stringBytes = FileUtils.readNBytesAtPos(raf, stringBytesSize, offset);
@@ -199,7 +216,7 @@ public class CollectionFileController<E> {
                 }
             }
 
-            scheme.setKeyValue(entity, scheme.findKeyByName(key.name()), key.isArray() ? elements : elements[0]);
+            scheme.setKeyValue(entity, key, valueType.isArray() ? elements : elements[0]);
         }
 
         return entity;
@@ -228,7 +245,7 @@ public class CollectionFileController<E> {
             boolean isActive = readEntityIsActiveAtPos(offset);
 
             if (isActive) {
-                E entity = readEntityAtPos(offset);
+                T entity = readEntityAtPos(offset);
 
                 tmpFileController.writeEntityAtPos(entity, tmpFileController.findFileEndPos());
             }
@@ -318,15 +335,9 @@ public class CollectionFileController<E> {
             throw new RuntimeException(e);  // TODO: better exception handling
         }
 
-        if (fileExists) {  // Read existing
-            readInFileScheme();
-        } else {  // Write new
-            inFileScheme = new InFileEntityScheme(descriptor.getScheme());
+        if (!fileExists) {
             writeVersion(0);
-            writeInFileScheme();
         }
-
-        firstEntityPos = findFirstEntityPos();
     }
 
     public void closeFile() {
@@ -340,92 +351,16 @@ public class CollectionFileController<E> {
         }
     }
 
-    private void writeInFileScheme() {
-        InFileEntitySchemeKey[] keys = inFileScheme.getKeys();
-
-        ByteArrayBuilder keysData = new ByteArrayBuilder();
-
-        keysData.add(ByteUtils.int32ToBytes(keys.length));
-        for (InFileEntitySchemeKey key : keys) {
-            keysData.add(ByteUtils.stringToBytes(key.name(), StandardCharsets.US_ASCII));
-            keysData.add(ByteUtils.stringToBytes(key.valueTypeCode(), StandardCharsets.US_ASCII));
-            keysData.add(ByteUtils.booleanToBytes(key.isArray()));
-        }
-
-        byte[] keysBytes = keysData.build();
-
-        FileUtils.writeBytesAtPos(raf, keysBytes, SCHEME_POS);
-    }
-
-    private void readInFileScheme() {
-        long offset = SCHEME_POS;
-
-        // Read key count
-        int keyCount = FileUtils.readInt32AtPos(raf, offset);
-        offset += ByteUtils.INT32_SIZE;
-
-        // Read keys
-        InFileEntitySchemeKey[] keys = new InFileEntitySchemeKey[keyCount];
-
-        for (int i = 0; i < keyCount; i++) {
-            // Read key name
-            int keyNameBytesSize = FileUtils.readInt32AtPos(raf, offset);
-            offset += ByteUtils.INT32_SIZE;
-            byte[] keyNameBytes = FileUtils.readNBytesAtPos(raf, keyNameBytesSize, offset);
-            offset += keyNameBytesSize;
-
-            // Read value type code
-            int valueTypeBytesSize = FileUtils.readInt32AtPos(raf, offset);
-            offset += ByteUtils.INT32_SIZE;
-            byte[] valueTypeBytes = FileUtils.readNBytesAtPos(raf, valueTypeBytesSize, offset);
-            offset += valueTypeBytesSize;
-
-            // Read is array
-            boolean isArray = FileUtils.readBoolAtPos(raf, offset);
-            offset += ByteUtils.BOOLEAN_SIZE;
-
-            keys[i] = new InFileEntitySchemeKey(
-                    new String(keyNameBytes, StandardCharsets.US_ASCII),
-                    new String(valueTypeBytes, StandardCharsets.US_ASCII),
-                    isArray
-            );
-        }
-
-        inFileScheme = new InFileEntityScheme(keys);
-    }
-
-    private long findFirstEntityPos() {
-        long offset = SCHEME_POS;
-
-        // Read key count
-        int keyCount = FileUtils.readInt32AtPos(raf, offset);
-        offset += ByteUtils.INT32_SIZE;
-
-        // Skip scheme
-        for (int i = 0; i < keyCount; i++) {
-            // Skip name
-            offset += ByteUtils.INT32_SIZE + FileUtils.readInt32AtPos(raf, offset);
-
-            // Skip valueTypeCode
-            offset += ByteUtils.INT32_SIZE + FileUtils.readInt32AtPos(raf, offset);
-
-            // Skip isArray
-            offset += ByteUtils.BOOLEAN_SIZE;
-        }
-
-        return offset;
-    }
-
-    private Object[] instantiateArrayByTypeCode(String valueTypeCode, int elementCount) {
-        if (Objects.equals(valueTypeCode, InFileEntityScheme.BOOL_CODE)) {
+    private Object[] instantiateArrayByElementType(Class<?> valueElementType, int elementCount) {
+        if (valueElementType == Boolean.class) {
             return new Boolean[elementCount];
-        } else if (Objects.equals(valueTypeCode, InFileEntityScheme.INT_CODE)) {
+        } else if (valueElementType == Integer.class) {
             return new Integer[elementCount];
-        } else if (Objects.equals(valueTypeCode, InFileEntityScheme.STRING_CODE)) {
+        } else if (valueElementType == String.class) {
             return new String[elementCount];
         }
 
-        throw new UnsupportedValueTypeException(valueTypeCode);
+        throw new UnsupportedValueTypeException(valueElementType);
     }
 
     private int calculateFullSize(int entitySize) {

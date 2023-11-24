@@ -2,10 +2,8 @@ package com.mkr.datastore;
 
 import java.util.Arrays;
 
-public final class TestObjectWithArrays {
-    private Boolean bool;
-    private String string;
-    private Integer integer;
+@InheritedModel(id = "TestObjectWithArrays")
+public class TestObjectWithArrays extends TestObject {
     private String[] strings;
     private Integer[] integers;
 
@@ -13,23 +11,9 @@ public final class TestObjectWithArrays {
     }
 
     public TestObjectWithArrays(Boolean bool, String string, Integer integer, String[] strings, Integer[] integers) {
-        this.bool = bool;
-        this.string = string;
-        this.integer = integer;
+        super(bool, string, integer);
         this.strings = strings;
         this.integers = integers;
-    }
-
-    public Boolean getBool() {
-        return bool;
-    }
-
-    public String getString() {
-        return string;
-    }
-
-    public Integer getInteger() {
-        return integer;
     }
 
     public String[] getStrings() {
@@ -38,18 +22,6 @@ public final class TestObjectWithArrays {
 
     public Integer[] getIntegers() {
         return integers;
-    }
-
-    public void setBool(Boolean bool) {
-        this.bool = bool;
-    }
-
-    public void setString(String string) {
-        this.string = string;
-    }
-
-    public void setInteger(Integer integer) {
-        this.integer = integer;
     }
 
     public void setStrings(String[] strings) {
@@ -63,15 +35,13 @@ public final class TestObjectWithArrays {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof TestObjectWithArrays other &&
-                bool.equals(other.bool) &&
-                string.equals(other.string) &&
-                integer.equals(other.integer) &&
+                super.equals(other) &&
                 Arrays.equals(strings, other.strings) &&
                 Arrays.equals(integers, other.integers);
     }
 
     @Override
     public int hashCode() {
-        return string.hashCode() * 31 + integer + Arrays.hashCode(strings) * 71 + Arrays.hashCode(integers) * 11 + bool.hashCode();
+        return super.hashCode() + Arrays.hashCode(strings) + Arrays.hashCode(integers);
     }
 }
