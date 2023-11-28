@@ -56,9 +56,17 @@ export class ServerDataSource implements DataSource {
     }
 
     async signUpAsync(info: SignUpInfo): Promise<undefined> {
+        const formData = new FormData()
+        formData.set("firstName", info.firstName)
+        formData.set("lastName", info.lastName)
+        formData.set("telNumber", info.telNumber)
+        formData.set("email", info.email)
+        formData.set("password", info.password)
+
         await httpFetchRawAsync({
             method: "POST",
-            url: this.createUrl(`signUp?firstName=${info.firstName}`)
+            url: this.createUrl('signup'),
+            body: formData
         })
         return undefined
     }
@@ -339,7 +347,7 @@ export class TemporaryDataSource implements DataSource {
         return this.server.authenticateAsync(creds)
     }
     signUpAsync(info: SignUpInfo): Promise<undefined> {
-        return this.test.authenticateAsync()
+        return this.server.signUpAsync(info)
     }
     getUserType(creds: UserCreditials): Promise<UserType> {
         return this.server.getUserType(creds)

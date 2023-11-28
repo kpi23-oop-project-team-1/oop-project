@@ -36,7 +36,7 @@ export default function SignInPage() {
     return (
         <>
             <SimpleHeader/>
-            <div id="main-content">
+            <div id="sign-in-main-content">
                 <div id="signin-form">
                     <div id="user-info-block">
                         <AdvancedInput

@@ -20,13 +20,14 @@ public class ServerApplication extends SpringBootServletInitializer {
 	public DataStore dataStore(PasswordEncoder passwordEncoder) {
 		var dataStore = new InMemoryDataStore(DataStoreConfig.configuration);
 		var users = dataStore.getCollection(DataStoreConfig.users);
-		users.insert(
-			new CustomerTraderUser(
-				0,
-				"mail@gmail.com",
-				passwordEncoder.encode("password")
-			)
+		var user = new CustomerTraderUser(
+			0,
+			"mail@gmail.com",
+			passwordEncoder.encode("password")
 		);
+		user.setTelNumber("12345678910");
+
+		users.insert(user);
 
 		return dataStore;
 	}

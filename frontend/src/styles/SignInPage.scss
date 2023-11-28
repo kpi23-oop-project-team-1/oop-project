@@ -2,13 +2,9 @@
 
 $login-form-width: 50%;
 
-#main-content {
+#sign-in-main-content {
     position: relative;
     height: calc(100vh - (dimensions.$header-height + 1px)); 
-}
-
-#root {
-    height: 100vh;
 }
 
 #signin-form {
