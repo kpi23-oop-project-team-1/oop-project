@@ -30,7 +30,6 @@ export const allProductStatuses = [
     'on-moderation',
     'declined',
     'sold',
-    'deleted'
 ] as const
 
 export type ProductStatus = (typeof allProductStatuses)[number]
@@ -57,7 +56,10 @@ export const allProductStates = [
 export type ProductState = (typeof allProductStates)[number]
 
 export const allCategoryIds = [
-    'dress'
+    'dress',
+    'electronics',
+    'home',
+    'sport'
 ] as const
 
 export type CategoryId = (typeof allCategoryIds)[number]

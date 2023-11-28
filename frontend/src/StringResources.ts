@@ -114,7 +114,10 @@ export const ukrainianStringResources : StringResources = {
     productCountLabel: "Товарів: ",
     allProductsCategory: "Усі товари",
     productCategoryLabels: {
-        dress: "Одяг"
+        dress: "Одяг",
+        electronics: "Електроніка",
+        home: "Товари для дому",
+        sport: "Спортивні товари"
     },
     description: "Опис",
     characteristics: "Характеристики",
@@ -137,8 +140,7 @@ export const ukrainianStringResources : StringResources = {
         active: "Активні",
         'on-moderation': "На модерації",
         declined: "Відхилені",
-        sold: "Продані",
-        deleted: "Видалені",
+        sold: "Продані"
     },
     delete: "Видалити"
 }
