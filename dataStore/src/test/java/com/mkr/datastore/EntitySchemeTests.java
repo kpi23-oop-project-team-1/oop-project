@@ -99,8 +99,9 @@ public class EntitySchemeTests {
     @Test
     public void getKeyValueTest() {
         EntityScheme<TestObject> scheme = testObjectScheme();
-        var entity = new TestObject("123", 2);
+        var entity = new TestObject(true, "123", 2);
 
+        assertEquals(true, scheme.getKeyValue(entity, scheme.findKeyByName("bool")));
         assertEquals("123", scheme.getKeyValue(entity, scheme.findKeyByName("string")));
         assertEquals(2, scheme.getKeyValue(entity, scheme.findKeyByName("integer")));
     }
@@ -176,5 +177,13 @@ public class EntitySchemeTests {
         scheme.setKeyValue(instance, scheme.findKeyByName("field2"), 2);
 
         assertEquals(2, instance.field2);
+    }
+
+    @Test
+    public void getIdForSubclassTest() {
+        EntityScheme<TestClass1> scheme = testClass1Scheme();
+
+        assertEquals("testClass1", scheme.getIdForSubclass(TestClass1.class));
+        assertEquals("testClass2", scheme.getIdForSubclass(TestClass2.class));
     }
 }

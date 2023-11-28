@@ -60,14 +60,19 @@ public final class EntityScheme<T> {
         }
 
         if (inheritedSchemes != null) {
-            for (EntityScheme<? extends T> struct : inheritedSchemes) {
-                if (struct.id.equals(id)) {
-                    return struct.entityClass;
+            for (EntityScheme<? extends T> scheme : inheritedSchemes) {
+                if (scheme.id.equals(id)) {
+                    return scheme.entityClass;
                 }
             }
         }
 
         throw new IllegalArgumentException("Unknown id");
+    }
+
+    @NotNull
+    public String getIdForSubclass(@NotNull Class<? extends T> subclass) {
+        return resolveExactScheme(subclass).id;
     }
 
     @NotNull

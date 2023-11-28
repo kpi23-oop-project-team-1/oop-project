@@ -5,4 +5,9 @@ public class TestDataStoreCollections {
         .name("testObject")
         .entityClass(TestObject.class)
         .build();
+
+    public static final DataStoreCollectionDescriptor<TestObjectWithArrays> testObjectWithArrays = new DataStoreCollectionDescriptorBuilder<TestObjectWithArrays>()
+        .name("testObjectWithArrays")
+        .entityClass(TestObjectWithArrays.class)
+        .build();
 }

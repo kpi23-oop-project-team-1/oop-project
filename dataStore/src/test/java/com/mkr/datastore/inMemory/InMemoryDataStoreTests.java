@@ -1,13 +1,13 @@
-package com.mkr.datastore;
+package com.mkr.datastore.inMemory;
 
-import com.mkr.datastore.inMemory.InMemoryDataStore;
+import com.mkr.datastore.DataStore;
+import com.mkr.datastore.DataStoreConfiguration;
+import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestObject;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-
-import java.util.Spliterator;
-import java.util.stream.StreamSupport;
 
 public class InMemoryDataStoreTests {
     private static final DataStoreConfiguration dataStoreConfig = DataStoreConfiguration.builder()
@@ -27,8 +27,8 @@ public class InMemoryDataStoreTests {
     @Test
     public void insertTest() {
         var objects = new TestObject[]{
-            new TestObject("1", 1),
-            new TestObject("2", 2)
+            new TestObject(true, "1", 1),
+            new TestObject(false, "2", 2)
         };
 
         var dataStore = inMemoryDataStore();
@@ -45,9 +45,9 @@ public class InMemoryDataStoreTests {
     @Test
     public void deleteTest() {
         var objects = new TestObject[]{
-            new TestObject("1", 1),
-            new TestObject("2", 1),
-            new TestObject("3", 2)
+            new TestObject(true, "1", 1),
+            new TestObject(false, "2", 1),
+            new TestObject(true, "3", 2)
         };
 
         var dataStore = inMemoryDataStore(objects);
@@ -62,7 +62,7 @@ public class InMemoryDataStoreTests {
             .toArray(TestObject[]::new);
 
         var expectedResult = new TestObject[]{
-            new TestObject("3", 2)
+            new TestObject(true, "3", 2)
         };
 
         assertArrayEquals(expectedResult, actualResult);
@@ -71,9 +71,9 @@ public class InMemoryDataStoreTests {
     @Test
     public void updateTest() {
         var objects = new TestObject[]{
-            new TestObject("1", 1),
-            new TestObject("2", 1),
-            new TestObject("3", 2)
+            new TestObject(true, "1", 1),
+            new TestObject(false, "2", 1),
+            new TestObject(true, "3", 2)
         };
 
         var dataStore = inMemoryDataStore(objects);
@@ -82,7 +82,7 @@ public class InMemoryDataStoreTests {
             .getCollection(TestDataStoreCollections.testObject)
             .update(
                 o -> o.getInteger() == 1,
-                o -> new TestObject(o.getString() + "0", o.getInteger())
+                o -> new TestObject(o.getBool(), o.getString() + "0", o.getInteger())
             );
 
         TestObject[] actualResult = dataStore
@@ -91,9 +91,9 @@ public class InMemoryDataStoreTests {
             .toArray(TestObject[]::new);
 
         var expectedResult = new TestObject[]{
-            new TestObject("10", 1),
-            new TestObject("20", 1),
-            new TestObject("3", 2)
+            new TestObject(true, "10", 1),
+            new TestObject(false, "20", 1),
+            new TestObject(true, "3", 2)
         };
 
         assertArrayEquals(expectedResult, actualResult);
