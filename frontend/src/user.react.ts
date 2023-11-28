@@ -15,7 +15,7 @@ export function useUserType(): DeferredDataState<UserType | undefined> {
 }
 
 export function navigateToMainPageIfNotBuyerSeller(userType: DeferredDataState<UserType | undefined>, navigate: NavigateFunction) {
-    if (((userType.type == 'success' && userType.value != 'buyer-seller') || userType.type == 'error')) {
+    if (((userType.type == 'success' && userType.value != 'customer-trader') || userType.type == 'error')) {
         navigate('/')
     }
 }

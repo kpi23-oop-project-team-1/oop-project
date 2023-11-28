@@ -1,5 +1,8 @@
 package com.mkr.server.domain;
 
+import com.mkr.datastore.InheritedModel;
+
+@InheritedModel(id = "customer_trader")
 public class CustomerTraderUser extends User implements Commentable {
     private String displayName;
 
@@ -12,6 +15,13 @@ public class CustomerTraderUser extends User implements Commentable {
     private Comment[] comments;
     private Product[] products;
     private CartProduct[] cartProducts;
+
+    public CustomerTraderUser() {
+    }
+
+    public CustomerTraderUser(int id, String email, String passwordHash) {
+        super(id, email, passwordHash);
+    }
 
     @Override
     public UserRole getRole() {

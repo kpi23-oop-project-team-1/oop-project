@@ -27,6 +27,9 @@ module.exports = env => ({
     compress: true,
     port: 9000,
     historyApiFallback: true,
+    proxy: {
+      '/api': 'http://localhost:8080'
+    }
   },
   module: {
     rules: [

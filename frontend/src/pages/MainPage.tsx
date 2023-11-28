@@ -75,7 +75,7 @@ function SpecialProduct(props: SpecialProductProps) {
             </Link>
             
             {
-                !cartManager.isProductInCart(product.id) && userType == 'buyer-seller' ?
+                !cartManager.isProductInCart(product.id) && userType == 'customer-trader' ?
                     <button 
                       className="special-product-add-to-cart primary"
                       onClick={addProductToCart}>

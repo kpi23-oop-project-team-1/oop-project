@@ -40,8 +40,6 @@ $login-form-width: 50%;
 }
 
 #signin-button {
-    //margin-top: 20px;
-    
     position: relative;
     margin: 20px auto;
     width: 50%;
@@ -52,6 +50,8 @@ $login-form-width: 50%;
 }
 
 #signup-block {
+    margin-top: 10px;
+
     p {
         display: inline-block;
     }

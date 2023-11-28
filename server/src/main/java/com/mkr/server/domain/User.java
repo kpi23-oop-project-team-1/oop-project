@@ -9,6 +9,15 @@ public abstract class User {
     private String email;
     private String passwordHash;
 
+    protected User() {
+    }
+
+    protected User(int id, String email, String passwordHash) {
+        this.id = id;
+        this.email = email;
+        this.passwordHash = passwordHash;
+    }
+
     public int getId() {
         return id;
     }

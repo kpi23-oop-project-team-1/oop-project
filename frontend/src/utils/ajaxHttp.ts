@@ -1,5 +1,6 @@
 import { UserCreditials } from "../user";
 import { encodeBase64 } from "../utils/base64";
+import { basicAuthEncode } from "./basicAuth";
 
 export type HttpMethod = 'GET' | 'POST' | 'DELETE';
 
@@ -10,7 +11,9 @@ export type HttpBaseFetchInfo<M extends HttpMethod> = {
     timeout?: number 
 }
 
-export type HttpBodyFetchInfo<M extends HttpMethod> = HttpBaseFetchInfo<M> & { body?: string }
+export type HttpBodyFetchInfo<M extends HttpMethod> = HttpBaseFetchInfo<M> & { 
+    body?: Document | XMLHttpRequestBodyInit | null 
+}
 
 export type HttpGetFetchInfo = HttpBaseFetchInfo<'GET'>
 export type HttpPostFetchInfo = HttpBodyFetchInfo<'POST'>
@@ -26,15 +29,12 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
             httpRequest.timeout = info.timeout
         }
 
-        const creds = info.creditials
-        if (creds) { 
-            const encoded = encodeBase64(creds.email + ":" + creds.password)
-
-            httpRequest.setRequestHeader("Authorization", encoded)
-        }
-
         httpRequest.onload = () => {
-            resolve(httpRequest.response)
+            if (httpRequest.status == 200) {
+                resolve(httpRequest.response)
+            } else {
+                reject()
+            }
         }
         httpRequest.onerror = () => {
             reject()
@@ -45,12 +45,25 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
 
         // Async request
         httpRequest.open(info.method, info.url, true)
+
+        const creds = info.creditials
+        if (creds) { 
+            httpRequest.setRequestHeader("Authorization", basicAuthEncode(creds))
+        }
+
         httpRequest.send(info.method != 'GET' ? info.body : null);
     });
 }
 
-export async function httpFetchAsync<R>(info: HttpFetchInfo): Promise<R> {
+export async function httpFetchAsync<R>(info: HttpFetchInfo, defaultValue?: R): Promise<R> {
     const rawResponse = await httpFetchRawAsync(info);
+    if (rawResponse.length == 0) {
+        if (defaultValue) {
+            return defaultValue
+        }
+
+        throw "Empty response"
+    }
 
     return JSON.parse(rawResponse);
 }

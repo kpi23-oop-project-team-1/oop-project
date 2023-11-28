@@ -43,7 +43,7 @@ export default function FullHeader(props: FullHeaderProps) {
 
             <div id="header-option-block">
                 {
-                    userType == 'buyer-seller' ?
+                    userType == 'customer-trader' ?
                     <>
                         <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
                         <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>

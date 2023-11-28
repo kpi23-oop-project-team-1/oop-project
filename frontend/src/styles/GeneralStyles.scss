@@ -20,7 +20,7 @@ $input-border-color: #c3c3c3;
 $input-hover-border-color: #b1b1b1;
 $input-focus-border-color: #909090;
 
-input[type=text] {
+input[type=text], input[type=email], input[type=password] {
     box-sizing: border-box;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;  

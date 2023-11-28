@@ -67,7 +67,7 @@ export default function ProductInfoPage() {
                             <p id="product-info-price">{product ? formatPriceToString(product.price) : ""}</p>
 
                             {
-                                userType.value != 'buyer-seller' ?
+                                userType.value != 'customer-trader' ?
                                 undefined 
                                 :
                                 <>

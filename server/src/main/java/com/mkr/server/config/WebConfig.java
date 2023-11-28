@@ -1,4 +1,4 @@
-package com.mkr.server;
+package com.mkr.server.config;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;

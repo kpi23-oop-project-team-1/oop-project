@@ -1,5 +1,5 @@
 
-export type UserType = 'buyer-seller' | 'admin'
+export type UserType = 'customer-trader' | 'admin'
 export type UserCreditials = {
     email: string,
     password: string
