@@ -72,7 +72,9 @@ interface StringResources {
     readonly loginDetails: string,
     readonly changePassword: string,
     readonly personContactDetails: string,
-    readonly saveChanges: string
+    readonly saveChanges: string,
+    readonly postComment: string,
+    readonly rateProductHeader: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -174,5 +176,7 @@ export const ukrainianStringResources : StringResources = {
     loginDetails: "Дані для входу",
     changePassword: "Змінити пароль",
     personContactDetails: "Контактні дані",
-    saveChanges: "Зберегти зміни"
+    saveChanges: "Зберегти зміни",
+    postComment: "Опублікувати",
+    rateProductHeader: "Оцініть товар"
 }

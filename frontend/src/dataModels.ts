@@ -153,11 +153,19 @@ export type SearchConciseProductsResult = {
     products: ConciseProductInfo[]
 }
 
+export const totalCommentStarCount = 5;
+
 export type ProductComment = {
     user: ConciseUserInfo,
     rating: number,
     text: string,
     dateString: string
+}
+
+export type NewCommentInfo = {
+    targetId: number,
+    rating: number,
+    text: string
 }
 
 export type ProductInfo = {

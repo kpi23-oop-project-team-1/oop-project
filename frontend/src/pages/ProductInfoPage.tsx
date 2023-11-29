@@ -7,25 +7,34 @@ import ImageCarousel from "../components/ImageCarousel";
 import { useValueFromDataSource } from "../dataSource.react";
 import { formatPriceToString } from "../utils/stringFormatting";
 import { StringResourcesContext } from "../StringResourcesContext";
-import { ProductComment, ProductInfo } from "../dataModels";
+import { ProductComment, ProductInfo, totalCommentStarCount } from "../dataModels";
 import { StarRating } from "../components/StarRating";
 import "../styles/ProductInfoPage.scss"
 import NumberInput from "../components/NumberInput";
 import Footer from "../components/Footer";
 import { UserTypeContext, useUserType } from "../user.react";
+import PostCommentDialog from "../components/PostCommentDialog";
+import { DialogInfo } from "../components/Dialogs";
+import { DiContainerContext } from "../diContainer";
+
+type OwnPageDialogType = 'post-comment'
+type DialogType = PageWithFullHeaderDialogType | OwnPageDialogType
 
 export default function ProductInfoPage() {
     const productId = useProductId() ?? 0
     const strRes = useContext(StringResourcesContext)
+    const diContainer = useContext(DiContainerContext)
+    const dataSource = diContainer.dataSource
 
-    const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
+    const [dialogType, setDialogType] = useState<DialogType | undefined>()
     const [cart, cartManager] = useCart()
     const [quantity, setQuantity] = useState(1)
 
-    const [productState] = useValueFromDataSource(ds => ds.getProductInfo(productId), [productId])
+    const [productState, setProductState] = useValueFromDataSource(ds => ds.getProductInfo(productId), [productId])
     const product = productState.value
 
     const isProductInCart = useMemo(() => cartManager.isProductInCart(productId), [cart])
+    const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])
     const userType = useUserType()
 
     function addToCart() {
@@ -34,11 +43,35 @@ export default function ProductInfoPage() {
         }
     }
 
+    function showCommentDialog() {
+        setDialogType('post-comment')
+    }
+
+    function doPostComment(info: { rating: number, text: string }) {
+        if (userCreds) {
+            dataSource.postProductComment({ targetId: productId, ...info }, userCreds).then(() => {
+                setDialogType(undefined)
+                setProductState({ type: 'loading' })
+            }).catch(() => {
+
+            })
+        }
+    }
+
+    function dialogSwitch(): DialogInfo {
+        // Currently there's only 'post-comment' dialog type
+        return { 
+            mode: 'fullscreen',
+            factory: () => <PostCommentDialog onClose={() => setDialogType(undefined)} onPost={doPostComment} headerText={strRes.rateProductHeader}/> 
+        }
+    }
+
     return (
         <UserTypeContext.Provider value={userType.value}>
         <CartContext.Provider value={[cart, cartManager]}>
             <PageWithSearchHeader 
               dialogType={dialogType} 
+              dialogSwitch={dialogSwitch}
               onChangeDialogType={setDialogType}>
                 <div id="product-info-content">
                     <ImageCarousel imageSources={product?.imageSources ?? []}/>
@@ -91,7 +124,7 @@ export default function ProductInfoPage() {
 
                                     <button 
                                       id="product-info-write-comment"
-                                      onClick={() => {}}>
+                                      onClick={showCommentDialog}>
                                         {strRes.writeComment}
                                     </button>
                                 </>
@@ -135,7 +168,7 @@ function CommentView(props: CommentViewProps) {
                 <p className="product-info-comment-date">{new Date(comment.dateString).toLocaleDateString()}</p>
             </div>
 
-            <StarRating value={comment.rating} total={5}/>
+            <StarRating value={comment.rating} total={totalCommentStarCount}/>
             <p className="product-info-comment-text">{comment.text}</p>
         </div>
     )

@@ -14,7 +14,8 @@ import {
     UserProductSearchFilter,
     userProductSearchFilterToSearchParams,
     ProductStatus,
-    UserProductSearchDesc, 
+    UserProductSearchDesc,
+    NewCommentInfo,
 } from "./dataModels";
 import { UserCredentials, UserType } from "./user";
 import { httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
@@ -44,6 +45,8 @@ export interface DataSource {
     getUserId(email: String): Promise<number>
     getAccountInfo(id: number): Promise<AccountInfo>
     updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined>
+
+    postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined>
 }
 
 export class ServerDataSource implements DataSource {
@@ -232,6 +235,21 @@ export class ServerDataSource implements DataSource {
 
         return undefined
     }
+
+    async postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        const formData = new FormData()
+        formData.set("targetId", info.targetId.toString())
+        formData.set("rating", info.rating.toString())
+        formData.set("text", info.text)
+
+        await httpFetchRawAsync({
+            method: "POST",
+            url: this.createUrl("postproductcomment"),
+            body: formData,
+            credentials: creds
+        })
+        return undefined
+    }
 }
 
 export class TestDataSource implements DataSource {
@@ -406,6 +424,10 @@ export class TestDataSource implements DataSource {
     async updateAccountInfo(): Promise<undefined> {
         return undefined
     }
+
+    async postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        return undefined
+    }
 }
 
 export class TemporaryDataSource implements DataSource {
@@ -468,5 +490,9 @@ export class TemporaryDataSource implements DataSource {
     }
     updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
         return this.test.updateAccountInfo()
+    }
+
+    postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        return this.server.postProductComment(info, creds)
     }
 }

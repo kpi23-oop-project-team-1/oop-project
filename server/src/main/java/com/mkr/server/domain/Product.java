@@ -1,5 +1,8 @@
 package com.mkr.server.domain;
 
+import com.mkr.server.utils.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
+
 public class Product implements Commentable {
     private int productId;
     private int traderId;
@@ -111,5 +114,30 @@ public class Product implements Commentable {
         this.status = status;
     }
 
+    @NotNull
+    public Product copy() {
+        var p = new Product();
+        p.setProductId(productId);
+        p.setTraderId(traderId);
+        p.setTitle(title);
+        p.setImageSources(imageSources);
+        p.setPrice(price);
+        p.setAmount(amount);
+        p.setDescription(description);
+        p.setComments(comments);
+        p.setCategory(category);
+        p.setState(state);
+        p.setColor(color);
+        p.setStatus(status);
 
+        return p;
+    }
+
+    @NotNull
+    public Product withComment(@NotNull Comment comment) {
+        Product p = copy();
+        p.setComments(ArrayUtils.withAddedElement(comments, comment));
+
+        return p;
+    }
 }

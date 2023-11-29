@@ -4,7 +4,19 @@ public class Comment {
     private int targetId;
     private int userId;
     private int rating;
+    private String text;
     private long postEpochSeconds;
+
+    public Comment() {
+    }
+
+    public Comment(int targetId, int userId, int rating, String text, long postEpochSeconds) {
+        this.targetId = targetId;
+        this.userId = userId;
+        this.rating = rating;
+        this.text = text;
+        this.postEpochSeconds = postEpochSeconds;
+    }
 
     public int getTargetId() {
         return targetId;
@@ -36,5 +48,13 @@ public class Comment {
 
     public void setPostEpochSeconds(long postEpochSeconds) {
         this.postEpochSeconds = postEpochSeconds;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }
