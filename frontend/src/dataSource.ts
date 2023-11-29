@@ -252,8 +252,8 @@ export class TestDataSource implements DataSource {
         await new Promise(r => setTimeout(r, 500));
 
         return {
-            availColorIds: ['black', 'white', 'cyan'],
-            availStates: ['acceptable', 'good', 'ideal', 'new', 'very-good'],
+            colorIds: ['black', 'white', 'cyan'],
+            states: ['acceptable', 'good', 'ideal', 'new', 'very-good'],
             limitingPriceRange: { start: 100, end: 1000 }
         }
     }
@@ -369,10 +369,10 @@ export class TemporaryDataSource implements DataSource {
         return this.test.removeProductFromCartAsync(productId)
     }
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
-        return this.test.getSearchFilterDescAsync(categoryId)
+        return this.server.getSearchFilterDescAsync(categoryId)
     }
     getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult> {
-        return this.test.getConciseProductsBySearch(filter)
+        return this.server.getConciseProductsBySearch(filter)
     }
     getProductInfo(id: number): Promise<ProductInfo> {
         return this.test.getProductInfo(id)

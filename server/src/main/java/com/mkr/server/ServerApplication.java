@@ -3,7 +3,7 @@ package com.mkr.server;
 import com.mkr.datastore.DataStore;
 import com.mkr.datastore.inMemory.InMemoryDataStore;
 import com.mkr.server.config.DataStoreConfig;
-import com.mkr.server.domain.CustomerTraderUser;
+import com.mkr.server.domain.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -28,6 +28,21 @@ public class ServerApplication extends SpringBootServletInitializer {
 		user.setTelNumber("12345678910");
 
 		users.insert(user);
+
+		var products = dataStore.getCollection(DataStoreConfig.products);
+		products.insert(
+			new Product(
+				0, 0,
+				"123",
+				new String[] { "" },
+				100,
+				5,
+				ProductCategory.DRESS,
+				ProductState.NEW,
+				ProductStatus.ACTIVE,
+				ColorId.BLACK
+			)
+		);
 
 		return dataStore;
 	}

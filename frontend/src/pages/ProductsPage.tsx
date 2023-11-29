@@ -28,7 +28,7 @@ export default function ProductsPage() {
         updateUrl(commitedFilter)
     }, [commitedFilter])
 
-    const [filterDescState] = useValueFromDataSource(ds => ds.getSearchFilterDescAsync(filter.category))
+    const [filterDescState] = useValueFromDataSource(ds => ds.getSearchFilterDescAsync(filter.category), [filter.category])
     const [searchResultState] = useValueFromDataSource(ds => ds.getConciseProductsBySearch(commitedFilter), [commitedFilter])
     const searchResult = searchResultState.value
 
@@ -48,21 +48,25 @@ export default function ProductsPage() {
                 <div id="products-page-filter-and-grid">
                     <DeferredDataContainer state={filterDescState}>
                         <SearchFilterPanel 
-                          filterDesc={filterDescState?.value} 
+                          filterDesc={filterDescState.value} 
                           filter={filter} 
+                          productCount={searchResult?.totalProductCount ?? 0}
                           onChanged={setFilter}
                           urlFactory={createSearchFilterUrl}
                           commitFilter={setCommitedFilter}/>
                     </DeferredDataContainer>
                     <div id="products-page-right-side">
                         <h2>{filter.category ? strRes.productCategoryLabels[filter.category] : strRes.allProductsCategory}</h2>
+
                         <ProductsGridHeader
                           totalProductCount={searchResult?.totalProductCount}
-                          searchOrder={filter.order ?? 'recomended'}
+                          searchOrder={filter.order ?? 'cheapest'}
                           onSearchOrderChanged={order => setFilterAndCommit({ ...filter, order })}/>
+
                         <DeferredDataContainer state={searchResultState}>
                             <ProductsGrid products={searchResult?.products ?? []}/>
                         </DeferredDataContainer>
+
                         {searchResult && searchResult.pageCount > 1 &&
                             <PageNavRow 
                               pageCount={searchResult.pageCount} 

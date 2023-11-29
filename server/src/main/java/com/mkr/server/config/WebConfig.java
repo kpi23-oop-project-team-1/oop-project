@@ -1,13 +1,26 @@
 package com.mkr.server.config;
 
+import com.mkr.server.converters.ColorIdListConverter;
+import com.mkr.server.converters.IntRangeConverter;
+import com.mkr.server.converters.ProductCategoryConverter;
+import com.mkr.server.converters.ProductStateListConverter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.config.annotation.*;
 
 @EnableWebMvc
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new ColorIdListConverter());
+        registry.addConverter(new IntRangeConverter());
+        registry.addConverter(new ProductCategoryConverter());
+        registry.addConverter(new ProductStateListConverter());
+    }
+
     @Override
     public void addCorsMappings(@NotNull CorsRegistry registry) {
         registry.addMapping("/**")

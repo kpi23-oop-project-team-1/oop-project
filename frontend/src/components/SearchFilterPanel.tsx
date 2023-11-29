@@ -12,6 +12,7 @@ import { formatPriceToString } from "../utils/stringFormatting"
 export type SearchFilterPanelProps = {
     filter: SearchFilter,
     filterDesc: SearchFilterDesc | undefined,
+    productCount: number,
     urlFactory: (filter: SearchFilter) => string,
     onChanged: (filter: SearchFilter) => void,
     commitFilter: (filter: SearchFilter) => void
@@ -75,29 +76,32 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
                 )}
             </SearchFilterSection>
             
-            <SearchFilterSection title={strRes.filters}>
-                <SearchFilterPropertyBlock title={strRes.price}>
-                    <PriceSelector
-                      limitingRange={filterDesc.limitingPriceRange}
-                      valueRange={priceRange}
-                      onPointerUp={onCommitPriceRange}
-                      onRangeChanged={onPriceRangeChanged}/>
-                </SearchFilterPropertyBlock>
+            { 
+                props.productCount > 0 &&
+                <SearchFilterSection title={strRes.filters}>
+                    <SearchFilterPropertyBlock title={strRes.price}>
+                        <PriceSelector
+                          limitingRange={filterDesc.limitingPriceRange}
+                          valueRange={priceRange}
+                          onPointerUp={onCommitPriceRange}
+                          onRangeChanged={onPriceRangeChanged}/>
+                    </SearchFilterPropertyBlock>
 
-                <SearchFilterPropertyBlock title={strRes.color}>
-                    <ChoiceList
-                      choices={filterDesc.availColorIds.map(id => ({ id, label: strRes.colorLabels[id] }))}
-                      selectedValueIds={colorIds}
-                      onChoiceSelectedStateChanged={onColorSelectedStateChanged}/>
-                </SearchFilterPropertyBlock>
+                    <SearchFilterPropertyBlock title={strRes.color}>
+                        <ChoiceList
+                          choices={filterDesc.colorIds.map(id => ({ id, label: strRes.colorLabels[id] }))}
+                          selectedValueIds={colorIds}
+                          onChoiceSelectedStateChanged={onColorSelectedStateChanged}/>
+                    </SearchFilterPropertyBlock>
 
-                <SearchFilterPropertyBlock title={strRes.productState}>
-                    <ChoiceList
-                      choices={filterDesc.availStates.map(id => ({ id, label: strRes.productStateLabels[id] }))}
-                      selectedValueIds={states}
-                      onChoiceSelectedStateChanged={onProductStateSelectedStateChanged}/>
-                </SearchFilterPropertyBlock>
-            </SearchFilterSection>
+                    <SearchFilterPropertyBlock title={strRes.productState}>
+                        <ChoiceList
+                          choices={filterDesc.states.map(id => ({ id, label: strRes.productStateLabels[id] }))}
+                          selectedValueIds={states}
+                          onChoiceSelectedStateChanged={onProductStateSelectedStateChanged}/>
+                    </SearchFilterPropertyBlock>
+                </SearchFilterSection>
+            }
         </div>
     )
 }
