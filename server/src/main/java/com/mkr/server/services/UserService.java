@@ -73,4 +73,8 @@ public class UserService {
 
         repo.addUser(user);
     }
+
+    public int getUserIdByEmail(@NotNull String email) {
+        return repo.findUserByEmail(email).map(User::getId).orElse(-1);
+    }
 }

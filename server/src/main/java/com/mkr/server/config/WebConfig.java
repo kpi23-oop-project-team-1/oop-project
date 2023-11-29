@@ -1,9 +1,6 @@
 package com.mkr.server.config;
 
-import com.mkr.server.converters.ColorIdListConverter;
-import com.mkr.server.converters.IntRangeConverter;
-import com.mkr.server.converters.ProductCategoryConverter;
-import com.mkr.server.converters.ProductStateListConverter;
+import com.mkr.server.converters.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -19,6 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverter(new IntRangeConverter());
         registry.addConverter(new ProductCategoryConverter());
         registry.addConverter(new ProductStateListConverter());
+        registry.addConverter(new ProductStatusConverter());
     }
 
     @Override

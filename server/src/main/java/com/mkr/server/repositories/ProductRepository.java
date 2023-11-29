@@ -13,7 +13,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Repository
 public class ProductRepository {
@@ -54,5 +53,25 @@ public class ProductRepository {
         try (var data = productCollection().data()) {
             return (int)data.filter(predicate).count();
         }
+    }
+
+    @NotNull
+    public Product[] getUserProducts(@NotNull Predicate<Product> predicate, @NotNull IntRange range, int userId) {
+        try (var data = productCollection().data()) {
+            return data
+                .filter(userMatchPredicate(predicate, userId))
+                .skip(range.start())
+                .limit(range.length())
+                .toArray(Product[]::new);
+        }
+    }
+
+    public int countUserProducts(@NotNull Predicate<Product> predicate, int userId) {
+        return countProducts(userMatchPredicate(predicate, userId));
+    }
+
+    @NotNull
+    private static Predicate<Product> userMatchPredicate(@NotNull Predicate<Product> other, int userId) {
+        return p -> p.getTraderId() == userId && other.test(p);
     }
 }

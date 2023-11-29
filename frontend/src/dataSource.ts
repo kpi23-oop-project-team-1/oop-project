@@ -382,10 +382,10 @@ export class TemporaryDataSource implements DataSource {
         return this.test.addProduct()
     }
     getUserProductsSearchDesc(status: ProductStatus, creds: UserCreditials): Promise<UserProductSearchDesc> {
-        return this.test.getUserProductsSearchDesc()
+        return this.server.getUserProductsSearchDesc(status, creds)
     }
     getUserProducts(filter: UserProductSearchFilter, creds: UserCreditials): Promise<ConciseProductInfo[]> {
-        return this.test.getUserProducts(filter)
+        return this.server.getUserProducts(filter, creds)
     }
     deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined> {
         return this.test.deleteProducts(ids, creds)
