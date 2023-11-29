@@ -25,15 +25,15 @@ export default function FullHeader(props: FullHeaderProps) {
     return (
         <div id="header">
             <div id="header-logo-block">
-                <img id="header-logo" src={shopifyLogo} alt="Logo"></img>
-            </div> 
+                <a href="/"><img id="header-logo" src={shopifyLogo} alt="Logo"></img></a>
+            </div>
 
             <div id="header-search-block">
                 <button id="header-category-button" className="icon-button">
                     <CategoryIcon/>
                 </button>
 
-                <SearchBar 
+                <SearchBar
                   placeholder={strRes.headerSearchBoxPlaceholder}
                   text={searchQuery}
                   searchButtonText={strRes.search}
@@ -50,7 +50,7 @@ export default function FullHeader(props: FullHeaderProps) {
                     </>
                     : undefined
                 }
-                <HeaderLinkRoundButton to='/' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
+                <HeaderLinkRoundButton to='/myaccount' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
             </div>
         </div>
     )

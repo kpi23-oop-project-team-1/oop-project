@@ -9,36 +9,41 @@ import {
     searchFilterToSearchParams, 
     ProductInfo,
     NewProductInfo,
+    AccountInfo,
+    NewAccountInfo,
     UserProductSearchFilter,
     userProductSearchFilterToSearchParams,
     ProductStatus,
     UserProductSearchDesc, 
 } from "./dataModels";
-import { UserCreditials, UserType } from "./user";
+import { UserCredentials, UserType } from "./user";
 import { httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
-    authenticateAsync(creds: UserCreditials): Promise<undefined>
+    authenticateAsync(creds: UserCredentials): Promise<undefined>
     signUpAsync(info: SignUpInfo): Promise<undefined>
 
     getSpecialProductsAsync(): Promise<ConciseProductInfo[]>
 
-    getCartProductsAsync(creds: UserCreditials): Promise<CartProductInfo[]>
-    addProductToCartAsync(id: number, creds: UserCreditials): Promise<undefined>
-    updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCreditials): Promise<undefined>
-    removeProductFromCartAsync(productId: number, creds: UserCreditials): Promise<undefined>
+    getCartProductsAsync(creds: UserCredentials): Promise<CartProductInfo[]>
+    addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined>
+    updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined>
+    removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined>
 
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc>
     getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult>
     getProductInfo(id: number): Promise<ProductInfo>
 
-    getUserType(creds: UserCreditials): Promise<UserType>
+    addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined>
 
-    addProduct(info: NewProductInfo, creds: UserCreditials): Promise<undefined>
+    getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc>
+    getUserProducts(filter: UserProductSearchFilter, creds: UserCredentials): Promise<ConciseProductInfo[]>
+    deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined>
 
-    getUserProductsSearchDesc(status: ProductStatus, creds: UserCreditials): Promise<UserProductSearchDesc>
-    getUserProducts(filter: UserProductSearchFilter, creds: UserCreditials): Promise<ConciseProductInfo[]>
-    deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined>
+    getUserType(creds: UserCredentials): Promise<UserType>
+    getUserId(email: String): Promise<number>
+    getAccountInfo(id: number): Promise<AccountInfo>
+    updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined>
 }
 
 export class ServerDataSource implements DataSource {
@@ -46,10 +51,10 @@ export class ServerDataSource implements DataSource {
         return `/api/${query}`
     }
 
-    async authenticateAsync(creds: UserCreditials): Promise<undefined> {
+    async authenticateAsync(creds: UserCredentials): Promise<undefined> {
         await httpFetchRawAsync({
             method: "GET",
-            creditials: creds,
+            credentials: creds,
             url: this.createUrl(`auth`)
         })
         return undefined
@@ -78,36 +83,36 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    getCartProductsAsync(creds: UserCreditials): Promise<CartProductInfo[]> {
+    getCartProductsAsync(creds: UserCredentials): Promise<CartProductInfo[]> {
         return httpFetchAsync<CartProductInfo[]>({
             method: "GET",
-            creditials: creds,
+            credentials: creds,
             url: this.createUrl("cartproducts")
         })
     }
 
-    async addProductToCartAsync(id: number, creds: UserCreditials): Promise<undefined> {
+    async addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined> {
         await httpFetchRawAsync({
             method: "POST",
-            creditials: creds,
+            credentials: creds,
             url: this.createUrl(`addcartproduct?id=${id}`)
         })
         return undefined
     }
 
-    async updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCreditials): Promise<undefined> {
+    async updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined> {
         await httpFetchRawAsync({
             method: "POST",
-            creditials: creds,
+            credentials: creds,
             url: this.createUrl(`cartproductamount?id=${productId}&amount=${newAmount}`)
         })
         return undefined
     }
 
-    async removeProductFromCartAsync(productId: number, creds: UserCreditials): Promise<undefined> {
+    async removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
         await httpFetchRawAsync({
             method: "DELETE",
-            creditials: creds,
+            credentials: creds,
             url: this.createUrl(`cartproduct?id=${productId}`)
         })
         return undefined
@@ -134,15 +139,7 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    getUserType(creds: UserCreditials): Promise<UserType> {
-        return httpFetchAsync<UserType>({
-            method: "GET",
-            creditials: creds,
-            url: this.createUrl("usertype")
-        })    
-    }
-
-    async addProduct(info: NewProductInfo, creds: UserCreditials): Promise<undefined> {
+    async addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
         const formData = new FormData()
         formData.set('title', info.title)
         formData.set('description', info.description)
@@ -159,36 +156,80 @@ export class ServerDataSource implements DataSource {
         await httpFetchRawAsync({
             url: this.createUrl("addproduct"),
             method: "POST",
-            creditials: creds,
+            credentials: creds,
             body: formData
         })
 
         return undefined
     }
 
-    getUserProductsSearchDesc(status: ProductStatus, creds: UserCreditials): Promise<UserProductSearchDesc> {
+    getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc> {
         return httpFetchAsync<UserProductSearchDesc>({
             method: "GET",
-            creditials: creds,
+            credentials: creds,
             url: this.createUrl(`userproductssearchdesc?status=${status}`)
         })
     }
 
-    getUserProducts(filter: UserProductSearchFilter, creds: UserCreditials): Promise<ConciseProductInfo[]> {
+    getUserProducts(filter: UserProductSearchFilter, creds: UserCredentials): Promise<ConciseProductInfo[]> {
         return httpFetchAsync<ConciseProductInfo[]>({
             method: "GET",
             url: this.createUrl("userproducts") + userProductSearchFilterToSearchParams(filter),
-            creditials: creds
+            credentials: creds
         })
     }
 
-    async deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined> {
+    async deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
         await httpFetchRawAsync({
             method: "DELETE",
             url: this.createUrl("product"),
-            creditials: creds,
+            credentials: creds,
             body: JSON.stringify(ids)
         })    
+        return undefined
+    }
+
+    getUserType(creds: UserCredentials): Promise<UserType> {
+        return httpFetchAsync<UserType>({
+            method: "GET",
+            credentials: creds,
+            url: this.createUrl("usertype")
+        })
+    }
+
+    getUserId(email: String): Promise<number> {
+        return httpFetchAsync<number>({
+            method: "GET",
+            url: this.createUrl(`accountid?email=${email}`)
+        })
+    }
+
+    getAccountInfo(id: number): Promise<AccountInfo> {
+        return httpFetchAsync<AccountInfo>({
+            method: "GET",
+            url: this.createUrl(`accountinfo?id=${id}`)
+        })
+    }
+
+    async updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
+        const formData = new FormData()
+        formData.set('email', info.email)
+        formData.set('password', info.password)
+        formData.set('username', info.username)
+        formData.set('aboutMe', info.aboutMe)
+        formData.set('firstName', info.firstName)
+        formData.set('lastName', info.lastName)
+        formData.set('telNumber', info.telNumber)
+        formData.set('address', info.address)
+        formData.set('pfpFile', info.pfpFile)
+
+        await httpFetchRawAsync({
+            url: this.createUrl("updateaccountinfo"),
+            method: "POST",
+            credentials: creds,
+            body: formData
+        })
+
         return undefined
     }
 }
@@ -310,10 +351,6 @@ export class TestDataSource implements DataSource {
         }
     }
 
-    async getUserType(creds: UserCreditials): Promise<UserType> {
-        return 'customer-trader' 
-    }
-
     async addProduct(): Promise<undefined> {
         return undefined
     }
@@ -334,7 +371,39 @@ export class TestDataSource implements DataSource {
         }))
     }
 
-    async deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined> {
+    async deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
+        return undefined
+    }
+
+    async getUserType(creds: UserCredentials): Promise<UserType> {
+        return 'customer-trader'
+    }
+
+    async getUserId(email: String): Promise<number> {
+        return 128
+    }
+
+    async getAccountInfo(id: number): Promise<AccountInfo> {
+        await new Promise(r => setTimeout(r, 1000));
+
+        return {
+            id: id,
+            email: "test@email.com",
+            password: "",
+
+            username: "Username",
+            pfpSource: "/images/test_product_image.png",
+
+            aboutMe: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+
+            firstName: "Name",
+            lastName: "Surname",
+            telNumber: "1234567890",
+            address: "Kyiv"
+        }
+    }
+
+    async updateAccountInfo(): Promise<undefined> {
         return undefined
     }
 }
@@ -343,29 +412,26 @@ export class TemporaryDataSource implements DataSource {
     server = new ServerDataSource()
     test = new TestDataSource()
 
-    authenticateAsync(creds: UserCreditials): Promise<undefined> {
+    authenticateAsync(creds: UserCredentials): Promise<undefined> {
         return this.server.authenticateAsync(creds)
     }
     signUpAsync(info: SignUpInfo): Promise<undefined> {
         return this.server.signUpAsync(info)
     }
-    getUserType(creds: UserCreditials): Promise<UserType> {
-        return this.server.getUserType(creds)
-    }
 
     getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
         return this.test.getSpecialProductsAsync()
     }
-    getCartProductsAsync(creds: UserCreditials): Promise<CartProductInfo[]> {
+    getCartProductsAsync(creds: UserCredentials): Promise<CartProductInfo[]> {
         return this.test.getCartProductsAsync()
     }
-    addProductToCartAsync(id: number, creds: UserCreditials): Promise<undefined> {
+    addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined> {
         return this.test.addProductToCartAsync()
     }
-    updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCreditials): Promise<undefined> {
+    updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined> {
         return this.test.updateCartProductQuantityAsync(productId, newAmount)
     }
-    removeProductFromCartAsync(productId: number, creds: UserCreditials): Promise<undefined> {
+    removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
         return this.test.removeProductFromCartAsync(productId)
     }
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
@@ -378,17 +444,29 @@ export class TemporaryDataSource implements DataSource {
         return this.test.getProductInfo(id)
     }
     
-    addProduct(info: NewProductInfo, creds: UserCreditials): Promise<undefined> {
+    addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
         return this.test.addProduct()
     }
-    getUserProductsSearchDesc(status: ProductStatus, creds: UserCreditials): Promise<UserProductSearchDesc> {
+    getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc> {
         return this.test.getUserProductsSearchDesc()
     }
-    getUserProducts(filter: UserProductSearchFilter, creds: UserCreditials): Promise<ConciseProductInfo[]> {
+    getUserProducts(filter: UserProductSearchFilter, creds: UserCredentials): Promise<ConciseProductInfo[]> {
         return this.test.getUserProducts(filter)
     }
-    deleteProducts(ids: number[], creds: UserCreditials): Promise<undefined> {
+    deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
         return this.test.deleteProducts(ids, creds)
     }
-    
+
+    getUserType(creds: UserCredentials): Promise<UserType> {
+        return this.server.getUserType(creds)
+    }
+    getUserId(email: String): Promise<number> {
+        return this.test.getUserId(email)
+    }
+    getAccountInfo(id: number): Promise<AccountInfo> {
+        return this.test.getAccountInfo(id)
+    }
+    updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
+        return this.test.updateAccountInfo()
+    }
 }

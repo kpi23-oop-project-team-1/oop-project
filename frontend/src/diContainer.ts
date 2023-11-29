@@ -1,20 +1,20 @@
 import { createContext } from "react";
 import { DataSource, TemporaryDataSource, TestDataSource } from "./dataSource"
-import { CookieUserCreditialsStore, TestUserCreditialsStore, UserCrediatialsStore } from "./userCredsStore";
+import { CookieUserCredentialsStore, TestUserCredentialsStore, UserCredentialsStore } from "./userCredsStore";
 
 export type DiContainer = {
     dataSource: DataSource,
-    userCredsStore: UserCrediatialsStore
+    userCredsStore: UserCredentialsStore
 };
 
 export const TestDiContainer: DiContainer = {
     dataSource: new TestDataSource(),
-    userCredsStore: new TestUserCreditialsStore()
+    userCredsStore: new TestUserCredentialsStore()
 }
 
 export const TemporaryDiContainer: DiContainer = {
     dataSource: new TemporaryDataSource(),
-    userCredsStore: new CookieUserCreditialsStore()
+    userCredsStore: new CookieUserCredentialsStore()
 }
 
 export const DiContainerContext = createContext<DiContainer>(TestDiContainer)

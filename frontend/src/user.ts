@@ -1,6 +1,6 @@
 
 export type UserType = 'customer-trader' | 'admin'
-export type UserCreditials = {
+export type UserCredentials = {
     email: string,
     password: string
 }

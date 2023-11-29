@@ -27,7 +27,7 @@ export function useCart(): [DeferredDataState<Cart>, CartManager] {
     const diContainer = useContext(DiContainerContext)
     const dataSource = diContainer.dataSource
     
-    const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCrediatials(), [])
+    const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])
     const [cartState, setCartState] = useValueFromDataSource(
         async ds => userCreds ? await ds.getCartProductsAsync(userCreds) : [], 
     )

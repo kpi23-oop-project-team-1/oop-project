@@ -29,7 +29,7 @@ export default function MyProductsPage() {
     const diContainer = useContext(DiContainerContext)
 
     const dataSource = diContainer.dataSource
-    const userCreds = diContainer.userCredsStore.getCurrentUserCrediatials()
+    const userCreds = diContainer.userCredsStore.getCurrentUserCredentials()
 
     const cartAndManager = useCart()
     const userType = useUserType()

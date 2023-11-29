@@ -1,0 +1,17 @@
+.file-image-loader-container {
+    margin-bottom: 20px;
+
+    img {
+        width: 256px;
+        max-height: 512px;
+
+        &:not(:first-child) {
+            margin-top: 10px;
+        }
+    }
+
+    input {
+        display: block;
+        margin-top: 10px;
+    }
+}

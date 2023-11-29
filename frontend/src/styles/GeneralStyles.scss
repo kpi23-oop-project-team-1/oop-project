@@ -103,6 +103,24 @@ button {
         padding: 0;
         background-color: transparent;
     }
+
+    &.text-button {
+        padding: 10px 0px;
+        background-color: transparent;
+
+        hr {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            border-style: none;
+            border-top: 2px solid transparent;
+        }
+    }
+
+    &.text-button:hover {
+        hr {
+            border-top: 2px solid colors.$color-on-surface-light;
+        }
+    }
 }
 
 //
@@ -135,6 +153,10 @@ a.link-button {
 
 p {
     margin: 0;
+
+    &.gray {
+        color: colors.$color-gray;
+    }
 }
 
 .uppercase {
@@ -143,11 +165,10 @@ p {
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
-}
-
-h2 {
     font-weight: normal;
-  
+
+    margin-bottom: 15px;
+
     &.primary {
         color: colors.$primary-color;
     }
@@ -155,4 +176,24 @@ h2 {
 
 p.error {
     color: colors.$error-color;
+}
+
+
+//
+// Divider
+//
+
+hr {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-style: none;
+    border-top: 2px solid colors.$color-on-surface-light;
+
+    &.primary {
+        border-top: 2px solid colors.$primary-color;
+    }
+
+    &.primary-light {
+        border-top: 2px solid colors.$primary-dark-color;
+    }
 }

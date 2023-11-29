@@ -1,14 +1,14 @@
 import { getCookie, setCookie } from "./cookies"
-import { UserCreditials } from './user';
+import { UserCredentials } from './user';
 
-export interface UserCrediatialsStore {
-    getCurrentUserCrediatials(): UserCreditials | undefined
-    saveUser(crediatials: UserCreditials): void
+export interface UserCredentialsStore {
+    getCurrentUserCredentials(): UserCredentials | undefined
+    saveUser(credentials: UserCredentials): void
 }
 
-export class TestUserCreditialsStore implements UserCrediatialsStore {
-    getCurrentUserCrediatials(): UserCreditials {
-        return { email: "123", password: "123" }
+export class TestUserCredentialsStore implements UserCredentialsStore {
+    getCurrentUserCredentials(): UserCredentials {
+        return { email: "test@email.com", password: "123" }
     }
 
     saveUser(): void {
@@ -17,8 +17,8 @@ export class TestUserCreditialsStore implements UserCrediatialsStore {
 
 const userCredsExpirationDays = 365
 
-export class CookieUserCreditialsStore implements UserCrediatialsStore {
-    getCurrentUserCrediatials(): UserCreditials | undefined {        
+export class CookieUserCredentialsStore implements UserCredentialsStore {
+    getCurrentUserCredentials(): UserCredentials | undefined {
         const email = getCookie('email')
         const password = getCookie("password")
 
@@ -29,8 +29,8 @@ export class CookieUserCreditialsStore implements UserCrediatialsStore {
         return { email, password }
     }
 
-    saveUser(crediatials: UserCreditials): void {
-        setCookie("email", crediatials.email, userCredsExpirationDays)
-        setCookie("password", crediatials.password, userCredsExpirationDays)
+    saveUser(credentials: UserCredentials): void {
+        setCookie("email", credentials.email, userCredsExpirationDays)
+        setCookie("password", credentials.password, userCredsExpirationDays)
     }
 }

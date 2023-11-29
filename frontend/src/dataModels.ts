@@ -185,6 +185,41 @@ export type NewProductInfo = {
     color: ColorId,
 }
 
+// Account
+
+export type AccountInfo = {
+    id: number,
+    email: string,
+    password: string,
+
+    username: string,
+    pfpSource: string,
+
+    aboutMe: string,
+
+    firstName: string,
+    lastName: string,
+    telNumber: string,
+    address: string
+}
+
+export type NewAccountInfo = {
+    email: string,
+    password: string,
+
+    username: string,
+    pfpFile: File,
+
+    aboutMe: string,
+
+    firstName: string,
+    lastName: string,
+    telNumber: string,
+    address: string
+}
+
+// Search
+
 export type UserProductSearchFilter = {
     status: ProductStatus,
     page: number

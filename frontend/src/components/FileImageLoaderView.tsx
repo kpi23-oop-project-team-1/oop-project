@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react"
+import "../styles/FileImageLoaderView.scss"
 import { pushElementAndCopy } from "../utils/arrayUtils"
 
 type FileImageLoaderViewProps = {
