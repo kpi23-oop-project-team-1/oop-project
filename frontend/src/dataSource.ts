@@ -32,7 +32,7 @@ export interface DataSource {
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined>
 
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc>
-    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult>
+    getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult>
     getProductInfo(id: number): Promise<ProductInfo>
 
     addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined>
@@ -128,7 +128,7 @@ export class ServerDataSource implements DataSource {
         })    
     }
 
-    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult> {
+    getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult> {
         return httpFetchAsync<SearchConciseProductsResult>({
             method: "GET",
             url: this.createUrl("products") + searchFilterToSearchParams(filter),  

@@ -1,32 +1,29 @@
 import "../styles/ProductsPage.scss"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { StringResourcesContext } from "../StringResourcesContext"
 import { CartContext, useCart } from "../cart"
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader"
 import SearchFilterPanel from "../components/SearchFilterPanel"
-import { CategoryId, ColorId, ConciseProductInfo, ProductState, SearchFilter, SearchOrder, allCategoryIds, allColorIds, allProductStates, allSearchOrders, parseNumberRange, searchFilterToSearchParams } from "../dataModels"
+import { ConciseProductInfo, SearchFilter, SearchOrder, allCategoryIds, allColorIds, allProductStates, allSearchOrders, parseNumberRange, searchFilterToSearchParams } from "../dataModels"
 import ProductImageWithStripe from "../components/ProductImageWithStripe"
-import { formatPriceToString, splitToTypedStringArray } from "../utils/stringFormatting"
+import { formatPriceToString } from "../utils/stringFormatting"
 import { useValueFromDataSource } from "../dataSource.react"
 import DeferredDataContainer from "../components/DeferredDataContainer"
 import { Dropdown } from "../components/Dropdown"
 import PageNavRow from "../components/PageNavRow"
 import Footer from "../components/Footer"
-import { isValidNumber } from "../utils/dataValidation"
 import { Link } from "react-router-dom"
 import { UserTypeContext, useUserType } from "../user.react"
+import { useMappedSearchParams } from "../utils/urlUtils.react"
+import { GlobalSearchQueryContext } from "../globalSearchQueryContext"
 
 export default function ProductsPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
     const userType = useUserType()
-
-    const [filter, setFilter] = useState<SearchFilter>(extractSearchFilterFromSearchParams())
-    const [commitedFilter, setCommitedFilter] = useState(filter)
-
-    useEffect(() => {
-        updateUrl(commitedFilter)
-    }, [commitedFilter])
+    
+    const [commitedFilter, setCommitedFilter] = useSearchFilterFromSearchParams()
+    const [filter, setFilter] = useState<SearchFilter>(commitedFilter)
 
     const [filterDescState] = useValueFromDataSource(ds => ds.getSearchFilterDescAsync(filter.category))
     const [searchResultState] = useValueFromDataSource(ds => ds.getConciseProductsBySearch(commitedFilter), [commitedFilter])
@@ -42,6 +39,8 @@ export default function ProductsPage() {
     return (
         <UserTypeContext.Provider value={userType.value}>
         <CartContext.Provider value={cartAndManager}>
+        <GlobalSearchQueryContext.Provider value={commitedFilter.query ?? undefined}>
+
             <PageWithSearchHeader
               dialogType={dialogType}
               onChangeDialogType={setDialogType}>
@@ -73,52 +72,29 @@ export default function ProductsPage() {
                 </div>
                 <Footer/>
             </PageWithSearchHeader>
+
+        </GlobalSearchQueryContext.Provider>
         </CartContext.Provider>
         </UserTypeContext.Provider>
     )
 }
 
-function updateUrl(filter: SearchFilter) {
-    navigateToUrl(createSearchFilterUrl(filter))
-}
-
 function createSearchFilterUrl(filter: SearchFilter) {
-    return `${window.location.protocol}//${window.location.host}/products${searchFilterToSearchParams(filter)}`
+    return `/products${searchFilterToSearchParams(filter)}`
 }
 
-function navigateToUrl(url: string) {
-    history.pushState({}, "", url)
-}
+function useSearchFilterFromSearchParams(): [SearchFilter, React.Dispatch<React.SetStateAction<SearchFilter>>] {
+    return useMappedSearchParams<SearchFilter>(params => {
+        const query = params.get("query")
+        const page = params.getInt("page", 0)
+        const category = params.getStringUnion("category", allCategoryIds)
+        const order = params.getStringUnion("order", allSearchOrders)
+        const priceRange = params.getAndMap("price", parseNumberRange)
+        const colorIds = params.getStringUnionList("colors", allColorIds)
+        const states = params.getStringUnionList("states", allProductStates)
 
-function extractSearchFilterFromSearchParams(): SearchFilter {
-    const params = new URLSearchParams(document.location.search)
-    const query = params.get("query") ?? undefined
-
-    const pageStr = params.get("page")
-    let page: number | undefined = undefined
-    if (pageStr != null && isValidNumber(pageStr)) {
-        page = parseInt(pageStr)
-    }
-
-    let category = (params.get("category") ?? undefined) as CategoryId | undefined
-    if (!allCategoryIds.includes(category as CategoryId)) {
-        category = undefined
-    }
-
-    let order = (params.get("order") ?? undefined) as SearchOrder | undefined
-    if (!allSearchOrders.includes(order as SearchOrder)) {
-        order = undefined
-    }
-
-    const priceRangeStr = params.get("price") 
-    const priceRange = priceRangeStr != null ? parseNumberRange(priceRangeStr) : undefined
-    const colorIdsStr = params.get("colors")
-    const statesStr = params.get("states")
-
-    const colorIds = colorIdsStr != null ? splitToTypedStringArray<ColorId>(colorIdsStr, ';', allColorIds) : undefined
-    const states = statesStr != null ? splitToTypedStringArray<ProductState>(statesStr, ';', allProductStates) : undefined
-
-    return { query, category, order, priceRange, colorIds, states, page }
+        return { query, category, order, priceRange, colorIds, states, page }
+    }, searchFilterToSearchParams)
 }
 
 type ProductsGridHeaderProps = {

@@ -82,11 +82,7 @@ export type SearchFilter = {
     states?: ProductState[],
 }
 
-export function searchFilterToSearchParams(filter: SearchFilter | undefined): string {
-    if (!filter) {
-        return ""
-    }
-
+export function searchFilterToSearchParams(filter: SearchFilter): string {
     var builder = new UrlSearchParamsBuilder()
 
     if (filter.page && filter.page > 1) {
@@ -237,11 +233,7 @@ export type UserProductSearchDesc = {
     totalPages: number
 }
 
-export function userProductSearchFilterToSearchParams(filter: UserProductSearchFilter | undefined): string {
-    if (!filter) {
-        return ""
-    }
-
+export function userProductSearchFilterToSearchParams(filter: UserProductSearchFilter): string {
     const builder = new UrlSearchParamsBuilder()
     builder.appendString("status", filter.status)
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import shopifyLogo from '../../public/images/shopify-logo.png'
 import CategoryIcon from '../icons/category.svg'
 import FavoriteIcon from '../icons/favorite.svg'
@@ -10,8 +10,10 @@ import { CartContext } from '../cart'
 import { Link, To } from 'react-router-dom'
 import { StringResourcesContext } from '../StringResourcesContext'
 import { UserTypeContext } from '../user.react'
+import { GlobalSearchQueryContext } from '../globalSearchQueryContext'
 
 export type FullHeaderProps = {
+    onSearchSubmit: (query: string) => void,
     onShowCart: () => void
 };
 
@@ -19,7 +21,15 @@ export default function FullHeader(props: FullHeaderProps) {
     const strRes = useContext(StringResourcesContext)
     const userType = useContext(UserTypeContext)
 
-    let [searchQuery, setSearchQuery] = useState("")
+    const globalSearchQuery = useContext(GlobalSearchQueryContext)
+    const [searchQuery, setSearchQuery] = useState(globalSearchQuery ?? "")
+
+    useEffect(() => {
+        if (globalSearchQuery) {
+            setSearchQuery(globalSearchQuery)
+        }
+    }, [globalSearchQuery])
+
     const [cart] = useContext(CartContext)
 
     return (
@@ -36,9 +46,8 @@ export default function FullHeader(props: FullHeaderProps) {
                 <SearchBar
                   placeholder={strRes.headerSearchBoxPlaceholder}
                   text={searchQuery}
-                  searchButtonText={strRes.search}
-                  onInputTextChanged={text => setSearchQuery(text)}
-                  onInputFocusChanged={() => {}}/>
+                  onSubmit={() => props.onSearchSubmit(searchQuery)}
+                  onInputTextChanged={setSearchQuery}/>
             </div>
 
             <div id="header-option-block">

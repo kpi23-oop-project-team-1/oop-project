@@ -18,6 +18,7 @@ import { Link } from "react-router-dom";
 import { isValidNumber } from "../utils/dataValidation";
 import PageNavRow from "../components/PageNavRow";
 import Footer from "../components/Footer";
+import { useMappedSearchParams } from "../utils/urlUtils.react";
 
 const emptySearchDesc: UserProductSearchDesc = {
     totalPages: 0,
@@ -37,7 +38,7 @@ export default function MyProductsPage() {
 
     navigateToMainPageIfNotBuyerSeller(userType, navigate)
 
-    const [filter, setFilter] = useState(extractSearchFilterFromSearchParams())
+    const [filter, setFilter] = useSearchFilterFromSearchParams()
     const [searchDesc] = useValueFromDataSource(
         async ds => userCreds ? await ds.getUserProductsSearchDesc(filter.status, userCreds) : emptySearchDesc, 
         [filter]
@@ -48,8 +49,6 @@ export default function MyProductsPage() {
     )
 
     const [selectedIds, setSelectedIds] = useState<number[]>([])
-
-    useEffect(() => navigate(createSearchFilterUrl(filter)), [filter])
 
     function onAddProduct() {
         navigate('/addproduct')
@@ -107,7 +106,7 @@ export default function MyProductsPage() {
             {
                 searchDesc.value && searchDesc.value.totalPages > 1 ?
                 <PageNavRow 
-                  createLink={page => createFullSearchFilterUrl({ ...filter, page })}
+                  createLink={page => createSearchFilterUrl({ ...filter, page })}
                   onNavigateLink={page => {
                       const newFilter = { ...filter, page }
 
@@ -133,24 +132,13 @@ function createSearchFilterUrl(filter: UserProductSearchFilter) {
     return `/myproducts${userProductSearchFilterToSearchParams(filter)}`
 }
 
-function createFullSearchFilterUrl(filter: UserProductSearchFilter) {
-    return `${window.location.protocol}//${window.location.host}/${createSearchFilterUrl(filter)}`
-}
+function useSearchFilterFromSearchParams(): [UserProductSearchFilter, React.Dispatch<React.SetStateAction<UserProductSearchFilter>>] {
+    return useMappedSearchParams(params => {
+        const status = params.getStringUnion("status", allProductStatuses) ?? 'active'
+        const page = params.getInt("page", 1) ?? 1
 
-function extractSearchFilterFromSearchParams(): UserProductSearchFilter {
-    const params = new URLSearchParams(document.location.search)
-    let status = params.get("status") as ProductStatus ?? 'active'
-    if (!allProductStatuses.includes(status)) {
-        status = 'active'
-    }
-
-    const pageStr = params.get("page")
-    let page = 1
-    if (pageStr != null && isValidNumber(pageStr)) {
-        page = parseInt(pageStr)
-    }
-
-    return { status, page }
+        return { status, page }
+    }, userProductSearchFilterToSearchParams)
 }
 
 type ProductGridWithHeaderProps = {
