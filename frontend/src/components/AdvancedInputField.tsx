@@ -1,5 +1,5 @@
 import { HTMLInputTypeAttribute, useState } from 'react'
-import ErrorOutlineIcon from '../../public/images/error_outline.svg'
+import ErrorOutlineIcon from '../icons/error_outline.svg'
 import "../styles/AdvancedInputField.scss"
 
 export type AdvancedInputProps = {

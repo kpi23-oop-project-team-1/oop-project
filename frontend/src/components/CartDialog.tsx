@@ -5,9 +5,9 @@ import { usePopper } from 'react-popper';
 import Menu, { MenuItem } from "./Menu"
 
 import "../styles/CartDialog.scss"
-import OptionsIcon from "../../public/images/options.svg"
-import CloseIcon from "../../public/images/close.svg"
-import TrashIcon from "../../public/images/trash.svg"
+import OptionsIcon from "../icons/options.svg"
+import CloseIcon from "../icons/close.svg"
+import TrashIcon from "../icons/trash.svg"
 import NumberSpinner from "./NumberSpinner"
 import { formatPriceToString } from "../utils/stringFormatting"
 import { Dialog } from "./Dialogs"

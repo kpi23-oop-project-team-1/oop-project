@@ -1,5 +1,5 @@
 import '../styles/SignUpPage.scss'
-import UaFlag from '../../public/images/ua_flag.svg'
+import UaFlag from '../icons/ua_flag.svg'
 import { useContext, useMemo, useState } from "react";
 import AdvancedInput from "../components/AdvancedInput";
 import SimpleHeader from "../components/SimpleHeader";

@@ -1,5 +1,5 @@
 import "../styles/StarRating.scss"
-import StarIcon from "../../public/images/star.svg"
+import StarIcon from "../icons/star.svg"
 
 type StarRatingProps = {
     total: number,

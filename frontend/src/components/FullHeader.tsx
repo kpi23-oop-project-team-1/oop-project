@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react'
 import shopifyLogo from '../../public/images/shopify-logo.png'
-import CategoryIcon from '../../public/images/category.svg'
-import FavoriteIcon from '../../public/images/favorite.svg'
-import CartIcon from '../../public/images/cart.svg'
-import UserIcon from '../../public/images/user.svg'
+import CategoryIcon from '../icons/category.svg'
+import FavoriteIcon from '../icons/favorite.svg'
+import CartIcon from '../icons/cart.svg'
+import UserIcon from '../icons/user.svg'
 import "../styles/FullHeader.scss"
 import SearchBar from './SearchBar'
 import { CartContext } from '../cart'

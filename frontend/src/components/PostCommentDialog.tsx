@@ -3,7 +3,7 @@ import { totalCommentStarCount } from "../dataModels"
 import { Dialog } from "./Dialogs"
 import { StarRating } from "./StarRating"
 import { StringResourcesContext } from "../StringResourcesContext"
-import CloseIcon from '../../public/images/close.svg'
+import CloseIcon from '../icons/close.svg'
 import "../styles/PostCommentDialog.scss"
 
 type PostCommentDialogProps = {
