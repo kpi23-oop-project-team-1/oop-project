@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/usertype",
                     "/api/auth",
+                    "/api/postproductcomment",
                     "/api/userproducts",
                     "/api/userproductssearchdesc"
                 ).authenticated()

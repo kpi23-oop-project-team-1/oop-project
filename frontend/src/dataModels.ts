@@ -81,11 +81,7 @@ export type SearchFilter = {
     states?: ProductState[],
 }
 
-export function searchFilterToSearchParams(filter: SearchFilter | undefined): string {
-    if (!filter) {
-        return ""
-    }
-
+export function searchFilterToSearchParams(filter: SearchFilter): string {
     var builder = new UrlSearchParamsBuilder()
 
     if (filter.page && filter.page > 1) {
@@ -152,11 +148,19 @@ export type SearchConciseProductsResult = {
     products: ConciseProductInfo[]
 }
 
+export const totalCommentStarCount = 5;
+
 export type ProductComment = {
     user: ConciseUserInfo,
     rating: number,
     text: string,
     dateString: string
+}
+
+export type NewCommentInfo = {
+    targetId: number,
+    rating: number,
+    text: string
 }
 
 export type ProductInfo = {
@@ -184,6 +188,41 @@ export type NewProductInfo = {
     color: ColorId,
 }
 
+// Account
+
+export type AccountInfo = {
+    id: number,
+    email: string,
+    password: string,
+
+    username: string,
+    pfpSource: string,
+
+    aboutMe: string,
+
+    firstName: string,
+    lastName: string,
+    telNumber: string,
+    address: string
+}
+
+export type NewAccountInfo = {
+    email: string,
+    password: string,
+
+    username: string,
+    pfpFile: File,
+
+    aboutMe: string,
+
+    firstName: string,
+    lastName: string,
+    telNumber: string,
+    address: string
+}
+
+// Search
+
 export type UserProductSearchFilter = {
     status: ProductStatus,
     page: number
@@ -193,11 +232,7 @@ export type UserProductSearchDesc = {
     totalPages: number
 }
 
-export function userProductSearchFilterToSearchParams(filter: UserProductSearchFilter | undefined): string {
-    if (!filter) {
-        return ""
-    }
-
+export function userProductSearchFilterToSearchParams(filter: UserProductSearchFilter): string {
     const builder = new UrlSearchParamsBuilder()
     builder.appendString("status", filter.status)
 

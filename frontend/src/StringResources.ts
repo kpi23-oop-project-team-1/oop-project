@@ -5,6 +5,7 @@ interface StringResources {
     readonly password: string,
     readonly signUp: string,
     readonly signIn: string,
+    readonly signOut: string,
     readonly newToWebsite: string,
     readonly invalidEmail: string,
     readonly invalidEmailOrPassword: string,
@@ -12,8 +13,11 @@ interface StringResources {
     readonly shortPasswordError: string,
     readonly signUpError: string,
     readonly telephoneNumber: string,
+    readonly username: string,
+    readonly personAboutMe: string,
     readonly personFirstName: string,
     readonly personLastName: string,
+    readonly personAddress: string,
     readonly textEmptyError: string,
     readonly headerSearchBoxPlaceholder: string,
     readonly search: string,
@@ -59,6 +63,18 @@ interface StringResources {
     readonly edit: string,
     readonly productStatusLabels: Record<ProductStatus, string>
     readonly delete: string
+    readonly myProfile: string,
+    readonly myProducts: string,
+    readonly myAccount: string,
+    readonly myAccountPageDesc: string,
+    readonly profileLook: string,
+    readonly changePfp: string,
+    readonly loginDetails: string,
+    readonly changePassword: string,
+    readonly personContactDetails: string,
+    readonly saveChanges: string,
+    readonly postComment: string,
+    readonly rateProductHeader: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -66,15 +82,19 @@ export const ukrainianStringResources : StringResources = {
     password: "Password",
     signUp: "Реєстарація",
     signIn: "Вхід",
+    signOut: "Вийти",
     newToWebsite: "New to website?",
     invalidEmail: "Введіть правильний e-mail",
     invalidEmailOrPassword: "Неправильний email або пароль",
     invalidTelNumber: "Неправильний номер телефону",
     shortPasswordError: "Пароль має не менше 8 символів",
     signUpError: "Виникла помилка при реєстрації",
+    username: "Ім'я профілю",
+    personAboutMe: "Про мене",
     telephoneNumber: "Номер телефону",
     personFirstName: "Ім'я",
     personLastName: "Прізвище",
+    personAddress: "Місто",
     textEmptyError: "Поле не має бути пустим",
     headerSearchBoxPlaceholder: "Я шукаю",
     search: "Пошук",
@@ -145,5 +165,17 @@ export const ukrainianStringResources : StringResources = {
         declined: "Відхилені",
         sold: "Продані"
     },
-    delete: "Видалити"
+    delete: "Видалити",
+    myProfile: "Мій профіль",
+    myProducts: "Мої товари",
+    myAccount: "Мій кабінет",
+    myAccountPageDesc: "Тут Ви можете переглянути та змінити налаштування свого акаунту",
+    profileLook: "Вигляд профілю",
+    changePfp: "Змінити зображення профілю",
+    loginDetails: "Дані для входу",
+    changePassword: "Змінити пароль",
+    personContactDetails: "Контактні дані",
+    saveChanges: "Зберегти зміни",
+    postComment: "Опублікувати",
+    rateProductHeader: "Оцініть товар"
 }

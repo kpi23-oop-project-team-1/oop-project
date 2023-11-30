@@ -1,71 +1,15 @@
 @use 'colors';
 
 #add-product-page-content {
-    width: 50%;
-    margin-left: 32px;
+    width: 60%;
+    margin: 40px auto;
 
-    label {
-        display: block;
-        margin-top: 10px;
-        margin-bottom: 5px;
-        font-size: 1.15em;
-    }
-
-    input, textarea {
-        width: 80%;
-        border-radius: 5px;
-    }
-
-    h2 {
-        margin-top: 20px;
-        margin-bottom: 10px;
-    }
-
-    .error {
-        margin-top: 5px;
-        margin-bottom: 10px;
-
-        font-size: 1em;
-        margin-left: 5px;
-    }
-
-    .dropdown-header {
-        border: 1px solid colors.$color-on-surface-light;
-        border-radius: 5px;
-        padding: 5px;
-
-        width: 150px;
-    }
-
-    .dropdown {
-        margin-bottom: 20px;
-        width: 150px;
+    button {
+        float: right;
     }
 }
 
-#add-product-page-content .file-image-loader-container {
-    margin-bottom: 20px;
-
-    img {
-        width: 256px;
-        max-height: 512px;
-        
-        &:not(:first-child) {
-            margin-top: 10px;
-        }
-    }
-
-    input {
-        display: block;
-        margin-top: 10px;
-    }
-}
-
-.add-product-page-number-input {
-    min-width: 200px !important;
-}
-
-#add-product-button {
-    position: relative;
-    margin: 30px auto;
-}
+// #add-product-button {
+//     position: relative;
+//     margin: 30px auto;
+// }

@@ -1,0 +1,27 @@
+@use 'colors';
+
+#my-account-content {
+    width: 60%;
+    margin: 40px auto;
+}
+
+#my-account-nav-panel {
+    margin-top: 10px;
+}
+
+// Grid
+#my-account-content-grid {
+    display: flex;
+}
+
+#my-account-content-left-side {
+    flex: .3;
+}
+
+#my-account-content-right-side {
+    flex: .7;
+
+    button {
+        float: right;
+    }
+}

@@ -1,8 +1,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { clamp } from "../utils/mathUtils"
 import "../styles/ImageCarousel.scss"
-import LeftArrowIcon from "../../public/images/left_arrow.svg"
-import RightArrowIcon from "../../public/images/right_arrow.svg"
+import LeftArrowIcon from "../icons/left_arrow.svg"
+import RightArrowIcon from "../icons/right_arrow.svg"
 
 type ImageCarouselProps = {
     imageSources: string[]

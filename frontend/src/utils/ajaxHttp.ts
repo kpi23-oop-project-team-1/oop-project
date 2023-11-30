@@ -1,4 +1,4 @@
-import { UserCreditials } from "../user";
+import { UserCredentials } from "../user";
 import { encodeBase64 } from "../utils/base64";
 import { basicAuthEncode } from "./basicAuth";
 
@@ -7,7 +7,7 @@ export type HttpMethod = 'GET' | 'POST' | 'DELETE';
 export type HttpBaseFetchInfo<M extends HttpMethod> = {
     method: M, 
     url: string, 
-    creditials?: UserCreditials
+    credentials?: UserCredentials
     timeout?: number 
 }
 
@@ -46,7 +46,7 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
         // Async request
         httpRequest.open(info.method, info.url, true)
 
-        const creds = info.creditials
+        const creds = info.credentials
         if (creds) { 
             httpRequest.setRequestHeader("Authorization", basicAuthEncode(creds))
         }

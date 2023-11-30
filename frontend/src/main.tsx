@@ -14,6 +14,7 @@ import SignUpPage from "./pages/SignUpPage";
 import ProductInfoPage from "./pages/ProductInfoPage";
 import AddProductPage from "./pages/AddProductPage";
 import MyProductsPage from "./pages/MyProductsPage";
+import MyAccountPage from "./pages/MyAccountPage";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
     {
         path: "/myproducts",
         element: <MyProductsPage/>
+    },
+    {
+        path: "/myaccount",
+        element: <MyAccountPage/>
     }
   ]
 );

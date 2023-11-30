@@ -1,8 +1,7 @@
-import { useContext } from "react"
+import { useNavigate } from "react-router"
 import CartDialog from "../components/CartDialog"
 import { DialogHolder, DialogInfo, DialogSwitch } from "../components/Dialogs"
 import FullHeader from "../components/FullHeader"
-import { UserTypeContext, useUserType } from "../user.react"
 
 export type PageWithFullHeaderDialogType = 'cart'
 
@@ -13,8 +12,9 @@ export type PageWithFullHeaderProps<T> = React.PropsWithChildren<{
 }>
 
 export default function PageWithSearchHeader<T>(props: PageWithFullHeaderProps<T>) {
+    const navigate = useNavigate()
+
     function dialogSwitch(type: PageWithFullHeaderDialogType | T): DialogInfo {
-        // Temporarily like this. More dialogs will be added.
         switch (type) {
             case 'cart':
                 return {
@@ -22,18 +22,27 @@ export default function PageWithSearchHeader<T>(props: PageWithFullHeaderProps<T
                     factory: () => <CartDialog onClose={() => props.onChangeDialogType(undefined)}/>
                 }
             default:
+                if (props.dialogSwitch) {
+                    return props.dialogSwitch(type)
+                }
                 throw "Unexpected type in props"
         }
     }
 
-    
+    function onSearchSubmit(query: string) {
+        const encodedQuery = encodeURI(query)
+
+        navigate(`/products?query=${encodedQuery}`)
+    }
 
     return (
         <DialogHolder<PageWithFullHeaderDialogType | T> 
           dialogType={props.dialogType}
           dialogSwitch={dialogSwitch}
           onHideDialog={() => props.onChangeDialogType(undefined)}>
-            <FullHeader onShowCart={() => props.onChangeDialogType('cart')}/>
+            <FullHeader 
+              onShowCart={() => props.onChangeDialogType('cart')}
+              onSearchSubmit={onSearchSubmit}/>
             {props.children}
         </DialogHolder>
     )
