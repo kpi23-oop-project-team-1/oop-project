@@ -28,7 +28,8 @@ export type LabeledTextInputProps = BaseLabeledInputProps & {
     placeholder: string,
     onTextChanged: (text: string) => void,
     id?: string,
-    errorText?: string
+    errorText?: string,
+    inputType?: React.HTMLInputTypeAttribute
 }
 
 export function LabeledTextInput(props: LabeledTextInputProps) {
@@ -37,7 +38,7 @@ export function LabeledTextInput(props: LabeledTextInputProps) {
             <input
               id={props.id}
               value={props.text}
-              type="text"
+              type={props.inputType ?? "text"}
               onChange={e => props.onTextChanged(e.target.value)}
               placeholder={props.placeholder}/>
 
