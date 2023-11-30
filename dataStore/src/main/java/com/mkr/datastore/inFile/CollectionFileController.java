@@ -4,6 +4,7 @@ import com.mkr.datastore.DataStoreCollectionDescriptor;
 import com.mkr.datastore.EntityScheme;
 import com.mkr.datastore.utils.ByteUtils;
 import com.mkr.datastore.utils.FileUtils;
+import com.mkr.datastore.utils.TypeUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -116,6 +117,8 @@ public class CollectionFileController<T> {
                     elementsData.add(ByteUtils.int32ToBytes((Integer) element));
                 } else if (valueElementType == String.class) {
                     elementsData.add(ByteUtils.stringToBytes((String) element, StandardCharsets.UTF_8));
+                } else if (valueElementType.isEnum()) {
+                    elementsData.add(ByteUtils.stringToBytes(element.toString(), StandardCharsets.US_ASCII));
                 } else {
                     throw new UnsupportedValueTypeException(valueElementType);
                 }
@@ -213,6 +216,15 @@ public class CollectionFileController<T> {
                     byte[] stringBytes = FileUtils.readNBytesAtPos(raf, stringBytesSize, offset);
                     offset += stringBytes.length;
                     elements[i] = new String(stringBytes, StandardCharsets.UTF_8);
+                } else if (valueElementType.isEnum()) {
+                    int stringBytesSize = FileUtils.readInt32AtPos(raf, offset);
+                    offset += ByteUtils.INT32_SIZE;
+                    byte[] stringBytes = FileUtils.readNBytesAtPos(raf, stringBytesSize, offset);
+                    offset += stringBytes.length;
+
+                    String stringValue = new String(stringBytes, StandardCharsets.US_ASCII);
+
+                    elements[i] = TypeUtils.instantiateEnumByString(valueElementType, stringValue);
                 }
             }
 
@@ -332,7 +344,7 @@ public class CollectionFileController<T> {
             raf = new RandomAccessFile(file, "rw");
             isOpen = true;
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);  // TODO: better exception handling
+            throw new RuntimeException(e);
         }
 
         if (!fileExists) {
@@ -347,7 +359,7 @@ public class CollectionFileController<T> {
             raf.close();
             isOpen = false;
         } catch (IOException e) {
-            throw new RuntimeException(e);  // TODO: better exception handling
+            throw new RuntimeException(e);
         }
     }
 
@@ -358,6 +370,8 @@ public class CollectionFileController<T> {
             return new Integer[elementCount];
         } else if (valueElementType == String.class) {
             return new String[elementCount];
+        } else if (valueElementType.isEnum()) {
+            return new Enum[elementCount];
         }
 
         throw new UnsupportedValueTypeException(valueElementType);

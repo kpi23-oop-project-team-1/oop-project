@@ -99,11 +99,12 @@ public class EntitySchemeTests {
     @Test
     public void getKeyValueTest() {
         EntityScheme<TestObject> scheme = testObjectScheme();
-        var entity = new TestObject(true, "123", 2);
+        var entity = new TestObject(true, "123", 2, TestEnum.VALUE1);
 
         assertEquals(true, scheme.getKeyValue(entity, scheme.findKeyByName("bool")));
         assertEquals("123", scheme.getKeyValue(entity, scheme.findKeyByName("string")));
         assertEquals(2, scheme.getKeyValue(entity, scheme.findKeyByName("integer")));
+        assertEquals(TestEnum.VALUE1, scheme.getKeyValue(entity, scheme.findKeyByName("testEnum")));
     }
 
     @SuppressWarnings("DataFlowIssue")
