@@ -112,8 +112,9 @@ function ProductsGridHeader(props: ProductsGridHeaderProps) {
         <div id="product-grid-order-block">
             <p>{strRes.orderBy}</p>
             <Dropdown 
-              entries={allSearchOrders.map(id => ({ id, label: strRes.searchOrderLabels[id] }) )}
               selectedValueId={props.searchOrder}
+              allIds={allSearchOrders}
+              labelMap={strRes.searchOrderLabels}
               onSelected={props.onSearchOrderChanged}/>
         </div>
         

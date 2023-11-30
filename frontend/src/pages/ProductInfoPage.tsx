@@ -1,7 +1,7 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { CartContext, CartProductInfo, useCart } from "../cart";
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { isValidNumber } from "../utils/dataValidation";
 import ImageCarousel from "../components/ImageCarousel";
 import { useValueFromDataSource } from "../dataSource.react";
@@ -21,7 +21,7 @@ type OwnPageDialogType = 'post-comment'
 type DialogType = PageWithFullHeaderDialogType | OwnPageDialogType
 
 export default function ProductInfoPage() {
-    const productId = useProductId() ?? 0
+    const productId = useProductId()
     const strRes = useContext(StringResourcesContext)
     const diContainer = useContext(DiContainerContext)
     const dataSource = diContainer.dataSource
@@ -29,11 +29,18 @@ export default function ProductInfoPage() {
     const [dialogType, setDialogType] = useState<DialogType | undefined>()
     const [cart, cartManager] = useCart()
     const [quantity, setQuantity] = useState(1)
+    const navigate = useNavigate()
 
-    const [productState, setProductState] = useValueFromDataSource(ds => ds.getProductInfo(productId), [productId])
+    useEffect(() => {
+        if (productId == undefined) {
+            navigate("/")
+        }
+    }, [productId])
+
+    const [productState, setProductState] = useValueFromDataSource(ds => ds.getProductInfo(productId ?? -1), [productId])
     const product = productState.value
 
-    const isProductInCart = useMemo(() => cartManager.isProductInCart(productId), [cart])
+    const isProductInCart = useMemo(() => cartManager.isProductInCart(productId ?? 0), [cart])
     const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])
     const userType = useUserType()
 
@@ -49,7 +56,7 @@ export default function ProductInfoPage() {
 
     function doPostComment(info: { rating: number, text: string }) {
         if (userCreds) {
-            dataSource.postProductComment({ targetId: productId, ...info }, userCreds).then(() => {
+            dataSource.postProductComment({ targetId: productId ?? -1, ...info }, userCreds).then(() => {
                 setDialogType(undefined)
                 setProductState({ type: 'loading' })
             }).catch(() => {
@@ -198,5 +205,5 @@ function useProductId(): number | undefined {
     const params = useParams()
     const productIdStr = params.productId
 
-    return productIdStr && isValidNumber(productIdStr) ? parseInt(productIdStr) : undefined
+    return productIdStr != undefined && isValidNumber(productIdStr) ? parseInt(productIdStr) : undefined
 }

@@ -180,8 +180,10 @@ export default function MyAccountPage() {
                     <h2>{strRes.profileLook}</h2>
 
                     <LabeledFileImageLoaderView
+                      type="only-upload"
                       label={strRes.changePfp}
                       maxImages={1}
+                      files={pfpFiles}
                       onFilesChanged={setPfpFiles}/>
 
                     <LabeledTextInput

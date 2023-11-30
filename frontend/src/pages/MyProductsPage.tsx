@@ -69,7 +69,7 @@ export default function MyProductsPage() {
     }
 
     function onEdit(id: number) {
-
+        navigate(`/editproduct/${id}/`)
     }
 
     return (

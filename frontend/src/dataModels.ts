@@ -189,6 +189,8 @@ export type NewProductInfo = {
     color: ColorId,
 }
 
+export type UpdateProductInfo = { id: number } & Omit<NewProductInfo, 'images'> & { images: (File | undefined)[] }
+
 // Account
 
 export type AccountInfo = {

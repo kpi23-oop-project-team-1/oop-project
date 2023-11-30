@@ -16,6 +16,7 @@ import {
     ProductStatus,
     UserProductSearchDesc,
     NewCommentInfo,
+    UpdateProductInfo,
 } from "./dataModels";
 import { UserCredentials, UserType } from "./user";
 import { httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
@@ -36,6 +37,7 @@ export interface DataSource {
     getProductInfo(id: number): Promise<ProductInfo>
 
     addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined>
+    updateProduct(info: UpdateProductInfo, creds: UserCredentials): Promise<undefined>
 
     getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc>
     getUserProducts(filter: UserProductSearchFilter, creds: UserCredentials): Promise<ConciseProductInfo[]>
@@ -143,15 +145,7 @@ export class ServerDataSource implements DataSource {
     }
 
     async addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
-        const formData = new FormData()
-        formData.set('title', info.title)
-        formData.set('description', info.description)
-        formData.set('price', info.price.toString())
-        formData.set('amount', info.totalAmount.toString())
-        formData.set('category', info.category)
-        formData.set('state', info.state)
-        formData.set('color', info.color)
-        
+        const formData = this.createFormDataFromNewProductInfo(info)
         for (const file of info.images) {
             formData.append('image', file)
         }
@@ -164,6 +158,42 @@ export class ServerDataSource implements DataSource {
         })
 
         return undefined
+    }
+
+    async updateProduct(info: UpdateProductInfo, creds: UserCredentials): Promise<undefined> {
+        const formData = this.createFormDataFromNewProductInfo(info)
+        formData.set("id", info.id.toString())
+
+        var blob = new Blob()
+        for (const file of info.images) {
+            if (file) {
+                formData.append('image', file)
+            } else {
+                formData.append('image', blob)
+            }
+        }
+
+        await httpFetchRawAsync({
+            url: this.createUrl("updateproduct"),
+            method: "POST",
+            credentials: creds,
+            body: formData
+        })
+
+        return undefined
+    }
+
+    private createFormDataFromNewProductInfo(info: Omit<NewProductInfo, 'images'>): FormData {
+        const formData = new FormData()
+        formData.set('title', info.title)
+        formData.set('description', info.description)
+        formData.set('price', info.price.toString())
+        formData.set('amount', info.totalAmount.toString())
+        formData.set('category', info.category)
+        formData.set('state', info.state)
+        formData.set('color', info.color)
+
+        return formData
     }
 
     getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc> {
@@ -373,6 +403,10 @@ export class TestDataSource implements DataSource {
         return undefined
     }
 
+    async updateProduct(): Promise<undefined> {
+        return undefined
+    }
+
     async getUserProductsSearchDesc(): Promise<UserProductSearchDesc> {
         return { totalPages: 10 }
     }
@@ -468,6 +502,9 @@ export class TemporaryDataSource implements DataSource {
     
     addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
         return this.test.addProduct()
+    }
+    updateProduct(info: UpdateProductInfo, creds: UserCredentials): Promise<undefined> {
+        return this.test.updateProduct()
     }
     getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc> {
         return this.test.getUserProductsSearchDesc()

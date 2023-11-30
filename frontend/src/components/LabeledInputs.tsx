@@ -3,7 +3,7 @@ import "../styles/LabeledInputs.scss"
 import { StringResourcesContext } from "../StringResourcesContext";
 import { Dropdown } from "../components/Dropdown";
 import NumberInput from "../components/NumberInput";
-import FileImageLoaderView from "../components/FileImageLoaderView";
+import FileImageLoaderView, { FileHolder, FileImageLoaderViewProps, FileImageLoaderViewType } from "../components/FileImageLoaderView";
 
 type BaseLabeledInputProps = {
     label: string,
@@ -63,7 +63,8 @@ export function LabeledTextAreaInput(props: LabeledTextInputProps) {
 export type LabeledDropdownInputProps<I extends string | undefined> = BaseLabeledInputProps & {
     selectedValue: I,
     onSelected: (value: I) => void,
-    entries: readonly { id: I, label: string }[]
+    allIds: readonly NonNullable<I>[],
+    labelMap: Record<NonNullable<I>, string>
 }
 
 export function LabeledDropdownInput<I extends string | undefined>(props: LabeledDropdownInputProps<I>) {
@@ -73,9 +74,10 @@ export function LabeledDropdownInput<I extends string | undefined>(props: Labele
         <LabeledInput {...props}>
             <Dropdown
               selectedValueId={props.selectedValue}
-              entries={props.entries}
               onSelected={props.onSelected}
-              placeholder={placeholder}/>
+              placeholder={placeholder}
+              allIds={props.allIds}
+              labelMap={props.labelMap}/>
         </LabeledInput>
     )
 }
@@ -103,15 +105,13 @@ export function LabeledNumberInput(props: LabeledNumberInputProps) {
     )
 }
 
-export type LabeledFileImageLoaderViewProps = BaseLabeledInputProps & {
-    maxImages: number,
-    onFilesChanged: (files: File[]) => void
-}
+export type LabeledFileImageLoaderViewProps<T extends FileImageLoaderViewType> = 
+    BaseLabeledInputProps & FileImageLoaderViewProps<T>
 
-export function LabeledFileImageLoaderView(props: LabeledFileImageLoaderViewProps) {
+export function LabeledFileImageLoaderView<T extends FileImageLoaderViewType>(props: LabeledFileImageLoaderViewProps<T>) {
     return (
         <LabeledInput {...props}>
-            <FileImageLoaderView maxImages={props.maxImages} onFilesChanged={props.onFilesChanged}/>
+            <FileImageLoaderView {...props}/>
         </LabeledInput>
     )
 }
