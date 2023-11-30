@@ -116,7 +116,7 @@ export function searchFilterToSearchParams(filter: SearchFilter): string {
 } 
 
 export type SearchFilterDesc = {
-    limitingPriceRange: NumberRange,
+    limitingPriceRange: NumberRange | undefined,
     colorIds: ColorId[],
     states: ProductState[]
 }

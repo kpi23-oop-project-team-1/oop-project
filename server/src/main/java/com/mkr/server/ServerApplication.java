@@ -41,6 +41,17 @@ public class ServerApplication extends SpringBootServletInitializer {
 				ProductState.NEW,
 				ProductStatus.ACTIVE,
 				ColorId.BLACK
+			),
+			new Product(
+				1, 0,
+				"456",
+				new String[] { "" },
+				150,
+				5,
+				ProductCategory.SPORT,
+				ProductState.ACCEPTABLE,
+				ProductStatus.ACTIVE,
+				ColorId.WHITE
 			)
 		);
 

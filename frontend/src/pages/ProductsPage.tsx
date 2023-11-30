@@ -1,5 +1,5 @@
 import "../styles/ProductsPage.scss"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { StringResourcesContext } from "../StringResourcesContext"
 import { CartContext, useCart } from "../cart"
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader"
@@ -16,30 +16,43 @@ import { Link } from "react-router-dom"
 import { UserTypeContext, useUserType } from "../user.react"
 import { useMappedSearchParams } from "../utils/urlUtils.react"
 import { GlobalSearchQueryContext } from "../globalSearchQueryContext"
+import { clampRange, rangeCompletelyContains } from "../utils/mathUtils"
 
 export default function ProductsPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
     const userType = useUserType()
     
-    const [commitedFilter, setCommitedFilter] = useSearchFilterFromSearchParams()
-    const [filter, setFilter] = useState<SearchFilter>(commitedFilter)
+    const [committedFilter, setCommittedFilter] = useSearchFilterFromSearchParams()
+    const [filter, setFilter] = useState<SearchFilter>(committedFilter)
 
     const [filterDescState] = useValueFromDataSource(ds => ds.getSearchFilterDescAsync(filter.category), [filter.category])
-    const [searchResultState] = useValueFromDataSource(ds => ds.getConciseProductsBySearch(commitedFilter), [commitedFilter])
+    const [searchResultState] = useValueFromDataSource(ds => ds.getConciseProductsBySearch(committedFilter), [committedFilter])
     const searchResult = searchResultState.value
 
     const strRes = useContext(StringResourcesContext)
 
     function setFilterAndCommit(filter: SearchFilter) {
         setFilter(filter)
-        setCommitedFilter(filter)
+        setCommittedFilter(filter)
     }
+
+    useEffect(() => {
+        if (filterDescState.type == 'success') {
+            const filterDesc = filterDescState.value
+            const priceRange = committedFilter.priceRange
+            const limitingPriceRange = filterDesc?.limitingPriceRange
+
+            if (priceRange && limitingPriceRange && !rangeCompletelyContains(limitingPriceRange, priceRange)) {
+                setFilterAndCommit({ ...committedFilter, priceRange: clampRange(priceRange, limitingPriceRange) })
+            }
+        }
+    }, [filterDescState])
 
     return (
         <UserTypeContext.Provider value={userType.value}>
         <CartContext.Provider value={cartAndManager}>
-        <GlobalSearchQueryContext.Provider value={commitedFilter.query ?? undefined}>
+        <GlobalSearchQueryContext.Provider value={committedFilter.query ?? undefined}>
 
             <PageWithSearchHeader
               dialogType={dialogType}
@@ -49,10 +62,9 @@ export default function ProductsPage() {
                         <SearchFilterPanel 
                           filterDesc={filterDescState.value} 
                           filter={filter} 
-                          productCount={searchResult?.totalProductCount ?? 0}
                           onChanged={setFilter}
                           urlFactory={createSearchFilterUrl}
-                          commitFilter={setCommitedFilter}/>
+                          commitFilter={setCommittedFilter}/>
                     </DeferredDataContainer>
                     <div id="products-page-right-side">
                         <h2>{filter.category ? strRes.productCategoryLabels[filter.category] : strRes.allProductsCategory}</h2>
@@ -69,7 +81,7 @@ export default function ProductsPage() {
                         {searchResult && searchResult.pageCount > 1 &&
                             <PageNavRow 
                               pageCount={searchResult.pageCount} 
-                              createLink={i => createSearchFilterUrl({ ...commitedFilter, page: i })}
+                              createLink={i => createSearchFilterUrl({ ...committedFilter, page: i })}
                               onNavigateLink={i => setFilterAndCommit({ ...filter, page: i })}/>
                         }
                     </div>

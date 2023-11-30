@@ -16,9 +16,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 
 public record GlobalSearchFilterDescription(
-    IntRange limitingPriceRange,
-    Set<ColorId> colorIds,
-    Set<ProductState> states
+    @Nullable IntRange limitingPriceRange,
+    @NotNull Set<ColorId> colorIds,
+    @NotNull Set<ProductState> states
 ) {
     private static final class ProductCollectorState {
         @Nullable

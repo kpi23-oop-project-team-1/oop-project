@@ -18,7 +18,7 @@ import {
     NewCommentInfo,
 } from "./dataModels";
 import { UserCredentials, UserType } from "./user";
-import { httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
+import { httpFetchAsync, httpFetchAsyncOr, httpFetchRawAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
     authenticateAsync(creds: UserCredentials): Promise<undefined>
@@ -31,7 +31,7 @@ export interface DataSource {
     updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined>
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined>
 
-    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc>
+    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined>
     getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult>
     getProductInfo(id: number): Promise<ProductInfo>
 
@@ -121,11 +121,11 @@ export class ServerDataSource implements DataSource {
         return undefined
     }
 
-    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
-        return httpFetchAsync<SearchFilterDesc>({
+    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
+        return httpFetchAsyncOr<SearchFilterDesc | undefined>({
             method: "GET",
             url: this.createUrl(`searchfilterdesc` + (categoryId ? `?category=${categoryId}` : ""))
-        })    
+        }, undefined)    
     }
 
     getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult> {
@@ -307,7 +307,7 @@ export class TestDataSource implements DataSource {
         return undefined
     }
 
-    async getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
+    async getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
         await new Promise(r => setTimeout(r, 500));
 
         return {
@@ -456,7 +456,7 @@ export class TemporaryDataSource implements DataSource {
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
         return this.test.removeProductFromCartAsync(productId)
     }
-    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
+    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
         return this.server.getSearchFilterDescAsync(categoryId)
     }
     getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult> {

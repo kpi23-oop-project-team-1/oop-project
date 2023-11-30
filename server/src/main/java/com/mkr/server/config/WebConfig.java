@@ -17,6 +17,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addConverter(new ProductCategoryConverter());
         registry.addConverter(new ProductStateListConverter());
         registry.addConverter(new ProductStatusConverter());
+        registry.addConverter(new SearchOrderConverter());
     }
 
     @Override

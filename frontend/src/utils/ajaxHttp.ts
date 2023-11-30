@@ -21,8 +21,8 @@ export type HttpDeleteFetchInfo = HttpBodyFetchInfo<'DELETE'>
 
 export type HttpFetchInfo = HttpGetFetchInfo | HttpPostFetchInfo | HttpDeleteFetchInfo
 
-export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
+export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string | undefined> {
+    return new Promise<string | undefined>((resolve, reject) => {
         const httpRequest = new XMLHttpRequest()
 
         if (info.timeout != undefined) {
@@ -32,6 +32,8 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
         httpRequest.onload = () => {
             if (httpRequest.status == 200) {
                 resolve(httpRequest.response)
+            } else if (httpRequest.status == 404) {
+                resolve(undefined)
             } else {
                 reject()
             }
@@ -55,14 +57,19 @@ export function httpFetchRawAsync(info: HttpFetchInfo): Promise<string> {
     });
 }
 
-export async function httpFetchAsync<R>(info: HttpFetchInfo, defaultValue?: R): Promise<R> {
+export async function httpFetchAsync<R>(info: HttpFetchInfo): Promise<R> {
     const rawResponse = await httpFetchRawAsync(info);
-    if (rawResponse.length == 0) {
-        if (defaultValue) {
-            return defaultValue
-        }
-
+    if (!rawResponse || rawResponse.length == 0) {
         throw "Empty response"
+    }
+
+    return JSON.parse(rawResponse);
+}
+
+export async function httpFetchAsyncOr<R>(info: HttpFetchInfo, defaultValue: R): Promise<R> {
+    const rawResponse = await httpFetchRawAsync(info);
+    if (!rawResponse || rawResponse.length == 0) {
+        return defaultValue
     }
 
     return JSON.parse(rawResponse);

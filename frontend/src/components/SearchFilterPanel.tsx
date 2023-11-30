@@ -8,11 +8,11 @@ import PlusIcon from "../icons/plus_thin.svg"
 import MinusIcon from "../icons/minus_thin.svg"
 import "../styles/SearchFilterPanel.scss"
 import { formatPriceToString } from "../utils/stringFormatting"
+import { clampRange } from "../utils/mathUtils"
 
 export type SearchFilterPanelProps = {
     filter: SearchFilter,
     filterDesc: SearchFilterDesc | undefined,
-    productCount: number,
     urlFactory: (filter: SearchFilter) => string,
     onChanged: (filter: SearchFilter) => void,
     commitFilter: (filter: SearchFilter) => void
@@ -24,7 +24,7 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
     const filter = props.filter
     const filterDesc = props.filterDesc
 
-    if (filterDesc == undefined) {
+    if (!filterDesc) {
         return <div className="search-filter-panel"/>
     }
 
@@ -42,7 +42,7 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
     }
 
     function onCommitPriceRange() {
-        props.commitFilter({ ...filter, priceRange: priceRange })
+        props.commitFilter({ ...filter, priceRange })
     }
 
     function onColorSelectedStateChanged(id: ColorId, state: boolean) {
@@ -76,32 +76,33 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
                 )}
             </SearchFilterSection>
             
-            { 
-                props.productCount > 0 &&
-                <SearchFilterSection title={strRes.filters}>
+            <SearchFilterSection title={strRes.filters}>
+                {filterDesc.limitingPriceRange && 
                     <SearchFilterPropertyBlock title={strRes.price}>
                         <PriceSelector
                           limitingRange={filterDesc.limitingPriceRange}
-                          valueRange={priceRange}
+                          valueRange={priceRange ?? { start: 0, end: 0 } }
                           onPointerUp={onCommitPriceRange}
                           onRangeChanged={onPriceRangeChanged}/>
-                    </SearchFilterPropertyBlock>
+                    </SearchFilterPropertyBlock> 
+                }
+                
 
-                    <SearchFilterPropertyBlock title={strRes.color}>
-                        <ChoiceList
-                          choices={filterDesc.colorIds.map(id => ({ id, label: strRes.colorLabels[id] }))}
-                          selectedValueIds={colorIds}
-                          onChoiceSelectedStateChanged={onColorSelectedStateChanged}/>
-                    </SearchFilterPropertyBlock>
-
-                    <SearchFilterPropertyBlock title={strRes.productState}>
-                        <ChoiceList
-                          choices={filterDesc.states.map(id => ({ id, label: strRes.productStateLabels[id] }))}
-                          selectedValueIds={states}
-                          onChoiceSelectedStateChanged={onProductStateSelectedStateChanged}/>
-                    </SearchFilterPropertyBlock>
-                </SearchFilterSection>
-            }
+                <SearchFilterPropertyBlock title={strRes.color}>
+                    <ChoiceList
+                      selectedValueIds={colorIds}
+                      allKeys={filterDesc.colorIds}
+                      keyLabels={strRes.colorLabels}
+                      onChoiceSelectedStateChanged={onColorSelectedStateChanged}/>
+                </SearchFilterPropertyBlock>
+                <SearchFilterPropertyBlock title={strRes.productState}>
+                    <ChoiceList
+                      selectedValueIds={states}
+                      allKeys={filterDesc.states}
+                      keyLabels={strRes.productStateLabels}
+                      onChoiceSelectedStateChanged={onProductStateSelectedStateChanged}/>
+                </SearchFilterPropertyBlock>
+            </SearchFilterSection>
         </div>
     )
 }
@@ -160,23 +161,22 @@ function SearchFilterPropertyBlock(props: SearchFilterPropertyBlockProps) {
     )
 }
 
-type Choice<K> = { id: K, label: string }
-
 type SearchFilterChoiceListControl<K extends string> = {
-    choices: Choice<K>[],
-    selectedValueIds: K[]
+    selectedValueIds: K[],
+    allKeys: K[],
+    keyLabels: Record<K, string>,
     onChoiceSelectedStateChanged: (id: K, isSelected: boolean) => void
 }
 
 function ChoiceList<K extends string>(props: SearchFilterChoiceListControl<K>) {
     return (
         <>
-            {props.choices.map((choice) => 
+            {props.allKeys.map(key => 
                 <Checkbox 
-                  checked={props.selectedValueIds.indexOf(choice.id) >= 0}
-                  label={choice.label}
-                  key={choice.id}
-                  onCheckedChanged={state => props.onChoiceSelectedStateChanged(choice.id, state)}/> 
+                  checked={props.selectedValueIds.includes(key)}
+                  label={props.keyLabels[key]}
+                  key={key}
+                  onCheckedChanged={state => props.onChoiceSelectedStateChanged(key, state)}/> 
             )}
         </>
     )
@@ -190,16 +190,18 @@ type PriceRangeSelectorProps = {
 }
 
 function PriceSelector(props: PriceRangeSelectorProps) {
+    const valueRange = clampRange(props.valueRange, props.limitingRange)
+
     return (
         <div className="search-filter-price-selector">
             <RangeSlider
-                valueRange={props.valueRange}
+                valueRange={valueRange}
                 limitingRange={props.limitingRange}
                 onPointerStatusChanged={status => status == 'up' ? props.onPointerUp() : undefined}
                 onRangeSelected={props.onRangeChanged}/>
             
-            <p className="search-filter-price-selector-start">{formatPriceToString(props.valueRange.start)}</p>
-            <p className="search-filter-price-selector-end">{formatPriceToString(props.valueRange.end)}</p>
+            <p className="search-filter-price-selector-start">{formatPriceToString(valueRange.start)}</p>
+            <p className="search-filter-price-selector-end">{formatPriceToString(valueRange.end)}</p>
         </div>
     )
 }
