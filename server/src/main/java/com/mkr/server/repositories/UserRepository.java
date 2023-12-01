@@ -3,6 +3,7 @@ package com.mkr.server.repositories;
 import com.mkr.datastore.DataStore;
 import com.mkr.datastore.DataStoreCollection;
 import com.mkr.server.config.DataStoreConfig;
+import com.mkr.server.domain.CartProduct;
 import com.mkr.server.domain.Comment;
 import com.mkr.server.domain.CustomerTraderUser;
 import com.mkr.server.domain.User;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Repository
@@ -53,10 +55,26 @@ public class UserRepository {
         userCollection().insert(user);
     }
 
-    public void addComment(Comment comment) {
+    public void addComment(@NotNull Comment comment) {
+        updateUser(comment.getTargetId(), u -> u.withComment(comment));
+    }
+
+    public void addCartProduct(int userId, @NotNull CartProduct product) {
+        updateUser(userId, u -> u.withCartProduct(product));
+    }
+
+    public void updateCartProductAmount(int userId, int productId, int newAmount) {
+        updateUser(userId, u -> u.withUpdatedCartProductAmount(productId, newAmount));
+    }
+
+    public void removeCartProduct(int userId, int productId) {
+        updateUser(userId, u -> u.withRemovedCartProduct(productId));
+    }
+
+    private void updateUser(int userId, Function<CustomerTraderUser, CustomerTraderUser> transform) {
         userCollection().update(
-            u -> u.getId() == comment.getTargetId() && u instanceof CustomerTraderUser,
-            u -> ((CustomerTraderUser)u).withComment(comment)
+            u -> u.getId() == userId && u instanceof CustomerTraderUser,
+            u -> transform.apply((CustomerTraderUser)u)
         );
     }
 

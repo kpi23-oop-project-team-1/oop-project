@@ -513,21 +513,20 @@ export class TemporaryDataSource implements DataSource {
     signUpAsync(info: SignUpInfo): Promise<undefined> {
         return this.server.signUpAsync(info)
     }
-
     getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
         return this.test.getSpecialProductsAsync()
     }
     getCartProductsAsync(creds: UserCredentials): Promise<CartProductInfo[]> {
-        return this.test.getCartProductsAsync()
+        return this.server.getCartProductsAsync(creds)
     }
     addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined> {
-        return this.test.addProductToCartAsync()
+        return this.server.addProductToCartAsync(id, creds)
     }
     updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined> {
-        return this.test.updateCartProductQuantityAsync(productId, newAmount)
+        return this.server.updateCartProductQuantityAsync(productId, newAmount, creds)
     }
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
-        return this.test.removeProductFromCartAsync(productId)
+        return this.server.removeProductFromCartAsync(productId, creds)
     }
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
         return this.server.getSearchFilterDescAsync(categoryId)

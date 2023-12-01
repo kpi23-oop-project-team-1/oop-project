@@ -15,6 +15,8 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
 
+import java.util.Optional;
+
 @Repository
 public class ProductRepository {
     private final DataStore dataStore;
@@ -27,6 +29,16 @@ public class ProductRepository {
     @NotNull
     private DataStoreCollection<Product> productCollection() {
         return dataStore.getCollection(DataStoreConfig.products);
+    }
+
+    public Optional<Product> getProductById(int id) {
+        try (var data = productCollection().data()) {
+            return data.filter(p -> p.getProductId() == id).findFirst();
+        }
+    }
+
+    public boolean containsProductWithId(int id) {
+        return getProductById(id).isPresent();
     }
 
     public void addComment(@NotNull Comment comment) {

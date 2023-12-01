@@ -1,8 +1,11 @@
 package com.mkr.server.domain;
 
 import com.mkr.datastore.InheritedModel;
+import com.mkr.server.dto.CartProductInfo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @InheritedModel(id = "customer_trader")
 public class CustomerTraderUser extends User implements Commentable {
@@ -113,9 +116,9 @@ public class CustomerTraderUser extends User implements Commentable {
         u.setLastName(lastName);
         u.setTelNumber(telNumber);
         u.setProfileDescription(profileDescription);
-        u.setComments(comments);
-        u.setProducts(products);
-        u.setCartProducts(cartProducts);
+        u.setComments(Arrays.copyOf(comments, comments.length));
+        u.setProducts(Arrays.copyOf(products, products.length));
+        u.setCartProducts(Arrays.copyOf(cartProducts, cartProducts.length));
 
         return u;
     }
@@ -140,4 +143,38 @@ public class CustomerTraderUser extends User implements Commentable {
 
         return u;
     }
+
+    public CustomerTraderUser withCartProduct(CartProduct cartProduct) {
+        CustomerTraderUser u = copy();
+        var newCartProducts = Arrays.copyOf(u.cartProducts, u.cartProducts.length + 1);
+        newCartProducts[u.cartProducts.length] = cartProduct;
+
+        u.setCartProducts(newCartProducts);
+
+        return u;
+    }
+
+    public CustomerTraderUser withUpdatedCartProductAmount(int productId, int newAmount) {
+        CustomerTraderUser u = copy();
+        CartProduct[] cartProducts = u.cartProducts;
+
+        for (CartProduct cartProduct : cartProducts) {
+            if (cartProduct.getProductId() == productId) {
+                cartProduct.setQuantity(newAmount);
+                break;
+            }
+        }
+
+        return u;
+    }
+
+    public CustomerTraderUser withRemovedCartProduct(int productId) {
+        CustomerTraderUser u = copy();
+        List<CartProduct> productList = new ArrayList<>(List.of(u.cartProducts));
+        productList.removeIf(p -> p.getProductId() == productId);
+        u.cartProducts = productList.toArray(CartProduct[]::new);
+
+        return u;
+    }
+
 }

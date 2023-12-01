@@ -32,6 +32,10 @@ public class ServerApplication extends SpringBootServletInitializer {
 		user.setComments(new Comment[] {
 			new Comment(0, 0, 0, 5, "123", 100)
 		});
+		user.setCartProducts(new CartProduct[]{
+			new CartProduct(0, 5)
+		});
+		user.setProducts(new Product[0]);
 
 		users.insert(user);
 

@@ -30,7 +30,11 @@ public class SecurityConfig {
                     "/api/postproductcomment",
                     "/api/postusercomment",
                     "/api/userproducts",
-                    "/api/userproductssearchdesc"
+                    "/api/userproductssearchdesc",
+                    "/api/cartproducts",
+                    "/api/addcartproduct",
+                    "/api/cartproductamount",
+                    "/api/cartproduct"
                 ).hasRole("CUSTOMER_TRADER")
                 .requestMatchers("/**", "/api/**").permitAll()
             )
