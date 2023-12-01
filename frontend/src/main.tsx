@@ -15,6 +15,8 @@ import ProductInfoPage from "./pages/ProductInfoPage";
 import AddProductPage from "./pages/AddProductPage";
 import MyProductsPage from "./pages/MyProductsPage";
 import MyAccountPage from "./pages/MyAccountPage";
+import EditProductPage from "./pages/EditProductPage";
+import UserPage from "./pages/UserPage";
 
 const router = createBrowserRouter([
     {
@@ -42,12 +44,20 @@ const router = createBrowserRouter([
         element: <AddProductPage/>
     },
     {
+        path: "/editproduct/:productId/",
+        element: <EditProductPage/>,
+    },
+    {
         path: "/myproducts",
         element: <MyProductsPage/>
     },
     {
         path: "/myaccount",
         element: <MyAccountPage/>
+    },
+    {
+        path: "/user/:userId/",
+        element: <UserPage/>
     }
   ]
 );

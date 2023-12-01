@@ -47,6 +47,7 @@ interface StringResources {
     readonly description: string,
     readonly characteristics: string,
     readonly productComments: string,
+    readonly comments: string,
     readonly writeComment: string,
     readonly quantity: string,
     readonly productAlreadyInCart: string,
@@ -57,6 +58,7 @@ interface StringResources {
     readonly productDescriptionPlaceholder: string,
     readonly selectPlaceholder: string,
     readonly addProduct: string,
+    readonly editProduct: string,
     readonly byStatus: string,
     readonly myProductsTitle: string,
     readonly selectAll: string,
@@ -74,7 +76,8 @@ interface StringResources {
     readonly personContactDetails: string,
     readonly saveChanges: string,
     readonly postComment: string,
-    readonly rateProductHeader: string
+    readonly rateProductHeader: string,
+    readonly rateTraderHeader: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -145,6 +148,7 @@ export const ukrainianStringResources : StringResources = {
     description: "Опис",
     characteristics: "Характеристики",
     productComments: "Відгуки покупців",
+    comments: "Відгуки",
     writeComment: "Написати відгук",
     quantity: "Кількість",
     productAlreadyInCart: "Вже в корзині",
@@ -155,6 +159,7 @@ export const ukrainianStringResources : StringResources = {
     productDescriptionPlaceholder: "Приклад: в цій блузці ви будете виглядати як зірка",
     selectPlaceholder: "Виберіть",
     addProduct: "Додати річ",
+    editProduct: "Змінити опис",
     myProductsTitle: "Мої речі",
     byStatus: "За статусом",
     selectAll: "Вибрати все",
@@ -177,5 +182,6 @@ export const ukrainianStringResources : StringResources = {
     personContactDetails: "Контактні дані",
     saveChanges: "Зберегти зміни",
     postComment: "Опублікувати",
-    rateProductHeader: "Оцініть товар"
+    rateProductHeader: "Оцініть товар",
+    rateTraderHeader: "Оцініть продавця"
 }

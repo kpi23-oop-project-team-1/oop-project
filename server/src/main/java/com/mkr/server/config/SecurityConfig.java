@@ -24,10 +24,14 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/usertype",
                     "/api/auth",
+                    "/api/postproductcomment"
+                ).authenticated()
+                .requestMatchers(
                     "/api/postproductcomment",
+                    "/api/postusercomment",
                     "/api/userproducts",
                     "/api/userproductssearchdesc"
-                ).authenticated()
+                ).hasRole("CUSTOMER_TRADER")
                 .requestMatchers("/**", "/api/**").permitAll()
             )
             .httpBasic(basic ->

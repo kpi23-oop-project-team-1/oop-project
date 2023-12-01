@@ -11,12 +11,12 @@ import DeferredDataContainer from "../components/DeferredDataContainer"
 import { CartContext, useCart } from "../cart"
 import { useValueFromDataSource } from "../dataSource.react"
 import { Link } from "react-router-dom"
-import { UserTypeContext, useUserType } from "../user.react"
+import { UserTypeContext, useCurrentUserType } from "../user.react"
 
 export default function MainPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
-    const userType = useUserType()
+    const userType = useCurrentUserType()
 
     return (
         <UserTypeContext.Provider value={userType.value}>

@@ -2,8 +2,11 @@ package com.mkr.server.domain;
 
 import com.mkr.datastore.InheritedModel;
 
+import java.util.Arrays;
+
 @InheritedModel(id = "customer_trader")
 public class CustomerTraderUser extends User implements Commentable {
+    private String pfpSource;
     private String displayName;
 
     private String firstName;
@@ -91,5 +94,39 @@ public class CustomerTraderUser extends User implements Commentable {
 
     public void setCartProducts(CartProduct[] cartProducts) {
         this.cartProducts = cartProducts;
+    }
+
+    public String getPfpSource() {
+        return pfpSource;
+    }
+
+    public void setPfpSource(String pfpSource) {
+        this.pfpSource = pfpSource;
+    }
+
+    public CustomerTraderUser copy() {
+        var u = new CustomerTraderUser(getId(), getEmail(), getPasswordHash());
+
+        u.setPfpSource(pfpSource);
+        u.setDisplayName(displayName);
+        u.setFirstName(firstName);
+        u.setLastName(lastName);
+        u.setTelNumber(telNumber);
+        u.setProfileDescription(profileDescription);
+        u.setComments(comments);
+        u.setProducts(products);
+        u.setCartProducts(cartProducts);
+
+        return u;
+    }
+
+    public CustomerTraderUser withComment(Comment comment) {
+        CustomerTraderUser u = copy();
+        var newComments = Arrays.copyOf(u.comments, u.comments.length + 1);
+        newComments[u.comments.length] = comment;
+
+        u.setComments(newComments);
+
+        return u;
     }
 }

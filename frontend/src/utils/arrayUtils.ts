@@ -9,12 +9,16 @@ export function removeElementAndCopy<T>(array: T[], predicate: (element: T) => b
     const index = array.findIndex(predicate)
     
     if (index >= 0) {
-        const copiedArray = array.slice()
-        copiedArray.splice(index, 1)
-
-        return copiedArray
+        return removeElementAtAndCopy(array, index)
     }
     return array
+}
+
+export function removeElementAtAndCopy<T>(array: T[], index: number): T[] {
+    const copiedArray = array.slice()
+    copiedArray.splice(index, 1)
+
+    return copiedArray
 }
 
 export function mutateElementAndCopy<T>(array: T[], predicate: (element: T) => boolean, mutate: (element: T) => T): T[] {

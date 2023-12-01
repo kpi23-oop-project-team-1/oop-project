@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
 import { CartContext, useCart } from "../cart";
-import { UserTypeContext, navigateToMainPageIfNotBuyerSeller, useUserType } from "../user.react";
+import { UserTypeContext, navigateToMainPageIfNotBuyerSeller, useCurrentUserType } from "../user.react";
 import { useContext, useEffect, useState } from "react";
 import { StringResourcesContext } from "../StringResourcesContext";
 import { DiContainerContext } from "../diContainer";
@@ -33,7 +33,7 @@ export default function MyProductsPage() {
     const userCreds = diContainer.userCredsStore.getCurrentUserCredentials()
 
     const cartAndManager = useCart()
-    const userType = useUserType()
+    const userType = useCurrentUserType()
     const navigate = useNavigate()
 
     navigateToMainPageIfNotBuyerSeller(userType, navigate)
@@ -69,7 +69,7 @@ export default function MyProductsPage() {
     }
 
     function onEdit(id: number) {
-
+        navigate(`/editproduct/${id}/`)
     }
 
     return (

@@ -26,6 +26,12 @@ public class ServerApplication extends SpringBootServletInitializer {
 			passwordEncoder.encode("password")
 		);
 		user.setTelNumber("12345678910");
+		user.setPfpSource("");
+		user.setDisplayName("Display name");
+		user.setProfileDescription("Description");
+		user.setComments(new Comment[] {
+			new Comment(0, 0, 0, 5, "123", 100)
+		});
 
 		users.insert(user);
 

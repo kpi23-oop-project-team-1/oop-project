@@ -1,27 +1,28 @@
-import { useContext, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { CartContext, CartProductInfo, useCart } from "../cart";
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { isValidNumber } from "../utils/dataValidation";
 import ImageCarousel from "../components/ImageCarousel";
 import { useValueFromDataSource } from "../dataSource.react";
 import { formatPriceToString } from "../utils/stringFormatting";
 import { StringResourcesContext } from "../StringResourcesContext";
-import { ProductComment, ProductInfo, totalCommentStarCount } from "../dataModels";
+import { CommentInfo, ProductInfo, totalCommentStarCount } from "../dataModels";
 import { StarRating } from "../components/StarRating";
 import "../styles/ProductInfoPage.scss"
 import NumberInput from "../components/NumberInput";
 import Footer from "../components/Footer";
-import { UserTypeContext, useUserType } from "../user.react";
+import { UserTypeContext, useCurrentUserType } from "../user.react";
 import PostCommentDialog from "../components/PostCommentDialog";
 import { DialogInfo } from "../components/Dialogs";
 import { DiContainerContext } from "../diContainer";
+import { CommentView } from "../components/CommentView";
 
 type OwnPageDialogType = 'post-comment'
 type DialogType = PageWithFullHeaderDialogType | OwnPageDialogType
 
 export default function ProductInfoPage() {
-    const productId = useProductId() ?? 0
+    const productId = useProductId()
     const strRes = useContext(StringResourcesContext)
     const diContainer = useContext(DiContainerContext)
     const dataSource = diContainer.dataSource
@@ -29,13 +30,20 @@ export default function ProductInfoPage() {
     const [dialogType, setDialogType] = useState<DialogType | undefined>()
     const [cart, cartManager] = useCart()
     const [quantity, setQuantity] = useState(1)
+    const navigate = useNavigate()
 
-    const [productState, setProductState] = useValueFromDataSource(ds => ds.getProductInfo(productId), [productId])
+    useEffect(() => {
+        if (productId == undefined) {
+            navigate("/")
+        }
+    }, [productId])
+
+    const [productState, setProductState] = useValueFromDataSource(ds => ds.getProductInfo(productId ?? -1), [productId])
     const product = productState.value
 
-    const isProductInCart = useMemo(() => cartManager.isProductInCart(productId), [cart])
+    const isProductInCart = useMemo(() => cartManager.isProductInCart(productId ?? 0), [cart])
     const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])
-    const userType = useUserType()
+    const userType = useCurrentUserType()
 
     function addToCart() {
         if (product) {
@@ -49,7 +57,7 @@ export default function ProductInfoPage() {
 
     function doPostComment(info: { rating: number, text: string }) {
         if (userCreds) {
-            dataSource.postProductComment({ targetId: productId, ...info }, userCreds).then(() => {
+            dataSource.postProductComment({ targetId: productId ?? -1, ...info }, userCreds).then(() => {
                 setDialogType(undefined)
                 setProductState({ type: 'loading' })
             }).catch(() => {
@@ -91,7 +99,7 @@ export default function ProductInfoPage() {
                             </Section>
 
                             <Section header={strRes.productComments}>
-                                {product?.comments.map(comment => <CommentView comment={comment}/>)}
+                                {product?.comments.map(comment => <CommentView key={comment.id} comment={comment}/>)}
                             </Section>
                             
                         </div>
@@ -154,26 +162,6 @@ function Section(props: React.PropsWithChildren<{ header: string }>) {
     )
 }
 
-type CommentViewProps = {
-    comment: ProductComment
-}
-
-function CommentView(props: CommentViewProps) {
-    const comment = props.comment
-
-    return (
-        <div className="product-info-comment-container">
-            <div className="product-info-comment-header">
-                <p className="product-info-comment-display-name">{comment.user.displayName}</p>
-                <p className="product-info-comment-date">{new Date(comment.dateString).toLocaleDateString()}</p>
-            </div>
-
-            <StarRating value={comment.rating} total={totalCommentStarCount}/>
-            <p className="product-info-comment-text">{comment.text}</p>
-        </div>
-    )
-}
-
 type CharacteristicProps<T extends number | string> = {
     name: string,
     value: T | undefined,
@@ -198,5 +186,5 @@ function useProductId(): number | undefined {
     const params = useParams()
     const productIdStr = params.productId
 
-    return productIdStr && isValidNumber(productIdStr) ? parseInt(productIdStr) : undefined
+    return productIdStr != undefined && isValidNumber(productIdStr) ? parseInt(productIdStr) : undefined
 }

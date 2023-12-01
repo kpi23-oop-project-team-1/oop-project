@@ -1,0 +1,45 @@
+#user-page-info-block {
+    margin: 10px 20px;
+
+    * {
+        display: inline-block;
+    }
+}
+
+#user-page-pfp {
+    $size: 256px;
+
+    width: $size;
+    height: $size;
+
+    border-radius: 50%;
+}
+
+#user-page-displayname {
+    margin-left: 20px;
+    font-size: 2em;
+    font-weight: bold;
+
+    vertical-align: top;
+}
+
+#user-page-tab-container {
+    margin: 0 20px;
+}
+
+#user-page-comment-tab-content {
+    margin-top: 20px;
+}
+
+#user-page-write-comment-button {
+    margin-bottom: 20px;
+}
+
+#user-page-description-tab-content {
+    margin-top: 20px;
+   
+    
+    p {
+        font-size: 1.3em;
+    }
+}

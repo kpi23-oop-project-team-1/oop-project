@@ -13,7 +13,7 @@ import { Dropdown } from "../components/Dropdown"
 import PageNavRow from "../components/PageNavRow"
 import Footer from "../components/Footer"
 import { Link } from "react-router-dom"
-import { UserTypeContext, useUserType } from "../user.react"
+import { UserTypeContext, useCurrentUserType } from "../user.react"
 import { useMappedSearchParams } from "../utils/urlUtils.react"
 import { GlobalSearchQueryContext } from "../globalSearchQueryContext"
 import { clampRange, rangeCompletelyContains } from "../utils/mathUtils"
@@ -21,7 +21,7 @@ import { clampRange, rangeCompletelyContains } from "../utils/mathUtils"
 export default function ProductsPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
-    const userType = useUserType()
+    const userType = useCurrentUserType()
     
     const [committedFilter, setCommittedFilter] = useSearchFilterFromSearchParams()
     const [filter, setFilter] = useState<SearchFilter>(committedFilter)
@@ -128,8 +128,9 @@ function ProductsGridHeader(props: ProductsGridHeaderProps) {
         <div id="product-grid-order-block">
             <p>{strRes.orderBy}</p>
             <Dropdown 
-              entries={allSearchOrders.map(id => ({ id, label: strRes.searchOrderLabels[id] }) )}
               selectedValueId={props.searchOrder}
+              allIds={allSearchOrders}
+              labelMap={strRes.searchOrderLabels}
               onSelected={props.onSearchOrderChanged}/>
         </div>
         

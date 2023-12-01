@@ -18,7 +18,7 @@ public class ProductService {
     public void addComment(int productId, int userId, int rating, @NotNull String text) {
         long postEpochSeconds = LocalDateTime.now(Clock.systemUTC()).toEpochSecond(ZoneOffset.UTC);
 
-        var comment = new Comment(productId, userId, rating, text, postEpochSeconds);
+        var comment = new Comment(0, productId, userId, rating, text, postEpochSeconds);
         repo.addComment(comment);
     }
 }

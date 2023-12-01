@@ -1,25 +1,35 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent } from "react"
 import "../styles/FileImageLoaderView.scss"
-import { pushElementAndCopy } from "../utils/arrayUtils"
+import CloseIcon from '../icons/close.svg'
+import { removeElementAtAndCopy } from "../utils/arrayUtils"
 
-type FileImageLoaderViewProps = {
+type BaseFileImageLoaderViewProps<F> = {
     maxImages: number,
-    onFilesChanged: (files: File[]) => void
+    files: F[],
+    onFilesChanged: (files: F[]) => void
 }
 
-export default function FileImageLoaderView(props: FileImageLoaderViewProps) {
-    const [files, setFiles] = useState<File[]>([])
+export type FileImageLoaderViewType = 'only-upload' | 'upload-and-preloaded'
+export type FileHolder<T extends FileImageLoaderViewType> = T extends 'only-upload' ? File : File | string 
 
+export type FileImageLoaderViewProps<T extends FileImageLoaderViewType> = { type: T} & BaseFileImageLoaderViewProps<FileHolder<T>>
+
+export default function FileImageLoaderView<T extends FileImageLoaderViewType>(props: FileImageLoaderViewProps<T>) {
     function onUpload(file: File) {
-        setFiles(fs => pushElementAndCopy(fs, file))
-        props.onFilesChanged(pushElementAndCopy(files, file))
+       props.onFilesChanged([...props.files, file])
+    }
+
+    function onRemove(index: number) {
+        props.onFilesChanged(removeElementAtAndCopy(props.files, index))
     }
 
     return (
         <div className="file-image-loader-container">
-            {files.map(f => <ImagePreview file={f}/>)}
+            {props.files.map((f, i) => 
+                <ImagePreviewBlock key={i} file={f} onRemove={() => onRemove(i)}/>
+            )}
             {
-                files.length < props.maxImages ?
+                props.files.length < props.maxImages ?
                 <ImageFileInput onUpload={onUpload}/>    
                 : undefined
             }
@@ -45,6 +55,20 @@ function ImageFileInput(props: ImageFileInputProps) {
     )
 }
 
-function ImagePreview(props: { file: File }) {
-    return <img src={URL.createObjectURL(props.file)}/>
+function ImagePreviewBlock(props: { file: string | File, onRemove: () => void }) {
+    return <div className="file-image-loader-preview">
+        <ImagePreview file={props.file}/>
+
+        <button className="icon-button" onClick={props.onRemove}>
+            <CloseIcon/>
+        </button>
+    </div>
 }
+
+function ImagePreview(props: { file: string | File }) {
+    const file = props.file
+    const src = typeof file == 'string' ? file : URL.createObjectURL(props.file as File)
+
+    return <img src={src}/>
+}
+

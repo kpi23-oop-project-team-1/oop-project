@@ -1,11 +1,11 @@
 import SimpleHeader from "../components/SimpleHeader";
-import AdvancedInput from "../components/AdvancedInput";
 import "../styles/SignInPage.scss";
 import { useContext, useMemo, useState } from 'react';
 import { validateEmail } from "../utils/dataValidation";
 import { Link, useNavigate } from "react-router-dom";
 import { StringResourcesContext } from "../StringResourcesContext";
 import { DiContainerContext } from "../diContainer";
+import { LabeledTextInput } from "../components/LabeledInputs";
 
 export default function SignInPage() {
     const strRes = useContext(StringResourcesContext)
@@ -39,16 +39,19 @@ export default function SignInPage() {
             <div id="sign-in-main-content">
                 <div id="signin-form">
                     <div id="user-info-block">
-                        <AdvancedInput
+                        <LabeledTextInput
+                            label={strRes.email}
                             placeholder={strRes.email} 
                             inputType="email" 
+                            text={email}
                             onTextChanged={setEmail}
                             errorText={emailErrorText} />
 
-                        <AdvancedInput 
+                        <LabeledTextInput 
+                            label={strRes.password}
                             placeholder={strRes.password} 
                             inputType="password" 
-                            reserveSpaceForError={false}
+                            text={password}
                             onTextChanged={setPassword}/>
 
                         <p className="error">{signInError}</p>

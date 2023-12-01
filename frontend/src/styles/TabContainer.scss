@@ -1,0 +1,23 @@
+@use 'colors';
+
+.tab-container {
+    .tab-list-row {
+        p {
+            font-size: 1.3em;
+            display: inline-block;
+            margin-right: 20px;
+
+            cursor: pointer;
+            user-select: none;
+
+            border-bottom: transparent 2px solid;
+            transition: border-bottom-color linear .1s;
+
+            padding-bottom: 3px;
+
+            &.tab-selected, &:hover {
+                border-bottom-color: colors.$color-on-surface;
+            }
+        }
+    }
+}

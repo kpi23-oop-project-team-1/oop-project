@@ -1,0 +1,29 @@
+@use 'colors';
+
+.comment-container {
+    &:not(:first-child) {
+        margin-top: 20px;
+    }
+
+    .comment-display-name {
+        display: inline-block;
+
+        font-weight: bold;
+        font-size: 1.3em;
+    }
+
+    .comment-date {
+        float: right;
+
+        color: colors.$color-on-surface-light;
+    }
+
+    .star-rating-container {
+        margin-top: 5px;
+    }
+
+    .comment-text {
+        margin-top: 8px;
+        font-size: 1.2em;
+    }
+}

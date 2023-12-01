@@ -1,6 +1,7 @@
 package com.mkr.server.domain;
 
 public class Comment {
+    private int id;
     private int targetId;
     private int userId;
     private int rating;
@@ -10,12 +11,20 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(int targetId, int userId, int rating, String text, long postEpochSeconds) {
+    public Comment(int id, int targetId, int userId, int rating, String text, long postEpochSeconds) {
         this.targetId = targetId;
         this.userId = userId;
         this.rating = rating;
         this.text = text;
         this.postEpochSeconds = postEpochSeconds;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getTargetId() {
