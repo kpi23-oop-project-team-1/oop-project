@@ -11,8 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class CollectionFileController<T> {
-    static final long VERSION_POS = 0;
-    static final long ENTITIES_POS = ByteUtils.INT32_SIZE;
+    private static final long LAST_ID_POS = 0;
+    private static final long ENTITIES_POS = ByteUtils.INT32_SIZE;
 
     private final String filePath;
     private final DataStoreCollectionDescriptor<T> descriptor;
@@ -53,14 +53,14 @@ public class CollectionFileController<T> {
         return ENTITIES_POS;
     }
 
-    public void writeVersion(int version) {
+    public void writeLastID(int id) {
         verifyIsOpen();
-        FileUtils.writeInt32AtPos(raf, version, VERSION_POS);
+        FileUtils.writeInt32AtPos(raf, id, LAST_ID_POS);
     }
 
-    public int readVersion() {
+    public int readLastID() {
         verifyIsOpen();
-        return FileUtils.readInt32AtPos(raf, VERSION_POS);
+        return FileUtils.readInt32AtPos(raf, LAST_ID_POS);
     }
 
     public void writeEntityIsActiveAtPos(boolean isActive, long pos) {
@@ -348,7 +348,7 @@ public class CollectionFileController<T> {
         }
 
         if (!fileExists) {
-            writeVersion(0);
+            writeLastID(0);
         }
     }
 

@@ -37,14 +37,14 @@ public class CollectionFileControllerTests {
     }
 
     @Test
-    public void writeReadVersionTest() {
-        int version = 10;
+    public void writeReadLastIDTest() {
+        int lastId = 10;
 
-        fileController.writeVersion(version);
+        fileController.writeLastID(lastId);
 
-        int actualVersion = fileController.readVersion();
+        int actualLastId = fileController.readLastID();
 
-        assertEquals(version, actualVersion);
+        assertEquals(lastId, actualLastId);
     }
 
     @Test
