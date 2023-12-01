@@ -41,7 +41,7 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
 
         var spliterator = new InFileCollectionSpliterator<>(fileController);
 
-        return StreamSupport.stream(spliterator, false).onClose(this::OnStreamClose);
+        return StreamSupport.stream(spliterator, false).onClose(this::onStreamClose);
     }
 
     @SafeVarargs
@@ -119,7 +119,7 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
         }
     }
 
-    private void OnStreamClose() {
+    private void onStreamClose() {
         fileController.closeFile();
         readLock.unlock();
     }

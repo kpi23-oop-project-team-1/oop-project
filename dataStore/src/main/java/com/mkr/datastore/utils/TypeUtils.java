@@ -1,14 +1,13 @@
 package com.mkr.datastore.utils;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class TypeUtils {
     @NotNull
@@ -60,5 +59,22 @@ public class TypeUtils {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Object instantiateEnumByString(Class<?> clazz, String stringValue) {
+        try {
+            Method method = clazz.getDeclaredMethod("values");
+
+            Object[] values = (Object[]) method.invoke(null);
+
+            for (var value : values) {
+                if (!Objects.equals(value.toString(), stringValue)) continue;
+                return value;
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 }

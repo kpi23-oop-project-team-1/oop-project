@@ -1,6 +1,7 @@
 package com.mkr.datastore.inFile;
 
 import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestEnum;
 import com.mkr.datastore.TestObject;
 import com.mkr.datastore.TestObjectWithArrays;
 import com.mkr.datastore.utils.FileUtils;
@@ -36,14 +37,14 @@ public class CollectionFileControllerTests {
     }
 
     @Test
-    public void writeReadVersionTest() {
-        int version = 10;
+    public void writeReadLastIDTest() {
+        int lastId = 10;
 
-        fileController.writeVersion(version);
+        fileController.writeLastID(lastId);
 
-        int actualVersion = fileController.readVersion();
+        int actualLastId = fileController.readLastID();
 
-        assertEquals(version, actualVersion);
+        assertEquals(lastId, actualLastId);
     }
 
     @Test
@@ -52,12 +53,14 @@ public class CollectionFileControllerTests {
                 true,
                 "",
                 0,
+                TestEnum.VALUE1,
                 new String[] {},
                 new Integer[] {});
         TestObject testObjectLonger = new TestObjectWithArrays(
                 false,
                 "test",
                 128,
+                TestEnum.VALUE2,
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
 
@@ -77,12 +80,14 @@ public class CollectionFileControllerTests {
                 true,
                 "",
                 0,
+                TestEnum.VALUE1,
                 new String[] {},
                 new Integer[] {});
         TestObject testObjectLonger = new TestObjectWithArrays(
                 false,
                 "test",
                 128,
+                TestEnum.VALUE2,
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
 
@@ -109,6 +114,7 @@ public class CollectionFileControllerTests {
                     i % 2 == 0,
                     String.valueOf(i),
                     i,
+                    TestEnum.VALUE1,
                     new String[] {},
                     new Integer[] {});
         }

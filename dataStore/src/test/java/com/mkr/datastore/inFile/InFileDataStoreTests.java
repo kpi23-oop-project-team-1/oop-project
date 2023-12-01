@@ -1,9 +1,6 @@
 package com.mkr.datastore.inFile;
 
-import com.mkr.datastore.DataStoreCollectionDescriptor;
-import com.mkr.datastore.DataStoreConfiguration;
-import com.mkr.datastore.TestDataStoreCollections;
-import com.mkr.datastore.TestObject;
+import com.mkr.datastore.*;
 import com.mkr.datastore.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,8 +43,8 @@ public class InFileDataStoreTests {
     @Test
     public void insertTest() {
         var objects = new TestObject[]{
-            new TestObject(true, "1", 1),
-            new TestObject(false, "2", 2)
+            new TestObject(true, "1", 1, TestEnum.VALUE1),
+            new TestObject(false, "2", 2, TestEnum.VALUE2)
         };
 
         dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
@@ -62,9 +59,9 @@ public class InFileDataStoreTests {
     @Test
     public void deleteTest() {
         var objects = new TestObject[]{
-            new TestObject(true, "1", 1),
-            new TestObject(false, "2", 1),
-            new TestObject(true, "3", 2)
+            new TestObject(true, "1", 1, TestEnum.VALUE1),
+            new TestObject(false, "2", 1, TestEnum.VALUE2),
+            new TestObject(true, "3", 2, TestEnum.VALUE2)
         };
 
         dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
@@ -77,7 +74,7 @@ public class InFileDataStoreTests {
             TestObject[] actualResult = stream.toArray(TestObject[]::new);
 
             var expectedResult = new TestObject[]{
-                    new TestObject(true, "3", 2)
+                    new TestObject(true, "3", 2, TestEnum.VALUE2)
             };
 
             assertArrayEquals(expectedResult, actualResult);
@@ -87,9 +84,9 @@ public class InFileDataStoreTests {
     @Test
     public void updateTest() {
         var objects = new TestObject[]{
-            new TestObject(true, "1", 1),
-            new TestObject(false, "2", 1),
-            new TestObject(true, "3", 2)
+            new TestObject(true, "1", 1, TestEnum.VALUE1),
+            new TestObject(false, "2", 1, TestEnum.VALUE2),
+            new TestObject(true, "3", 2, TestEnum.VALUE2)
         };
 
         dataStore.getCollection(TestDataStoreCollections.testObject).insert(objects);
@@ -98,16 +95,16 @@ public class InFileDataStoreTests {
             .getCollection(TestDataStoreCollections.testObject)
             .update(
                 o -> o.getInteger() == 1,
-                o -> new TestObject(o.getBool(), o.getString() + "0", o.getInteger())
+                o -> new TestObject(o.getBool(), o.getString() + "0", o.getInteger(), o.getTestEnum())
             );
 
         try (var stream = dataStore.getCollection(TestDataStoreCollections.testObject).data()) {
             TestObject[] actualResult = stream.toArray(TestObject[]::new);
 
             var expectedResult = new TestObject[]{
-                    new TestObject(true, "10", 1),
-                    new TestObject(false, "20", 1),
-                    new TestObject(true, "3", 2)
+                    new TestObject(true, "10", 1, TestEnum.VALUE1),
+                    new TestObject(false, "20", 1, TestEnum.VALUE2),
+                    new TestObject(true, "3", 2, TestEnum.VALUE2)
             };
 
             assertArrayEquals(expectedResult, actualResult);

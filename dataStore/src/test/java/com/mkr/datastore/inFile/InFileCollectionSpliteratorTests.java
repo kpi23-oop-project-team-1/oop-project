@@ -1,6 +1,7 @@
 package com.mkr.datastore.inFile;
 
 import com.mkr.datastore.TestDataStoreCollections;
+import com.mkr.datastore.TestEnum;
 import com.mkr.datastore.TestObject;
 import com.mkr.datastore.utils.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -40,7 +41,7 @@ public class InFileCollectionSpliteratorTests {
         int objectsCount = 5;
 
         var objects = new TestObject[objectsCount];
-        Arrays.setAll(objects, i -> new TestObject(i % 2 == 0, String.valueOf(i), i));
+        Arrays.setAll(objects, i -> new TestObject(i % 2 == 0, String.valueOf(i), i, i % 2 == 0 ? TestEnum.VALUE1 : TestEnum.VALUE2));
 
         // Write objects and deactivate (delete) the first one
         writeEntities(objects);
@@ -67,7 +68,7 @@ public class InFileCollectionSpliteratorTests {
         int objectsCount = 5;
 
         var objects = new TestObject[objectsCount];
-        Arrays.setAll(objects, i -> new TestObject(i % 2 == 0, String.valueOf(i), i));
+        Arrays.setAll(objects, i -> new TestObject(i % 2 == 0, String.valueOf(i), i, i % 2 == 0 ? TestEnum.VALUE1 : TestEnum.VALUE2));
 
         // Write objects
         writeEntities(objects);
