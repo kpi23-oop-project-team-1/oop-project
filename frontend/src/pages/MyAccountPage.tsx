@@ -11,7 +11,7 @@ import { useValueFromDataSource } from "../dataSource.react"
 import { DiContainerContext } from "../diContainer";
 import { AccountInfo, NewAccountInfo } from "../dataModels";
 import { Link } from "react-router-dom"
-import { UserTypeContext, navigateToSignInPageIfNotSignedIn, useUserType } from "../user.react"
+import { UserTypeContext, navigateToSignInPageIfNotSignedIn, useCurrentUserType } from "../user.react"
 import { LabeledTextInputProps, LabeledTextInput, LabeledTextAreaInput, LabeledDropdownInputProps, LabeledDropdownInput, LabeledNumberInputProps, LabeledNumberInput, LabeledFileImageLoaderView } from "../components/LabeledInputs"
 import { validateEmail, validateTelNumber } from "../utils/dataValidation";
 import { useNavigate } from "react-router";
@@ -25,7 +25,7 @@ export default function MyAccountPage() {
     const userCreds = diContainer.userCredsStore.getCurrentUserCredentials()
 
     const cartAndManager = useCart()
-    const userType = useUserType()
+    const userType = useCurrentUserType()
 
     const navigate = useNavigate()
 

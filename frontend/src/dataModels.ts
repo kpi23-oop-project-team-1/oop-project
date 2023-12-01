@@ -151,7 +151,8 @@ export type SearchConciseProductsResult = {
 
 export const totalCommentStarCount = 5;
 
-export type ProductComment = {
+export type CommentInfo = {
+    id: number,
     user: ConciseUserInfo,
     rating: number,
     text: string,
@@ -172,7 +173,7 @@ export type ProductInfo = {
     price: number,
     totalAmount: number,
     description: string,
-    comments: ProductComment[],
+    comments: CommentInfo[],
     category: CategoryId,
     state: ProductState,
     color: ColorId,
@@ -190,6 +191,8 @@ export type NewProductInfo = {
 }
 
 export type UpdateProductInfo = { id: number } & Omit<NewProductInfo, 'images'> & { images: (File | undefined)[] }
+
+
 
 // Account
 
@@ -244,4 +247,11 @@ export function userProductSearchFilterToSearchParams(filter: UserProductSearchF
     }
     
     return builder.result()
+}
+
+export type DetailedUserInfo = {
+    pfpSource: string,
+    displayName: string,
+    comments: CommentInfo[],
+    description: string
 }

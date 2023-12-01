@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { StringResourcesContext } from "../StringResourcesContext";
-import { UserTypeContext, navigateToMainPageIfNotBuyerSeller, useUserType } from "../user.react";
+import { UserTypeContext, navigateToMainPageIfNotBuyerSeller, useCurrentUserType } from "../user.react";
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader";
 import { CartContext, useCart } from "../cart";
 import "../styles/AddEditProductPage.scss"
@@ -19,7 +19,7 @@ export default function AddProductPage() {
     const userCreds = diContainer.userCredsStore.getCurrentUserCredentials()
 
     const cartAndManager = useCart()
-    const userType = useUserType()
+    const userType = useCurrentUserType()
     const navigate = useNavigate()
 
     navigateToMainPageIfNotBuyerSeller(userType, navigate)

@@ -5,7 +5,7 @@ import { DeferredDataState } from "./deferredData";
 import { useValueFromDataSource } from "./dataSource.react";
 import { NavigateFunction } from "react-router";
 
-export function useUserType(): DeferredDataState<UserType | undefined> {
+export function useCurrentUserType(): DeferredDataState<UserType | undefined> {
     const diContainer = useContext(DiContainerContext)
 
     const creds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])

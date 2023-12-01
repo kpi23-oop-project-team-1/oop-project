@@ -17,9 +17,10 @@ import {
     UserProductSearchDesc,
     NewCommentInfo,
     UpdateProductInfo,
+    DetailedUserInfo,
 } from "./dataModels";
 import { UserCredentials, UserType } from "./user";
-import { httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
+import { HttpFetchInfo, httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
     authenticateAsync(creds: UserCredentials): Promise<undefined>
@@ -48,7 +49,10 @@ export interface DataSource {
     getAccountInfo(id: number): Promise<AccountInfo>
     updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined>
 
+    getDetailedUserInfo(id: number): Promise<DetailedUserInfo>
+
     postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined>
+    postUserComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined>
 }
 
 export class ServerDataSource implements DataSource {
@@ -57,12 +61,11 @@ export class ServerDataSource implements DataSource {
     }
 
     async authenticateAsync(creds: UserCredentials): Promise<undefined> {
-        await httpFetchRawAsync({
+        return this.noResponseFetch({
             method: "GET",
             credentials: creds,
             url: this.createUrl(`auth`)
         })
-        return undefined
     }
 
     async signUpAsync(info: SignUpInfo): Promise<undefined> {
@@ -73,12 +76,11 @@ export class ServerDataSource implements DataSource {
         formData.set("email", info.email)
         formData.set("password", info.password)
 
-        await httpFetchRawAsync({
+        return this.noResponseFetch({
             method: "POST",
             url: this.createUrl('signup'),
             body: formData
         })
-        return undefined
     }
 
     getSpecialProductsAsync(): Promise<ConciseProductInfo[]> {
@@ -96,31 +98,28 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    async addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined> {
-        await httpFetchRawAsync({
+    addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
             method: "POST",
             credentials: creds,
             url: this.createUrl(`addcartproduct?id=${id}`)
         })
-        return undefined
     }
 
-    async updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined> {
-        await httpFetchRawAsync({
+    updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
             method: "POST",
             credentials: creds,
             url: this.createUrl(`cartproductamount?id=${productId}&amount=${newAmount}`)
         })
-        return undefined
     }
 
-    async removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
-        await httpFetchRawAsync({
+    removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
             method: "DELETE",
             credentials: creds,
             url: this.createUrl(`cartproduct?id=${productId}`)
         })
-        return undefined
     }
 
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
@@ -144,23 +143,21 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    async addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
+    addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
         const formData = this.createFormDataFromNewProductInfo(info)
         for (const file of info.images) {
             formData.append('image', file)
         }
 
-        await httpFetchRawAsync({
+        return this.noResponseFetch({
             url: this.createUrl("addproduct"),
             method: "POST",
             credentials: creds,
             body: formData
         })
-
-        return undefined
     }
 
-    async updateProduct(info: UpdateProductInfo, creds: UserCredentials): Promise<undefined> {
+    updateProduct(info: UpdateProductInfo, creds: UserCredentials): Promise<undefined> {
         const formData = this.createFormDataFromNewProductInfo(info)
         formData.set("id", info.id.toString())
 
@@ -173,14 +170,12 @@ export class ServerDataSource implements DataSource {
             }
         }
 
-        await httpFetchRawAsync({
+        return this.noResponseFetch({
             url: this.createUrl("updateproduct"),
             method: "POST",
             credentials: creds,
             body: formData
         })
-
-        return undefined
     }
 
     private createFormDataFromNewProductInfo(info: Omit<NewProductInfo, 'images'>): FormData {
@@ -212,14 +207,13 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    async deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
-        await httpFetchRawAsync({
+    deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
             method: "DELETE",
             url: this.createUrl("product"),
             credentials: creds,
             body: JSON.stringify(ids)
         })    
-        return undefined
     }
 
     getUserType(creds: UserCredentials): Promise<UserType> {
@@ -244,7 +238,7 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    async updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
+    updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
         const formData = new FormData()
         formData.set('email', info.email)
         formData.set('password', info.password)
@@ -256,28 +250,51 @@ export class ServerDataSource implements DataSource {
         formData.set('address', info.address)
         formData.set('pfpFile', info.pfpFile)
 
-        await httpFetchRawAsync({
+        return this.noResponseFetch({
             url: this.createUrl("updateaccountinfo"),
             method: "POST",
             credentials: creds,
             body: formData
         })
-
-        return undefined
     }
 
-    async postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+    postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
+            method: "POST",
+            url: this.createUrl("postproductcomment"),
+            body: this.commentInfoToFormData(info),
+            credentials: creds
+        })
+    }
+
+    postUserComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
+            method: "POST",
+            url: this.createUrl("postusercomment"),
+            body: this.commentInfoToFormData(info),
+            credentials: creds
+        })
+    }
+
+    private commentInfoToFormData(info: NewCommentInfo) {
         const formData = new FormData()
         formData.set("targetId", info.targetId.toString())
         formData.set("rating", info.rating.toString())
         formData.set("text", info.text)
 
-        await httpFetchRawAsync({
-            method: "POST",
-            url: this.createUrl("postproductcomment"),
-            body: formData,
-            credentials: creds
+        return formData
+    } 
+
+    getDetailedUserInfo(id: number): Promise<DetailedUserInfo> {
+        return httpFetchAsync({
+            method: "GET",
+            url: this.createUrl(`detaileduserinfo?id=${id}`)
         })
+    }
+
+    private async noResponseFetch(info: HttpFetchInfo): Promise<undefined> {
+        await httpFetchRawAsync(info)
+
         return undefined
     }
 }
@@ -378,6 +395,7 @@ export class TestDataSource implements DataSource {
             description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
             comments: [
                 {
+                    id: 0,
                     user: {
                         id: 1,
                         displayName: "Display name"
@@ -387,6 +405,7 @@ export class TestDataSource implements DataSource {
                     dateString: "2023-11-18"
                 },
                 {
+                    id: 1,
                     user: {
                         id: 2,
                         displayName: "Display name"
@@ -462,6 +481,30 @@ export class TestDataSource implements DataSource {
     async postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
         return undefined
     }
+
+    async postUserComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        return undefined
+    }
+
+    async getDetailedUserInfo(id: number): Promise<DetailedUserInfo> {
+        return {
+            pfpSource: "/images/test_product_image.png",
+            description: "123",
+            displayName: "Display name",
+            comments: [
+                {
+                    id: 1,
+                    user: {
+                        id: 2,
+                        displayName: "Display name"
+                    },
+                    rating: 5,
+                    text: "Comment text 2",
+                    dateString: "2023-11-19"
+                }
+            ]
+        }
+    }
 }
 
 export class TemporaryDataSource implements DataSource {
@@ -531,5 +574,11 @@ export class TemporaryDataSource implements DataSource {
 
     postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
         return this.server.postProductComment(info, creds)
+    }
+    getDetailedUserInfo(id: number): Promise<DetailedUserInfo> {
+        return this.test.getDetailedUserInfo(id)
+    }
+    postUserComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
+        return this.test.postProductComment(info, creds)
     }
 }

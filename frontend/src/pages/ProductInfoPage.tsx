@@ -7,15 +7,16 @@ import ImageCarousel from "../components/ImageCarousel";
 import { useValueFromDataSource } from "../dataSource.react";
 import { formatPriceToString } from "../utils/stringFormatting";
 import { StringResourcesContext } from "../StringResourcesContext";
-import { ProductComment, ProductInfo, totalCommentStarCount } from "../dataModels";
+import { CommentInfo, ProductInfo, totalCommentStarCount } from "../dataModels";
 import { StarRating } from "../components/StarRating";
 import "../styles/ProductInfoPage.scss"
 import NumberInput from "../components/NumberInput";
 import Footer from "../components/Footer";
-import { UserTypeContext, useUserType } from "../user.react";
+import { UserTypeContext, useCurrentUserType } from "../user.react";
 import PostCommentDialog from "../components/PostCommentDialog";
 import { DialogInfo } from "../components/Dialogs";
 import { DiContainerContext } from "../diContainer";
+import { CommentView } from "../components/CommentView";
 
 type OwnPageDialogType = 'post-comment'
 type DialogType = PageWithFullHeaderDialogType | OwnPageDialogType
@@ -42,7 +43,7 @@ export default function ProductInfoPage() {
 
     const isProductInCart = useMemo(() => cartManager.isProductInCart(productId ?? 0), [cart])
     const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])
-    const userType = useUserType()
+    const userType = useCurrentUserType()
 
     function addToCart() {
         if (product) {
@@ -98,7 +99,7 @@ export default function ProductInfoPage() {
                             </Section>
 
                             <Section header={strRes.productComments}>
-                                {product?.comments.map(comment => <CommentView comment={comment}/>)}
+                                {product?.comments.map(comment => <CommentView key={comment.id} comment={comment}/>)}
                             </Section>
                             
                         </div>
@@ -158,26 +159,6 @@ function Section(props: React.PropsWithChildren<{ header: string }>) {
                 {props.children}
             </div>
         </>
-    )
-}
-
-type CommentViewProps = {
-    comment: ProductComment
-}
-
-function CommentView(props: CommentViewProps) {
-    const comment = props.comment
-
-    return (
-        <div className="product-info-comment-container">
-            <div className="product-info-comment-header">
-                <p className="product-info-comment-display-name">{comment.user.displayName}</p>
-                <p className="product-info-comment-date">{new Date(comment.dateString).toLocaleDateString()}</p>
-            </div>
-
-            <StarRating value={comment.rating} total={totalCommentStarCount}/>
-            <p className="product-info-comment-text">{comment.text}</p>
-        </div>
     )
 }
 

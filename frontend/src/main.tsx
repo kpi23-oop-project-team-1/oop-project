@@ -16,6 +16,7 @@ import AddProductPage from "./pages/AddProductPage";
 import MyProductsPage from "./pages/MyProductsPage";
 import MyAccountPage from "./pages/MyAccountPage";
 import EditProductPage from "./pages/EditProductPage";
+import UserPage from "./pages/UserPage";
 
 const router = createBrowserRouter([
     {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
     {
         path: "/myaccount",
         element: <MyAccountPage/>
+    },
+    {
+        path: "/user/:userId/",
+        element: <UserPage/>
     }
   ]
 );

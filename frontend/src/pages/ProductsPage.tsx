@@ -13,14 +13,14 @@ import { Dropdown } from "../components/Dropdown"
 import PageNavRow from "../components/PageNavRow"
 import Footer from "../components/Footer"
 import { Link } from "react-router-dom"
-import { UserTypeContext, useUserType } from "../user.react"
+import { UserTypeContext, useCurrentUserType } from "../user.react"
 import { useMappedSearchParams } from "../utils/urlUtils.react"
 import { GlobalSearchQueryContext } from "../globalSearchQueryContext"
 
 export default function ProductsPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
-    const userType = useUserType()
+    const userType = useCurrentUserType()
     
     const [commitedFilter, setCommitedFilter] = useSearchFilterFromSearchParams()
     const [filter, setFilter] = useState<SearchFilter>(commitedFilter)
