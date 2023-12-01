@@ -35,14 +35,12 @@ export default function MyAccountPage() {
     const emptyAccountInfo: AccountInfo = {
         id: 0,
         email: "",
-        password: "",
         username: "",
         pfpSource: "",
         aboutMe: "",
         firstName: "",
         lastName: "",
-        telNumber: "",
-        address: ""
+        telNumber: ""
     }
     const [userIdState] = useValueFromDataSource(async ds => userCreds ? await ds.getUserId(userCreds.email) : undefined)
     const userId = userIdState && userIdState.value ? userIdState.value : 0
@@ -51,7 +49,6 @@ export default function MyAccountPage() {
     const accountInfo = accountState && accountState.value ? accountState.value : emptyAccountInfo
 
     // Account parameters
-    const [email, setEmail] = useState(accountInfo.email)
     const [password, setPassword] = useState("")
 
     const [pfpFiles, setPfpFiles] = useState<File[]>([])
@@ -61,22 +58,18 @@ export default function MyAccountPage() {
     const [firstName, setFirstName] = useState("")
     const [lastName, setLastName] = useState("")
     const [telNumber, setTelNumber] = useState("")
-    const [address, setAddress] = useState("")
-
+    
     const [loaded, setLoaded] = useState(false);
     if (!loaded && accountState && accountState.value) {
-        setEmail(accountInfo.email)
         setUsername(accountInfo.username)
         setAboutMe(accountInfo.aboutMe)
         setFirstName(accountInfo.firstName)
         setLastName(accountInfo.lastName)
         setTelNumber(accountInfo.telNumber)
-        setAddress(accountInfo.address)
         setLoaded(true);
     }
 
     // Validation
-    const isValidEmail = useMemo(() => validateEmail(email), [email])
     const isValidPassword = password.length == 0 || password.length >= 8;
 
     const isValidUsername = username.length > 0
@@ -85,8 +78,7 @@ export default function MyAccountPage() {
     const isValidFirstName = firstName.length > 0
     const isValidLastName = lastName.length > 0
     const isValidTelNumber = validateTelNumber(telNumber)
-    const isValidAddress = address.length > 0
-    const isValidEverything = isValidEmail && isValidPassword && isValidUsername && isValidAboutMe && isValidFirstName && isValidLastName && isValidTelNumber && isValidAddress
+    const isValidEverything = isValidPassword && isValidUsername && isValidAboutMe && isValidFirstName && isValidLastName && isValidTelNumber
 
     const [showTextInputErrors, setShowTextInputErrors] = useState(false)
     const [isSubmitInProgress, setSubmitInProgress] = useState(false)
@@ -114,15 +106,13 @@ export default function MyAccountPage() {
         }
 
         const newAccount: NewAccountInfo = {
-            email,
             password,
             username,
             pfpFile: pfpFiles[0],
             aboutMe,
             firstName,
             lastName,
-            telNumber,
-            address
+            telNumber
         }
 
         setSubmitInProgress(true)
@@ -206,10 +196,9 @@ export default function MyAccountPage() {
 
                     <LabeledTextInput
                         label={strRes.email}
-                        text={email}
+                        text={accountInfo.email}
                         placeholder=""
-                        onTextChanged={setEmail}
-                        errorText={showTextInputErrors && !isValidEmail ? strRes.invalidEmail : undefined}/>
+                        onTextChanged={() => {}}/>
 
                     <LabeledTextInput
                         label={strRes.changePassword}
@@ -242,13 +231,6 @@ export default function MyAccountPage() {
                         placeholder=""
                         onTextChanged={setTelNumber}
                         errorText={showTextInputErrors && !isValidTelNumber ? strRes.invalidTelNumber : undefined}/>
-
-                    <LabeledTextInput
-                        label={strRes.personAddress}
-                        text={address}
-                        placeholder=""
-                        onTextChanged={setAddress}
-                        errorText={showTextInputErrors && !isValidAddress ? strRes.textEmptyError : undefined}/>
 
                     <button
                       id="submit-button"

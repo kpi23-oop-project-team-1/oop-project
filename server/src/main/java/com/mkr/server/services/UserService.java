@@ -1,10 +1,7 @@
 package com.mkr.server.services;
 
 import com.mkr.server.domain.*;
-import com.mkr.server.dto.CommentInfo;
-import com.mkr.server.dto.ConciseUserInfo;
-import com.mkr.server.dto.DetailedUserInfo;
-import com.mkr.server.dto.NewCommentInfo;
+import com.mkr.server.dto.*;
 import com.mkr.server.repositories.UserRepository;
 import com.mkr.server.utils.DataValidations;
 import jakarta.validation.ValidationException;
@@ -132,5 +129,35 @@ public class UserService {
         );
 
         repo.addComment(comment);
+    }
+
+    public int getUserId(String email) {
+        return repo.findUserByEmail(email).map(User::getId).orElseThrow();
+    }
+
+    public Optional<AccountInfo> getAccountInfo(int id) {
+        return repo.findCustomerTraderUserBy(u -> u.getId() == id).map(user -> new AccountInfo(
+            user.getId(),
+            user.getEmail(),
+            user.getDisplayName(),
+            user.getPfpSource(),
+            user.getProfileDescription(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getTelNumber()
+        ));
+    }
+
+    public void updateAccountInfo(@NotNull String email, @NotNull UpdateAccountInfo accountInfo, String pfpSource) {
+        int userId = repo.findCustomerTraderUserByEmail(email).map(User::getId).orElseThrow();
+        String passwordHash = passwordEncoder.encode(accountInfo.password());
+
+        repo.updateUserInfo(
+            userId,
+            passwordHash,
+            accountInfo.firstName(),
+            accountInfo.lastName(),
+            accountInfo.telNumber()
+        );
     }
 }

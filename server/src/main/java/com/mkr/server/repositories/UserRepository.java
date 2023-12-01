@@ -59,4 +59,17 @@ public class UserRepository {
             u -> ((CustomerTraderUser)u).withComment(comment)
         );
     }
+
+    public void updateUserInfo(
+        int userId,
+        String passwordHash,
+        String firstName,
+        String lastName,
+        String telNumber
+    ) {
+        userCollection().update(
+            u -> u.getId() == userId && u instanceof CustomerTraderUser,
+            u -> ((CustomerTraderUser)u).withPersonalInfo(passwordHash, firstName, lastName, telNumber)
+        );
+    }
 }

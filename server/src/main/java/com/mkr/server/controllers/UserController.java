@@ -1,18 +1,13 @@
 package com.mkr.server.controllers;
 
 import com.mkr.server.domain.UserRole;
-import com.mkr.server.dto.DetailedUserInfo;
-import com.mkr.server.dto.NewCommentInfo;
-import com.mkr.server.dto.SignUpForm;
+import com.mkr.server.dto.*;
 import com.mkr.server.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -56,5 +51,20 @@ public class UserController {
         String email = auth.getName();
 
         userService.addNewComment(email, commentInfo);
+    }
+
+    @GetMapping("/api/accountid")
+    public int accountId(@RequestParam("email") String email) {
+        return userService.getUserId(email);
+    }
+
+    @GetMapping("/api/accountinfo")
+    public ResponseEntity<AccountInfo> accountInfo(@RequestParam("id") int id) {
+        return ResponseEntity.of(userService.getAccountInfo(id));
+    }
+
+    @PostMapping("/api/updateaccountinfo")
+    public void updateAccountInfo(UpdateAccountInfo info, Authentication auth) {
+        userService.updateAccountInfo(auth.getName(), info, "");
     }
 }

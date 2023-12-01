@@ -240,14 +240,12 @@ export class ServerDataSource implements DataSource {
 
     updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
         const formData = new FormData()
-        formData.set('email', info.email)
         formData.set('password', info.password)
         formData.set('username', info.username)
         formData.set('aboutMe', info.aboutMe)
         formData.set('firstName', info.firstName)
         formData.set('lastName', info.lastName)
         formData.set('telNumber', info.telNumber)
-        formData.set('address', info.address)
         formData.set('pfpFile', info.pfpFile)
 
         return this.noResponseFetch({
@@ -460,7 +458,6 @@ export class TestDataSource implements DataSource {
         return {
             id: id,
             email: "test@email.com",
-            password: "",
 
             username: "Username",
             pfpSource: "/images/test_product_image.png",
@@ -469,8 +466,7 @@ export class TestDataSource implements DataSource {
 
             firstName: "Name",
             lastName: "Surname",
-            telNumber: "1234567890",
-            address: "Kyiv"
+            telNumber: "1234567890"
         }
     }
 
@@ -563,13 +559,13 @@ export class TemporaryDataSource implements DataSource {
         return this.server.getUserType(creds)
     }
     getUserId(email: String): Promise<number> {
-        return this.test.getUserId(email)
+        return this.server.getUserId(email)
     }
     getAccountInfo(id: number): Promise<AccountInfo> {
-        return this.test.getAccountInfo(id)
+        return this.server.getAccountInfo(id)
     }
     updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
-        return this.test.updateAccountInfo()
+        return this.server.updateAccountInfo(info, creds)
     }
 
     postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {

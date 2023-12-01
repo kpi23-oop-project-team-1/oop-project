@@ -198,7 +198,6 @@ export type UpdateProductInfo = { id: number } & Omit<NewProductInfo, 'images'> 
 export type AccountInfo = {
     id: number,
     email: string,
-    password: string,
 
     username: string,
     pfpSource: string,
@@ -207,12 +206,10 @@ export type AccountInfo = {
 
     firstName: string,
     lastName: string,
-    telNumber: string,
-    address: string
+    telNumber: string
 }
 
 export type NewAccountInfo = {
-    email: string,
     password: string,
 
     username: string,
@@ -222,8 +219,7 @@ export type NewAccountInfo = {
 
     firstName: string,
     lastName: string,
-    telNumber: string,
-    address: string
+    telNumber: string
 }
 
 // Search

@@ -129,4 +129,15 @@ public class CustomerTraderUser extends User implements Commentable {
 
         return u;
     }
+
+    public CustomerTraderUser withPersonalInfo(String passwordHash, String firstName, String lastName, String telNumber) {
+        CustomerTraderUser u = copy();
+
+        u.setPasswordHash(passwordHash);
+        u.setFirstName(firstName);
+        u.setLastName(lastName);
+        u.setTelNumber(telNumber);
+
+        return u;
+    }
 }
