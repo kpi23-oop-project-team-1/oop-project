@@ -65,7 +65,6 @@ export const allCategoryIds = [
 export type CategoryId = (typeof allCategoryIds)[number]
 
 export const allSearchOrders = [
-    'recomended',
     'cheapest',
     'most-expensive'
 ] as const
@@ -117,9 +116,9 @@ export function searchFilterToSearchParams(filter: SearchFilter): string {
 } 
 
 export type SearchFilterDesc = {
-    limitingPriceRange: NumberRange,
-    availColorIds: ColorId[],
-    availStates: ProductState[]
+    limitingPriceRange: NumberRange | undefined,
+    colorIds: ColorId[],
+    states: ProductState[]
 }
 
 // Sign up

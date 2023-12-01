@@ -23,11 +23,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/api/usertype",
-                    "/api/auth"
+                    "/api/auth",
+                    "/api/postproductcomment"
                 ).authenticated()
                 .requestMatchers(
                     "/api/postproductcomment",
-                    "/api/postusercomment"
+                    "/api/postusercomment",
+                    "/api/userproducts",
+                    "/api/userproductssearchdesc"
                 ).hasRole("CUSTOMER_TRADER")
                 .requestMatchers("/**", "/api/**").permitAll()
             )

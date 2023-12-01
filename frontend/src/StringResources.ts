@@ -134,7 +134,6 @@ export const ukrainianStringResources : StringResources = {
     },
     orderBy: "Сортувати за",
     searchOrderLabels: {
-        "recomended": "Рекомендовані",
         "most-expensive": "Найдорожчі",
         "cheapest": "Найдешевші"
     },

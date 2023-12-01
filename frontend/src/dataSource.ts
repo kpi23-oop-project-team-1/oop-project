@@ -20,7 +20,7 @@ import {
     DetailedUserInfo,
 } from "./dataModels";
 import { UserCredentials, UserType } from "./user";
-import { HttpFetchInfo, httpFetchAsync, httpFetchRawAsync } from "./utils/ajaxHttp";
+import { HttpFetchInfo, httpFetchAsync, httpFetchAsyncOr, httpFetchRawAsync } from "./utils/ajaxHttp";
 
 export interface DataSource {
     authenticateAsync(creds: UserCredentials): Promise<undefined>
@@ -33,7 +33,7 @@ export interface DataSource {
     updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined>
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined>
 
-    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc>
+    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined>
     getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult>
     getProductInfo(id: number): Promise<ProductInfo>
 
@@ -122,11 +122,11 @@ export class ServerDataSource implements DataSource {
         })
     }
 
-    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
-        return httpFetchAsync<SearchFilterDesc>({
+    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
+        return httpFetchAsyncOr<SearchFilterDesc | undefined>({
             method: "GET",
             url: this.createUrl(`searchfilterdesc` + (categoryId ? `?category=${categoryId}` : ""))
-        })    
+        }, undefined)
     }
 
     getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult> {
@@ -213,7 +213,7 @@ export class ServerDataSource implements DataSource {
             url: this.createUrl("product"),
             credentials: creds,
             body: JSON.stringify(ids)
-        })    
+        })
     }
 
     getUserType(creds: UserCredentials): Promise<UserType> {
@@ -283,7 +283,7 @@ export class ServerDataSource implements DataSource {
         formData.set("text", info.text)
 
         return formData
-    } 
+    }
 
     getDetailedUserInfo(id: number): Promise<DetailedUserInfo> {
         return httpFetchAsync({
@@ -354,12 +354,12 @@ export class TestDataSource implements DataSource {
         return undefined
     }
 
-    async getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
+    async getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
         await new Promise(r => setTimeout(r, 500));
 
         return {
-            availColorIds: ['black', 'white', 'cyan'],
-            availStates: ['acceptable', 'good', 'ideal', 'new', 'very-good'],
+            colorIds: ['black', 'white', 'cyan'],
+            states: ['acceptable', 'good', 'ideal', 'new', 'very-good'],
             limitingPriceRange: { start: 100, end: 1000 }
         }
     }
@@ -533,11 +533,11 @@ export class TemporaryDataSource implements DataSource {
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
         return this.test.removeProductFromCartAsync(productId)
     }
-    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc> {
-        return this.test.getSearchFilterDescAsync(categoryId)
+    getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
+        return this.server.getSearchFilterDescAsync(categoryId)
     }
-    getConciseProductsBySearch(filter: SearchFilter | undefined): Promise<SearchConciseProductsResult> {
-        return this.test.getConciseProductsBySearch(filter)
+    getConciseProductsBySearch(filter: SearchFilter): Promise<SearchConciseProductsResult> {
+        return this.server.getConciseProductsBySearch(filter)
     }
     getProductInfo(id: number): Promise<ProductInfo> {
         return this.test.getProductInfo(id)
@@ -550,10 +550,10 @@ export class TemporaryDataSource implements DataSource {
         return this.test.updateProduct()
     }
     getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc> {
-        return this.test.getUserProductsSearchDesc()
+        return this.server.getUserProductsSearchDesc(status, creds)
     }
     getUserProducts(filter: UserProductSearchFilter, creds: UserCredentials): Promise<ConciseProductInfo[]> {
-        return this.test.getUserProducts(filter)
+        return this.server.getUserProducts(filter, creds)
     }
     deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
         return this.test.deleteProducts(ids, creds)
