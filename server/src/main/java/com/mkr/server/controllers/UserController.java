@@ -1,6 +1,8 @@
 package com.mkr.server.controllers;
 
 import com.mkr.server.domain.UserRole;
+import com.mkr.server.dto.DetailedUserInfo;
+import com.mkr.server.dto.NewCommentInfo;
 import com.mkr.server.dto.SignUpForm;
 import com.mkr.server.services.UserService;
 import jakarta.validation.Valid;
@@ -42,5 +44,17 @@ public class UserController {
         );
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/api/detaileduserinfo")
+    public ResponseEntity<DetailedUserInfo> detailedUserInfo(int id) {
+        return ResponseEntity.of(userService.getDetailedUserInfo(id));
+    }
+
+    @PostMapping("/api/postusercomment")
+    public void postUserComment(NewCommentInfo commentInfo, Authentication auth) {
+        String email = auth.getName();
+
+        userService.addNewComment(email, commentInfo);
     }
 }

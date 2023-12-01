@@ -3,6 +3,7 @@ package com.mkr.server;
 import com.mkr.datastore.DataStore;
 import com.mkr.datastore.inMemory.InMemoryDataStore;
 import com.mkr.server.config.DataStoreConfig;
+import com.mkr.server.domain.Comment;
 import com.mkr.server.domain.CustomerTraderUser;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,6 +27,12 @@ public class ServerApplication extends SpringBootServletInitializer {
 			passwordEncoder.encode("password")
 		);
 		user.setTelNumber("12345678910");
+		user.setPfpSource("");
+		user.setDisplayName("Display name");
+		user.setProfileDescription("Description");
+		user.setComments(new Comment[] {
+			new Comment(0, 0, 0, 5, "123", 100)
+		});
 
 		users.insert(user);
 

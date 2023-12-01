@@ -23,9 +23,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/api/usertype",
-                    "/api/auth",
-                    "/api/postproductcomment"
+                    "/api/auth"
                 ).authenticated()
+                .requestMatchers(
+                    "/api/postproductcomment",
+                    "/api/postusercomment"
+                ).hasRole("CUSTOMER_TRADER")
                 .requestMatchers("/**", "/api/**").permitAll()
             )
             .httpBasic(basic ->

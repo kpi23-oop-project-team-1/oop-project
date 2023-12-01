@@ -576,9 +576,9 @@ export class TemporaryDataSource implements DataSource {
         return this.server.postProductComment(info, creds)
     }
     getDetailedUserInfo(id: number): Promise<DetailedUserInfo> {
-        return this.test.getDetailedUserInfo(id)
+        return this.server.getDetailedUserInfo(id)
     }
     postUserComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined> {
-        return this.test.postProductComment(info, creds)
+        return this.server.postProductComment(info, creds)
     }
 }
