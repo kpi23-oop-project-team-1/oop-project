@@ -20,14 +20,36 @@ $input-border-color: #c3c3c3;
 $input-hover-border-color: #b1b1b1;
 $input-focus-border-color: #909090;
 
-input[type=text] {
+input[type=text], input[type=email], input[type=password], input[type=tel] {
     box-sizing: border-box;
     -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
     -moz-box-sizing: border-box;  
 
     padding: 10px;
 
+    display: block;
     border: 1px solid $input-border-color;
+
+    &:hover {
+        border-color: $input-hover-border-color;
+    }
+
+    &:focus {
+        border-color: $input-hover-border-color;
+        outline-width: 0;
+    }
+}
+
+textarea {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;  
+
+    padding: 10px;
+
+    display: block;
+    border: 1px solid $input-border-color;
+    resize: none;
 
     &:hover {
         border-color: $input-hover-border-color;
@@ -81,6 +103,24 @@ button {
         padding: 0;
         background-color: transparent;
     }
+
+    &.text-button {
+        padding: 10px 0px;
+        background-color: transparent;
+
+        hr {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            border-style: none;
+            border-top: 2px solid transparent;
+        }
+    }
+
+    &.text-button:hover {
+        hr {
+            border-top: 2px solid colors.$color-on-surface-light;
+        }
+    }
 }
 
 //
@@ -113,6 +153,10 @@ a.link-button {
 
 p {
     margin: 0;
+
+    &.gray {
+        color: colors.$color-gray;
+    }
 }
 
 .uppercase {
@@ -121,11 +165,10 @@ p {
 
 h1, h2, h3, h4, h5, h6 {
     margin: 0;
-}
-
-h2 {
     font-weight: normal;
-  
+
+    margin-bottom: 15px;
+
     &.primary {
         color: colors.$primary-color;
     }
@@ -133,4 +176,24 @@ h2 {
 
 p.error {
     color: colors.$error-color;
+}
+
+
+//
+// Divider
+//
+
+hr {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    border-style: none;
+    border-top: 2px solid colors.$color-on-surface-light;
+
+    &.primary {
+        border-top: 2px solid colors.$primary-color;
+    }
+
+    &.primary-light {
+        border-top: 2px solid colors.$primary-dark-color;
+    }
 }

@@ -4,20 +4,25 @@ import { isValidNumber } from "../utils/dataValidation";
 type NumberInputProps = 
     Omit<React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 'value'> &
     {
-        value: number,
+        value: number | undefined,
         validateNumber?: (value: number) => boolean,
+        onTextEmptyStatusChanged?: (isEmpty: boolean) => void
         onChanged: (value: number) => void
     };
 
 export default function NumberInput(props: NumberInputProps) {
-    const [text, setText] = useState(props.value.toString())
+    const [text, setText] = useState(props.value?.toString() ?? "")
 
     useEffect(() => {
-        setText(props.value.toString())
+        setText(props.value?.toString() ?? "")
     }, [props.value])
     
     function onChange(e: ChangeEvent<HTMLInputElement>) {
         const newText = e.target.value
+
+        if(props.onTextEmptyStatusChanged) {
+            props.onTextEmptyStatusChanged(newText.length == 0)
+        }
 
         if (newText.length == 0) {
             setText("")

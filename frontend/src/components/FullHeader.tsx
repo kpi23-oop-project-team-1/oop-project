@@ -1,48 +1,65 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import shopifyLogo from '../../public/images/shopify-logo.png'
-import CategoryIcon from '../../public/images/category.svg'
-import FavoriteIcon from '../../public/images/favorite.svg'
-import CartIcon from '../../public/images/cart.svg'
-import UserIcon from '../../public/images/user.svg'
+import CategoryIcon from '../icons/category.svg'
+import FavoriteIcon from '../icons/favorite.svg'
+import CartIcon from '../icons/cart.svg'
+import UserIcon from '../icons/user.svg'
 import "../styles/FullHeader.scss"
 import SearchBar from './SearchBar'
 import { CartContext } from '../cart'
 import { Link, To } from 'react-router-dom'
 import { StringResourcesContext } from '../StringResourcesContext'
+import { UserTypeContext } from '../user.react'
+import { GlobalSearchQueryContext } from '../globalSearchQueryContext'
 
 export type FullHeaderProps = {
+    onSearchSubmit: (query: string) => void,
     onShowCart: () => void
 };
 
 export default function FullHeader(props: FullHeaderProps) {
     const strRes = useContext(StringResourcesContext)
+    const userType = useContext(UserTypeContext)
 
-    let [searchQuery, setSearchQuery] = useState("")
+    const globalSearchQuery = useContext(GlobalSearchQueryContext)
+    const [searchQuery, setSearchQuery] = useState(globalSearchQuery ?? "")
+
+    useEffect(() => {
+        if (globalSearchQuery) {
+            setSearchQuery(globalSearchQuery)
+        }
+    }, [globalSearchQuery])
+
     const [cart] = useContext(CartContext)
 
     return (
         <div id="header">
             <div id="header-logo-block">
-                <img id="header-logo" src={shopifyLogo} alt="Logo"></img>
-            </div> 
+                <a href="/"><img id="header-logo" src={shopifyLogo} alt="Logo"></img></a>
+            </div>
 
             <div id="header-search-block">
                 <button id="header-category-button" className="icon-button">
                     <CategoryIcon/>
                 </button>
 
-                <SearchBar 
+                <SearchBar
                   placeholder={strRes.headerSearchBoxPlaceholder}
                   text={searchQuery}
-                  searchButtonText={strRes.search}
-                  onInputTextChanged={text => setSearchQuery(text)}
-                  onInputFocusChanged={() => {}}/>
+                  onSubmit={() => props.onSearchSubmit(searchQuery)}
+                  onInputTextChanged={setSearchQuery}/>
             </div>
 
             <div id="header-option-block">
-                <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
-                <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>
-                <HeaderLinkRoundButton to='/' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
+                {
+                    userType == 'customer-trader' ?
+                    <>
+                        <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
+                        <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>
+                    </>
+                    : undefined
+                }
+                <HeaderLinkRoundButton to='/myaccount' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
             </div>
         </div>
     )

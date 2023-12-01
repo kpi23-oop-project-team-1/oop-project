@@ -4,6 +4,7 @@ import "../styles/Checkbox.scss"
 type CheckboxProps = {
     checked: boolean,
     label: string,
+    id?: string,
     onCheckedChanged: (state: boolean) => void
 }
 
@@ -15,7 +16,7 @@ export default function Checkbox(props: CheckboxProps) {
     }
 
     return (
-        <label className="checkbox-container">
+        <label className="checkbox-container" id={props.id}>
             <input type="checkbox" checked={props.checked} onChange={onChange}/>
             <span>{props.label}</span>
         </label>

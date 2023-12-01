@@ -1,6 +1,6 @@
 import { useRef } from "react"
-import LeftArrowIcon from '../../public/images/left_arrow.svg'
-import RightArrowIcon from '../../public/images/right_arrow.svg'
+import LeftArrowIcon from '../icons/left_arrow.svg'
+import RightArrowIcon from '../icons/right_arrow.svg'
 import "../styles/HorizontalScrollContainer.scss"
 
 export type HorizontalScrollContainerProps<T> = {

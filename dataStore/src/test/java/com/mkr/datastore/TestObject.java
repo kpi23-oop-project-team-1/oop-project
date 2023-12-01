@@ -28,6 +28,7 @@ public class TestObject {
     public Integer getInteger() {
         return integer;
     }
+
     public TestEnum getTestEnum() {
         return testEnum;
     }
@@ -43,6 +44,7 @@ public class TestObject {
     public void setInteger(Integer integer) {
         this.integer = integer;
     }
+
     public void setTestEnum(TestEnum testEnum) {
         this.testEnum = testEnum;
     }

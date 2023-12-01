@@ -62,36 +62,6 @@
     width: 80px;
 }
 
-// Comments
-
-.product-info-comment-container {
-    &:not(:first-child) {
-        margin-top: 20px;
-    }
-
-    .product-info-comment-display-name {
-        display: inline-block;
-
-        font-weight: bold;
-        font-size: 1.3em;
-    }
-
-    .product-info-comment-date {
-        float: right;
-
-        color: colors.$color-on-surface-light;
-    }
-
-    .star-rating-container {
-        margin-top: 5px;
-    }
-
-    .product-info-comment-text {
-        margin-top: 8px;
-        font-size: 1.2em;
-    }
-}
-
 // Other
 
 #product-info-price {

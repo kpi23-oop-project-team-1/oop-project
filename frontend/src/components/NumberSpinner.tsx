@@ -1,7 +1,6 @@
 import "../styles/NumberSpinner.scss"
-import MinusIcon from "../../public/images/minus.svg"
-import PlusIcon from "../../public/images/plus.svg"
-import { isValidNumber } from "../utils/dataValidation"
+import MinusIcon from "../icons/minus.svg"
+import PlusIcon from "../icons/plus.svg"
 import NumberInput from "./NumberInput"
 
 export type NumberSpinnerProps = {

@@ -1,28 +1,37 @@
+import { KeyboardEvent, useContext } from "react"
 import "../styles/SearchBar.scss"
+import { StringResourcesContext } from "../StringResourcesContext"
 
 export type SearchBarProps = {
     text?: string,
     placeholder: string,
-    searchButtonText: string,
-    onInputFocusChanged: (isFocused: boolean) => void,
+    onSubmit: () => void
     onInputTextChanged: (text: string) => void
 }
 
 export default function SearchBar(props: SearchBarProps) {
+    const strRes = useContext(StringResourcesContext)
+
+    function onKeyPress(e: KeyboardEvent) {
+        if (e.key == "Enter") {
+            props.onSubmit()
+        }
+    }
+
     return (
         <div className="search-bar-container">
             <input 
               type="text"
               placeholder={props.placeholder}
               onChange={e => props.onInputTextChanged(e.target.value)}
-              onFocus={() => props.onInputFocusChanged(true)}
-              onBlur={() => props.onInputFocusChanged(false)}
+              onKeyDown={onKeyPress}
               value={props.text}/>
             
             <button
               type="button"
-              className="search-bar-search-button primary">
-                {props.searchButtonText}
+              className="search-bar-search-button primary"
+              onClick={props.onSubmit}>
+                {strRes.search}
             </button>
         </div>
     )

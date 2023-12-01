@@ -11,22 +11,26 @@ import DeferredDataContainer from "../components/DeferredDataContainer"
 import { CartContext, useCart } from "../cart"
 import { useValueFromDataSource } from "../dataSource.react"
 import { Link } from "react-router-dom"
+import { UserTypeContext, useCurrentUserType } from "../user.react"
 
 export default function MainPage() {
     const [dialogType, setDialogType] = useState<PageWithFullHeaderDialogType>()
     const cartAndManager = useCart()
+    const userType = useCurrentUserType()
 
     return (
-        <CartContext.Provider value={cartAndManager}>
-            <PageWithSearchHeader
-              dialogSwitch={undefined} 
-              dialogType={dialogType} 
-              onChangeDialogType={setDialogType}>
-                <SpecialProductsBlock/>
-                <AboutBlock/>
-                <Footer/>
-            </PageWithSearchHeader>
-        </CartContext.Provider>
+        <UserTypeContext.Provider value={userType.value}>
+            <CartContext.Provider value={cartAndManager}>
+                <PageWithSearchHeader
+                  dialogSwitch={undefined} 
+                  dialogType={dialogType} 
+                  onChangeDialogType={setDialogType}>
+                    <SpecialProductsBlock/>
+                    <AboutBlock/>
+                    <Footer/>
+                </PageWithSearchHeader>
+            </CartContext.Provider>
+        </UserTypeContext.Provider>
     )
 }
 
@@ -56,6 +60,7 @@ function SpecialProduct(props: SpecialProductProps) {
 
     const strRes = useContext(StringResourcesContext)
     const [_, cartManager] = useContext(CartContext)
+    const userType = useContext(UserTypeContext)
 
     function addProductToCart() {
         cartManager.addProduct({ ...product, quantity: 1 })
@@ -70,7 +75,7 @@ function SpecialProduct(props: SpecialProductProps) {
             </Link>
             
             {
-                !cartManager.isProductInCart(product.id) ?
+                !cartManager.isProductInCart(product.id) && userType == 'customer-trader' ?
                     <button 
                       className="special-product-add-to-cart primary"
                       onClick={addProductToCart}>

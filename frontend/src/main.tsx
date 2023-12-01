@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { DiContainerContext, TestDiContainer } from "./diContainer";
+import { DiContainerContext, TemporaryDiContainer } from "./diContainer";
 import { StringResourcesContext } from "./StringResourcesContext";
 import { ukrainianStringResources } from "./StringResources";
 
@@ -12,6 +12,11 @@ import ProductsPage from "./pages/ProductsPage";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
 import ProductInfoPage from "./pages/ProductInfoPage";
+import AddProductPage from "./pages/AddProductPage";
+import MyProductsPage from "./pages/MyProductsPage";
+import MyAccountPage from "./pages/MyAccountPage";
+import EditProductPage from "./pages/EditProductPage";
+import UserPage from "./pages/UserPage";
 
 const router = createBrowserRouter([
     {
@@ -33,6 +38,26 @@ const router = createBrowserRouter([
     {
         path: "/product/:productId/",
         element: <ProductInfoPage/>
+    },
+    {
+        path: "/addproduct",
+        element: <AddProductPage/>
+    },
+    {
+        path: "/editproduct/:productId/",
+        element: <EditProductPage/>,
+    },
+    {
+        path: "/myproducts",
+        element: <MyProductsPage/>
+    },
+    {
+        path: "/myaccount",
+        element: <MyAccountPage/>
+    },
+    {
+        path: "/user/:userId/",
+        element: <UserPage/>
     }
   ]
 );
@@ -40,7 +65,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
         <StringResourcesContext.Provider value={ukrainianStringResources}>
-            <DiContainerContext.Provider value={TestDiContainer}>
+            <DiContainerContext.Provider value={TemporaryDiContainer}>
                 <RouterProvider router={router} />
             </DiContainerContext.Provider>
         </StringResourcesContext.Provider>

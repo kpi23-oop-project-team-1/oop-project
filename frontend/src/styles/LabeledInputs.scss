@@ -1,0 +1,46 @@
+@use 'colors';
+
+.labeled-input-container {
+    margin-bottom: 20px;
+    width: 100%;
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.15em;
+    }
+
+    input, textarea {
+        width: 100%;
+        border-radius: 5px;
+    }
+
+    textarea {
+        height: 150px;
+    }
+
+    .error {
+        margin-top: 5px;
+        margin-bottom: 10px;
+
+        font-size: 1em;
+        margin-left: 5px;
+    }
+
+    .dropdown-header {
+        border: 1px solid colors.$color-on-surface-light;
+        border-radius: 5px;
+        padding: 5px;
+
+        width: 150px;
+    }
+
+    .dropdown {
+        margin-bottom: 20px;
+        width: 150px;
+    }
+
+    // .labeled-number-input {
+    //     min-width: 200px !important;
+    // }
+}

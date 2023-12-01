@@ -1,0 +1,55 @@
+@use 'colors';
+
+.file-image-loader-container {
+    margin-bottom: 20px;
+
+    .file-image-loader-preview {
+        position: relative;
+        max-width: 256px;
+
+        img {
+            width: 100%;
+            max-height: 512px;
+    
+            &:not(:first-child) {
+                margin-top: 10px;
+            }
+        }
+
+        button {
+            $size: 32px;
+            $icon-size: 16px;
+            $margin: 5px;
+            
+            width: $size;
+            height: $size;
+
+            position: absolute;
+            
+            left: calc(100% - $size - $margin);
+            top: $margin;
+
+            background-color: colors.$surface-color;
+            border: 1px solid colors.$color-on-surface;
+            border-radius: 50%;
+            transition: background-color linear .1s;
+
+            &:hover {
+                background-color: colors.$surface-hover-color;
+            }
+
+            svg {
+                width: $icon-size;
+                height: $icon-size;
+
+                stroke: colors.$color-on-surface;
+            }
+        }
+    }
+    
+
+    input {
+        display: block;
+        margin-top: 10px;
+    }
+}

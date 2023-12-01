@@ -2,12 +2,13 @@ import React, { useContext, useState } from "react"
 import Checkbox from "./Checkbox"
 import RangeSlider from "./RangeSlider"
 import { addOrRemoveElement } from "../utils/arrayUtils"
-import { CategoryId, ColorId, NumberRange, ProductStatus, SearchFilter, SearchFilterDesc, allCategoryIds } from "../dataModels"
+import { CategoryId, ColorId, NumberRange, ProductState, SearchFilter, SearchFilterDesc, allCategoryIds } from "../dataModels"
 import { StringResourcesContext } from "../StringResourcesContext"
-import PlusIcon from "../../public/images/plus_thin.svg"
-import MinusIcon from "../../public/images/minus_thin.svg"
+import PlusIcon from "../icons/plus_thin.svg"
+import MinusIcon from "../icons/minus_thin.svg"
 import "../styles/SearchFilterPanel.scss"
 import { formatPriceToString } from "../utils/stringFormatting"
+import { clampRange } from "../utils/mathUtils"
 
 export type SearchFilterPanelProps = {
     filter: SearchFilter,
@@ -23,13 +24,13 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
     const filter = props.filter
     const filterDesc = props.filterDesc
 
-    if (filterDesc == undefined) {
+    if (!filterDesc) {
         return <div className="search-filter-panel"/>
     }
 
     const priceRange = filter.priceRange ?? filterDesc.limitingPriceRange
     const colorIds = filter.colorIds ?? []
-    const statuses = filter.statuses ?? []
+    const states = filter.states ?? []
 
     function changeAndCommitFilter(filter: SearchFilter) {
         props.onChanged(filter)
@@ -41,15 +42,15 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
     }
 
     function onCommitPriceRange() {
-        props.commitFilter({ ...filter, priceRange: priceRange })
+        props.commitFilter({ ...filter, priceRange })
     }
 
     function onColorSelectedStateChanged(id: ColorId, state: boolean) {
         changeAndCommitFilter({ ...filter, colorIds: addOrRemoveElement(colorIds, id, state)})
     }
 
-    function onProductStatusSelectedStateChanged(id: ProductStatus, state: boolean) {
-        changeAndCommitFilter({...filter, statuses: addOrRemoveElement(statuses, id, state)})
+    function onProductStateSelectedStateChanged(id: ProductState, state: boolean) {
+        changeAndCommitFilter({...filter, states: addOrRemoveElement(states, id, state)})
     }
 
     function onCategoryLinkClick(category: CategoryId | undefined) {
@@ -76,26 +77,30 @@ export default function SearchFilterPanel(props: SearchFilterPanelProps) {
             </SearchFilterSection>
             
             <SearchFilterSection title={strRes.filters}>
-                <SearchFilterPropertyBlock title={strRes.price}>
-                    <PriceSelector
-                      limitingRange={filterDesc.limitingPriceRange}
-                      valueRange={priceRange}
-                      onPointerUp={onCommitPriceRange}
-                      onRangeChanged={onPriceRangeChanged}/>
-                </SearchFilterPropertyBlock>
+                {filterDesc.limitingPriceRange && 
+                    <SearchFilterPropertyBlock title={strRes.price}>
+                        <PriceSelector
+                          limitingRange={filterDesc.limitingPriceRange}
+                          valueRange={priceRange ?? { start: 0, end: 0 } }
+                          onPointerUp={onCommitPriceRange}
+                          onRangeChanged={onPriceRangeChanged}/>
+                    </SearchFilterPropertyBlock> 
+                }
+                
 
                 <SearchFilterPropertyBlock title={strRes.color}>
                     <ChoiceList
-                      choices={filterDesc.availColorIds.map(id => ({ id, label: strRes.colorLabels[id] }))}
                       selectedValueIds={colorIds}
+                      allKeys={filterDesc.colorIds}
+                      keyLabels={strRes.colorLabels}
                       onChoiceSelectedStateChanged={onColorSelectedStateChanged}/>
                 </SearchFilterPropertyBlock>
-
-                <SearchFilterPropertyBlock title={strRes.productStatus}>
+                <SearchFilterPropertyBlock title={strRes.productState}>
                     <ChoiceList
-                      choices={filterDesc.availStatuses.map(id => ({ id, label: strRes.productStatusLabels[id] }))}
-                      selectedValueIds={statuses}
-                      onChoiceSelectedStateChanged={onProductStatusSelectedStateChanged}/>
+                      selectedValueIds={states}
+                      allKeys={filterDesc.states}
+                      keyLabels={strRes.productStateLabels}
+                      onChoiceSelectedStateChanged={onProductStateSelectedStateChanged}/>
                 </SearchFilterPropertyBlock>
             </SearchFilterSection>
         </div>
@@ -156,23 +161,22 @@ function SearchFilterPropertyBlock(props: SearchFilterPropertyBlockProps) {
     )
 }
 
-type Choice<K> = { id: K, label: string }
-
 type SearchFilterChoiceListControl<K extends string> = {
-    choices: Choice<K>[],
-    selectedValueIds: K[]
+    selectedValueIds: K[],
+    allKeys: K[],
+    keyLabels: Record<K, string>,
     onChoiceSelectedStateChanged: (id: K, isSelected: boolean) => void
 }
 
 function ChoiceList<K extends string>(props: SearchFilterChoiceListControl<K>) {
     return (
         <>
-            {props.choices.map((choice) => 
+            {props.allKeys.map(key => 
                 <Checkbox 
-                  checked={props.selectedValueIds.indexOf(choice.id) >= 0}
-                  label={choice.label}
-                  key={choice.id}
-                  onCheckedChanged={state => props.onChoiceSelectedStateChanged(choice.id, state)}/> 
+                  checked={props.selectedValueIds.includes(key)}
+                  label={props.keyLabels[key]}
+                  key={key}
+                  onCheckedChanged={state => props.onChoiceSelectedStateChanged(key, state)}/> 
             )}
         </>
     )
@@ -186,16 +190,18 @@ type PriceRangeSelectorProps = {
 }
 
 function PriceSelector(props: PriceRangeSelectorProps) {
+    const valueRange = clampRange(props.valueRange, props.limitingRange)
+
     return (
         <div className="search-filter-price-selector">
             <RangeSlider
-                valueRange={props.valueRange}
+                valueRange={valueRange}
                 limitingRange={props.limitingRange}
                 onPointerStatusChanged={status => status == 'up' ? props.onPointerUp() : undefined}
                 onRangeSelected={props.onRangeChanged}/>
             
-            <p className="search-filter-price-selector-start">{formatPriceToString(props.valueRange.start)}</p>
-            <p className="search-filter-price-selector-end">{formatPriceToString(props.valueRange.end)}</p>
+            <p className="search-filter-price-selector-start">{formatPriceToString(valueRange.start)}</p>
+            <p className="search-filter-price-selector-end">{formatPriceToString(valueRange.end)}</p>
         </div>
     )
 }
