@@ -6,7 +6,6 @@ public record ProductInfo(
     int id,
     String title,
     String[] imageSources,
-    String stripeText,
     int price,
     int totalAmount,
     String description,

@@ -21,23 +21,41 @@ public class ServerApplication extends SpringBootServletInitializer {
 	public DataStore dataStore(PasswordEncoder passwordEncoder) {
 		var dataStore = new InMemoryDataStore(DataStoreConfig.configuration);
 		var users = dataStore.getCollection(DataStoreConfig.users);
-		var user = new CustomerTraderUser(
+		var user1 = new CustomerTraderUser(
 			0,
 			"mail@gmail.com",
 			passwordEncoder.encode("password")
 		);
-		user.setTelNumber("1234567891");
-		user.setFirstName("First name");
-		user.setLastName("Last name");
-		user.setDisplayName("Display name");
-		user.setProfileDescription("Description");
-		user.setComments(new Comment[] {
+		user1.setTelNumber("1234567891");
+		user1.setFirstName("First name");
+		user1.setLastName("Last name");
+		user1.setDisplayName("Display name");
+		user1.setProfileDescription("Description");
+		user1.setComments(new Comment[] {
 			new Comment(0, 0, 0, 5, "123", 100)
 		});
-		user.setCartProducts(new CartProduct[]{
+		user1.setCartProducts(new CartProduct[]{
 			new CartProduct(1, 5)
 		});
-		user.setProducts(new Product[0]);
+		user1.setProducts(new Product[0]);
+
+		var user2 = new CustomerTraderUser(
+			2,
+			"mail2@gmail.com",
+			passwordEncoder.encode("password")
+		);
+		user2.setTelNumber("1234567891");
+		user2.setFirstName("First name");
+		user2.setLastName("Last name");
+		user2.setDisplayName("Display name");
+		user2.setProfileDescription("Description");
+		user2.setComments(new Comment[] {
+			new Comment(0, 0, 2, 5, "123", 100)
+		});
+		user2.setCartProducts(new CartProduct[]{
+			new CartProduct(1, 5)
+		});
+		user2.setProducts(new Product[0]);
 
 		var admin = new AdminUser(
 			1,
@@ -45,7 +63,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 			passwordEncoder.encode("password")
 		);
 
-		users.insert(user, admin);
+		users.insert(user1, user2, admin);
 
 		var products = dataStore.getCollection(DataStoreConfig.products);
 		products.insert(
@@ -60,7 +78,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 				ColorId.BLACK
 			),
 			new Product(
-				1, 1,
+				1, 2,
 				"456",
 				150,
 				5,

@@ -195,7 +195,6 @@ public class ProductService {
                 productId,
                 product.getTitle(),
                 imageSources,
-                "",
                 product.getPrice(),
                 product.getAmount(),
                 product.getDescription(),

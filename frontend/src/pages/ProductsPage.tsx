@@ -5,7 +5,6 @@ import { CartContext, useCart } from "../cart"
 import PageWithSearchHeader, { PageWithFullHeaderDialogType } from "./PageWithFullHeader"
 import SearchFilterPanel from "../components/SearchFilterPanel"
 import { ConciseProductInfo, SearchFilter, SearchOrder, allCategoryIds, allColorIds, allProductStates, allSearchOrders, parseNumberRange, searchFilterToSearchParams } from "../dataModels"
-import ProductImageWithStripe from "../components/ProductImageWithStripe"
 import { formatPriceToString } from "../utils/stringFormatting"
 import { useValueFromDataSource } from "../dataSource.react"
 import DeferredDataContainer from "../components/DeferredDataContainer"
@@ -160,9 +159,7 @@ function ProductView(props: ProductViewProps) {
 
     return (
         <Link className="products-grid-view" to={`/product/${product.id}/`}>
-            <ProductImageWithStripe
-              imageSource={product.imageSource}
-              stripeText={product.stripeText}/>
+            <img src={product.imageSource}/>
 
             <p className="products-grid-view-title">{product.title}</p>
             <p className="products-grid-view-price">{formatPriceToString(product.price)}</p>

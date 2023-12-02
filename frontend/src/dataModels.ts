@@ -136,8 +136,7 @@ export type SignUpInfo = {
 export type ConciseProductInfo = {
     id: number,
     title: string,
-    imageSource: string,
-    stripeText?: string,
+    imageSource: string
     price: number,
     totalAmount: number
 }
@@ -168,7 +167,6 @@ export type ProductInfo = {
     id: number,
     title: string,
     imageSources: string[],
-    stripeText?: string,
     price: number,
     totalAmount: number,
     description: string,
@@ -192,8 +190,6 @@ export type NewProductInfo = {
 }
 
 export type UpdateProductInfo = { id: number } & Omit<NewProductInfo, 'images'> & { images: (File | undefined)[] }
-
-
 
 // Account
 
