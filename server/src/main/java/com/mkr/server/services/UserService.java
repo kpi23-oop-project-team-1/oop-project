@@ -3,12 +3,18 @@ package com.mkr.server.services;
 import com.mkr.server.domain.*;
 import com.mkr.server.dto.*;
 import com.mkr.server.repositories.UserRepository;
+import com.mkr.server.services.storage.StorageService;
+import com.mkr.server.services.storage.UserPfpUrlMapper;
 import com.mkr.server.utils.DataValidations;
 import jakarta.validation.ValidationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -20,6 +26,13 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository repo;
+
+    @Autowired
+    @Qualifier("userPfpStorageService")
+    private StorageService storageService;
+
+    @Autowired
+    private UserPfpUrlMapper pfpUrlMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -95,8 +108,10 @@ public class UserService {
 
     @NotNull
     private DetailedUserInfo getDetailedUserInfo(@NotNull CustomerTraderUser user) {
+        var pfpSource = pfpUrlMapper.getEndpointUrl(user.getId());
+
         return new DetailedUserInfo(
-            user.getPfpSource(),
+            pfpSource,
             user.getDisplayName(),
             user.getProfileDescription(),
             getUserComments(user)
@@ -107,7 +122,7 @@ public class UserService {
         return Arrays.stream(user.getComments())
             .map(c -> new CommentInfo(
                 c.getId(),
-                getConciseUserInfo(c.getUserId()).get(),
+                getConciseUserInfo(c.getUserId()).orElseThrow(),
                 c.getRating(),
                 c.getText(),
                 LocalDateTime.ofEpochSecond(c.getPostEpochSeconds(), 0, ZoneOffset.UTC))
@@ -122,7 +137,7 @@ public class UserService {
         Comment comment = new Comment(
             0,
             commentInfo.targetId(),
-            authorUser.get().getId(),
+            authorUser.orElseThrow().getId(),
             commentInfo.rating(),
             commentInfo.text(),
             nowEpochSeconds
@@ -136,11 +151,13 @@ public class UserService {
     }
 
     public Optional<AccountInfo> getAccountInfo(int id) {
+        var pfpSource = pfpUrlMapper.getEndpointUrl(id);
+
         return repo.findCustomerTraderUserBy(u -> u.getId() == id).map(user -> new AccountInfo(
             user.getId(),
             user.getEmail(),
             user.getDisplayName(),
-            user.getPfpSource(),
+            pfpSource,
             user.getProfileDescription(),
             user.getFirstName(),
             user.getLastName(),
@@ -148,16 +165,47 @@ public class UserService {
         ));
     }
 
-    public void updateAccountInfo(@NotNull String email, @NotNull UpdateAccountInfo accountInfo, String pfpSource) {
+    public void updateAccountInfo(
+        @NotNull String email,
+        @NotNull UpdateAccountInfo accountInfo,
+        @Nullable MultipartFile pfpFile
+    ) {
         int userId = repo.findCustomerTraderUserByEmail(email).map(User::getId).orElseThrow();
-        String passwordHash = passwordEncoder.encode(accountInfo.password());
+
+        String passwordHash = null;
+
+        if (accountInfo.password() != null) {
+            passwordHash = passwordEncoder.encode(accountInfo.password());
+        }
+
+        if (pfpFile != null) {
+            storageService.store(pfpFile, getImageFileName(userId));
+        }
 
         repo.updateUserInfo(
             userId,
             passwordHash,
             accountInfo.firstName(),
             accountInfo.lastName(),
+            accountInfo.aboutMe(),
+            accountInfo.username(),
             accountInfo.telNumber()
         );
+    }
+
+    @Nullable
+    public Resource getImageResource(int id) {
+        Resource resource = storageService.getFileResource(getImageFileName(id));
+
+        if (resource.exists() && resource.isReadable()) {
+            return resource;
+        }
+
+        return null;
+    }
+
+    @NotNull
+    private String getImageFileName(int id) {
+        return id + ".png";
     }
 }

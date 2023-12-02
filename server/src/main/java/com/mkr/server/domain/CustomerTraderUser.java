@@ -1,7 +1,8 @@
 package com.mkr.server.domain;
 
 import com.mkr.datastore.InheritedModel;
-import com.mkr.server.dto.CartProductInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +10,6 @@ import java.util.List;
 
 @InheritedModel(id = "customer_trader")
 public class CustomerTraderUser extends User implements Commentable {
-    private String pfpSource;
     private String displayName;
 
     private String firstName;
@@ -99,18 +99,9 @@ public class CustomerTraderUser extends User implements Commentable {
         this.cartProducts = cartProducts;
     }
 
-    public String getPfpSource() {
-        return pfpSource;
-    }
-
-    public void setPfpSource(String pfpSource) {
-        this.pfpSource = pfpSource;
-    }
-
     public CustomerTraderUser copy() {
         var u = new CustomerTraderUser(getId(), getEmail(), getPasswordHash());
 
-        u.setPfpSource(pfpSource);
         u.setDisplayName(displayName);
         u.setFirstName(firstName);
         u.setLastName(lastName);
@@ -133,13 +124,25 @@ public class CustomerTraderUser extends User implements Commentable {
         return u;
     }
 
-    public CustomerTraderUser withPersonalInfo(String passwordHash, String firstName, String lastName, String telNumber) {
+    public CustomerTraderUser withPersonalInfo(
+        @Nullable String passwordHash,
+        @NotNull String firstName,
+        @NotNull String lastName,
+        @NotNull String description,
+        @NotNull String displayName,
+        @NotNull String telNumber
+    ) {
         CustomerTraderUser u = copy();
 
-        u.setPasswordHash(passwordHash);
+        if (passwordHash != null) {
+            u.setPasswordHash(passwordHash);
+        }
+
         u.setFirstName(firstName);
         u.setLastName(lastName);
         u.setTelNumber(telNumber);
+        u.setProfileDescription(description);
+        u.setDisplayName(displayName);
 
         return u;
     }

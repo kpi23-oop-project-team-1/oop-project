@@ -240,13 +240,20 @@ export class ServerDataSource implements DataSource {
 
     updateAccountInfo(info: NewAccountInfo, creds: UserCredentials): Promise<undefined> {
         const formData = new FormData()
-        formData.set('password', info.password)
+     
         formData.set('username', info.username)
         formData.set('aboutMe', info.aboutMe)
         formData.set('firstName', info.firstName)
         formData.set('lastName', info.lastName)
         formData.set('telNumber', info.telNumber)
-        formData.set('pfpFile', info.pfpFile)
+
+        if (info.password.length > 0) {
+            formData.set('password', info.password)
+        }
+
+        if (info.pfpFile) {
+            formData.set('pfpFile', info.pfpFile)
+        }
 
         return this.noResponseFetch({
             url: this.createUrl("updateaccountinfo"),

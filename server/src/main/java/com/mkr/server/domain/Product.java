@@ -9,7 +9,6 @@ public class Product implements Commentable {
     private int productId;
     private int traderId;
     private String title;
-    private String[] imageSources;
     private int price;
     private int amount;
     private String description = "";
@@ -26,7 +25,6 @@ public class Product implements Commentable {
         int productId,
         int traderId,
         String title,
-        String[] imageSources,
         int price,
         int amount,
         ProductCategory category,
@@ -37,7 +35,6 @@ public class Product implements Commentable {
         this.productId = productId;
         this.traderId = traderId;
         this.title = title;
-        this.imageSources = imageSources;
         this.price = price;
         this.amount = amount;
         this.category = category;
@@ -68,14 +65,6 @@ public class Product implements Commentable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String[] getImageSources() {
-        return imageSources;
-    }
-
-    public void setImageSources(String[] imageSources) {
-        this.imageSources = imageSources;
     }
 
     public int getPrice() {
@@ -149,7 +138,6 @@ public class Product implements Commentable {
         p.setProductId(productId);
         p.setTraderId(traderId);
         p.setTitle(title);
-        p.setImageSources(imageSources);
         p.setPrice(price);
         p.setAmount(amount);
         p.setDescription(description);
@@ -182,7 +170,6 @@ public class Product implements Commentable {
         if (price != product.price) return false;
         if (amount != product.amount) return false;
         if (!title.equals(product.title)) return false;
-        if (!Arrays.equals(imageSources, product.imageSources)) return false;
         if (!description.equals(product.description)) return false;
         if (!Arrays.equals(comments, product.comments)) return false;
         if (category != product.category) return false;
@@ -197,7 +184,6 @@ public class Product implements Commentable {
         int result = productId;
         result = 31 * result + traderId;
         result = 31 * result + title.hashCode();
-        result = 31 * result + Arrays.hashCode(imageSources);
         result = 31 * result + price;
         result = 31 * result + amount;
         result = 31 * result + description.hashCode();

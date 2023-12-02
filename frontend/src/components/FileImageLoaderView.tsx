@@ -51,7 +51,7 @@ function ImageFileInput(props: ImageFileInputProps) {
 
     // Always set value to "" to reset the input
     return (
-        <input type="file" accept=".jpg, .jpeg, .png" value={""} onChange={onChange}/>
+        <input type="file" accept=".png" value={""} onChange={onChange}/>
     )
 }
 

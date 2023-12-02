@@ -6,6 +6,7 @@ import com.mkr.server.domain.Product;
 import com.mkr.server.dto.CartProductInfo;
 import com.mkr.server.repositories.ProductRepository;
 import com.mkr.server.repositories.UserRepository;
+import com.mkr.server.services.storage.ProductImageUrlMapper;
 import jakarta.validation.ValidationException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class CartService {
 
     @Autowired
     private ProductRepository productRepo;
+
+    @Autowired
+    private ProductImageUrlMapper imageUrlMapper;
 
     @NotNull
     public CartProductInfo[] getCartProducts(@NotNull String userEmail) {
@@ -60,12 +64,13 @@ public class CartService {
 
     @NotNull
     private CartProductInfo convertToCartProductInfo(@NotNull CartProduct cartProduct) {
-        Product product = productRepo.getProductById(cartProduct.getProductId()).get();
+        Product product = productRepo.getProductById(cartProduct.getProductId()).orElseThrow();
+        String imageSource = imageUrlMapper.getEndpointUrl(product.getProductId(), 0);
 
         return new CartProductInfo(
             product.getProductId(),
             product.getTitle(),
-            product.getImageSources()[0],
+            imageSource,
             product.getPrice(),
             cartProduct.getQuantity(),
             product.getAmount()

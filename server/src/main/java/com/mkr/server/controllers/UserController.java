@@ -5,9 +5,12 @@ import com.mkr.server.dto.*;
 import com.mkr.server.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class UserController {
@@ -64,7 +67,23 @@ public class UserController {
     }
 
     @PostMapping("/api/updateaccountinfo")
-    public void updateAccountInfo(UpdateAccountInfo info, Authentication auth) {
-        userService.updateAccountInfo(auth.getName(), info, "");
+    public void updateAccountInfo(
+        @ModelAttribute UpdateAccountInfo info,
+        @RequestParam(value = "pfpFile", required = false) MultipartFile pfpFile,
+        Authentication auth
+    ) {
+        userService.updateAccountInfo(auth.getName(), info, pfpFile);
+    }
+
+    @GetMapping("/images/pfp/{id}")
+    public ResponseEntity<Resource> pfpImage(@PathVariable int id) {
+        Resource resource = userService.getImageResource(id);
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().header(
+            HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\""
+        ).body(resource);
     }
 }

@@ -8,6 +8,7 @@ import com.mkr.server.domain.Comment;
 import com.mkr.server.domain.CustomerTraderUser;
 import com.mkr.server.domain.User;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -80,14 +81,16 @@ public class UserRepository {
 
     public void updateUserInfo(
         int userId,
-        String passwordHash,
-        String firstName,
-        String lastName,
-        String telNumber
+        @Nullable String passwordHash,
+        @NotNull String firstName,
+        @NotNull String lastName,
+        @NotNull String description,
+        @NotNull String displayName,
+        @NotNull String telNumber
     ) {
         userCollection().update(
             u -> u.getId() == userId && u instanceof CustomerTraderUser,
-            u -> ((CustomerTraderUser)u).withPersonalInfo(passwordHash, firstName, lastName, telNumber)
+            u -> ((CustomerTraderUser)u).withPersonalInfo(passwordHash, firstName, lastName, description, displayName, telNumber)
         );
     }
 }

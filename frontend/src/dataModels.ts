@@ -213,7 +213,7 @@ export type NewAccountInfo = {
     password: string,
 
     username: string,
-    pfpFile: File,
+    pfpFile: File | undefined,
 
     aboutMe: string,
 

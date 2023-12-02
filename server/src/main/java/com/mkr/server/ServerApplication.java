@@ -25,8 +25,9 @@ public class ServerApplication extends SpringBootServletInitializer {
 			"mail@gmail.com",
 			passwordEncoder.encode("password")
 		);
-		user.setTelNumber("12345678910");
-		user.setPfpSource("");
+		user.setTelNumber("1234567891");
+		user.setFirstName("First name");
+		user.setLastName("Last name");
 		user.setDisplayName("Display name");
 		user.setProfileDescription("Description");
 		user.setComments(new Comment[] {
@@ -44,7 +45,6 @@ public class ServerApplication extends SpringBootServletInitializer {
 			new Product(
 				0, 0,
 				"123",
-				new String[] { "" },
 				100,
 				5,
 				ProductCategory.DRESS,
@@ -55,7 +55,6 @@ public class ServerApplication extends SpringBootServletInitializer {
 			new Product(
 				1, 0,
 				"456",
-				new String[] { "" },
 				150,
 				5,
 				ProductCategory.SPORT,

@@ -108,7 +108,7 @@ export default function MyAccountPage() {
         const newAccount: NewAccountInfo = {
             password,
             username,
-            pfpFile: pfpFiles[0],
+            pfpFile: pfpFiles.length > 0 ? pfpFiles[0] : undefined,
             aboutMe,
             firstName,
             lastName,
@@ -117,7 +117,8 @@ export default function MyAccountPage() {
 
         setSubmitInProgress(true)
         dataSource.updateAccountInfo(newAccount, userCreds).then(() => {
-            navigate('/myaccount')
+            // Refresh page
+            navigate(0)
         }).catch(() => {
             setSubmitInProgress(false)
         })

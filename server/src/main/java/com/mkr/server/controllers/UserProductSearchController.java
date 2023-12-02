@@ -1,6 +1,5 @@
 package com.mkr.server.controllers;
 
-import com.mkr.server.domain.Product;
 import com.mkr.server.domain.ProductStatus;
 import com.mkr.server.dto.ConciseProduct;
 import com.mkr.server.search.UserProductSearchDescription;
@@ -36,13 +35,11 @@ public class UserProductSearchController {
         @RequestParam("status") ProductStatus status,
         Authentication auth
     ) {
-        Product[] result = searchService.getUserProducts(
+        return searchService.getUserProducts(
             status,
             page == null ? 1 : page,
             getUserId(auth)
         );
-
-        return ConciseProduct.fromProducts(result);
     }
 
     private int getUserId(@NotNull Authentication auth) {

@@ -10,6 +10,7 @@ import com.mkr.server.search.GlobalSearchFilter;
 import com.mkr.server.search.GlobalSearchFilterDescription;
 import com.mkr.server.search.SearchOrder;
 import com.mkr.server.services.GlobalProductSearchService;
+import com.mkr.server.services.storage.ProductImageUrlMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,9 @@ import java.util.Set;
 public class GlobalSearchController {
     @Autowired
     private GlobalProductSearchService service;
+
+    @Autowired
+    private ProductImageUrlMapper imageUrlMapper;
 
     @GetMapping("/api/searchfilterdesc")
     public GlobalSearchFilterDescription searchFilterDescription(
@@ -54,7 +58,7 @@ public class GlobalSearchController {
         return new GlobalSearchResultDto(
             result.pageCount(),
             result.totalProductCount(),
-            ConciseProduct.fromProducts(result.products())
+            ConciseProduct.fromProducts(result.products(), imageUrlMapper.asSingleImageFunction())
         );
     }
 }
