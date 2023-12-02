@@ -210,7 +210,7 @@ export class ServerDataSource implements DataSource {
     deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
         return this.noResponseFetch({
             method: "DELETE",
-            url: this.createUrl("product"),
+            url: this.createUrl("deleteproducts"),
             credentials: creds,
             body: JSON.stringify(ids)
         })
@@ -524,16 +524,16 @@ export class TemporaryDataSource implements DataSource {
         return this.test.getSpecialProductsAsync()
     }
     getCartProductsAsync(creds: UserCredentials): Promise<CartProductInfo[]> {
-        return this.server.getCartProductsAsync(creds)
+        return this.test.getCartProductsAsync()//creds)
     }
     addProductToCartAsync(id: number, creds: UserCredentials): Promise<undefined> {
-        return this.server.addProductToCartAsync(id, creds)
+        return this.test.addProductToCartAsync()//id, creds)
     }
     updateCartProductQuantityAsync(productId: number, newAmount: number, creds: UserCredentials): Promise<undefined> {
-        return this.server.updateCartProductQuantityAsync(productId, newAmount, creds)
+        return this.test.updateCartProductQuantityAsync(productId, newAmount)//, creds)
     }
     removeProductFromCartAsync(productId: number, creds: UserCredentials): Promise<undefined> {
-        return this.server.removeProductFromCartAsync(productId, creds)
+        return this.test.removeProductFromCartAsync(productId)//, creds)
     }
     getSearchFilterDescAsync(categoryId: CategoryId | undefined): Promise<SearchFilterDesc | undefined> {
         return this.server.getSearchFilterDescAsync(categoryId)
@@ -542,14 +542,14 @@ export class TemporaryDataSource implements DataSource {
         return this.server.getConciseProductsBySearch(filter)
     }
     getProductInfo(id: number): Promise<ProductInfo> {
-        return this.test.getProductInfo(id)
+        return this.server.getProductInfo(id)
     }
     
     addProduct(info: NewProductInfo, creds: UserCredentials): Promise<undefined> {
-        return this.test.addProduct()
+        return this.server.addProduct(info, creds)
     }
     updateProduct(info: UpdateProductInfo, creds: UserCredentials): Promise<undefined> {
-        return this.test.updateProduct()
+        return this.server.updateProduct(info, creds)
     }
     getUserProductsSearchDesc(status: ProductStatus, creds: UserCredentials): Promise<UserProductSearchDesc> {
         return this.server.getUserProductsSearchDesc(status, creds)
@@ -558,7 +558,7 @@ export class TemporaryDataSource implements DataSource {
         return this.server.getUserProducts(filter, creds)
     }
     deleteProducts(ids: number[], creds: UserCredentials): Promise<undefined> {
-        return this.test.deleteProducts(ids, creds)
+        return this.server.deleteProducts(ids, creds)
     }
 
     getUserType(creds: UserCredentials): Promise<UserType> {

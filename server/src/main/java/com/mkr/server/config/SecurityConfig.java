@@ -23,7 +23,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(
                     "/api/usertype",
-                    "/api/auth"
+                    "/api/auth",
+                    "/api/postproductcomment",
+                    "/api/deleteproducts"
                 ).authenticated()
                 .requestMatchers(
                     "/api/postproductcomment",
@@ -34,7 +36,9 @@ public class SecurityConfig {
                     "/api/addcartproduct",
                     "/api/cartproductamount",
                     "/api/cartproduct",
-                    "/api/updateaccountinfo"
+                    "/api/updateaccountinfo",
+                    "/api/addproduct",
+                    "/api/updateproduct"
                 ).hasRole("CUSTOMER_TRADER")
                 .requestMatchers("/**", "/api/**").permitAll()
             )

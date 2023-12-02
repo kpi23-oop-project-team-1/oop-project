@@ -17,13 +17,17 @@ public class FileStorageConfig {
     }
 
     @Bean
+    public StorageService productImageStorageService() {
+        return new FileStorageService(Path.of("images", "product_image"));
+    }
+
+    @Bean
     public UserPfpUrlMapper userPfpUrlMapper() {
         return entityId -> "/images/pfp/" + entityId;
     }
     
     @Bean
     public ProductImageUrlMapper productImageUrlMapper() {
-        // Temporary
-        return (entityId, index) -> "";
+        return (entityId, index) -> "/images/product/" + entityId + "/" + index;
     }
 }

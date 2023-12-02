@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collector;
-
-import java.util.Optional;
 
 @Repository
 public class ProductRepository {
@@ -39,6 +39,28 @@ public class ProductRepository {
 
     public boolean containsProductWithId(int id) {
         return getProductById(id).isPresent();
+    }
+
+    public Optional<Product> findFirstProductBy(@NotNull Predicate<Product> predicate) {
+        try (var data = productCollection().data()) {
+            return data.filter(predicate).findFirst();
+        }
+    }
+
+    public void addProduct(@NotNull Product product) {
+        productCollection().insert(product);
+        productCollection().setLastID(product.getProductId());
+    }
+
+    public void updateProduct(int id, @NotNull Function<Product, Product> transformProduct) {
+        productCollection().update(
+                o -> o.getProductId() == id,
+                transformProduct
+        );
+    }
+
+    public void deleteProduct(int id) {
+        productCollection().delete(o -> o.getProductId() == id);
     }
 
     public void addComment(@NotNull Comment comment) {
@@ -88,6 +110,14 @@ public class ProductRepository {
 
     public int countUserProducts(@NotNull Predicate<Product> predicate, int userId) {
         return countProducts(userMatchPredicate(predicate, userId));
+    }
+
+    public int getLastID() {
+        return productCollection().getLastID();
+    }
+
+    public void setLastID(int newLastID) {
+        productCollection().setLastID(newLastID);
     }
 
     @NotNull
