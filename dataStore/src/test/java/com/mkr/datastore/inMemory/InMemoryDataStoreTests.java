@@ -95,4 +95,15 @@ public class InMemoryDataStoreTests {
 
         assertArrayEquals(expectedResult, actualResult);
     }
+
+    @Test
+    public void setGetLastIDTest() {
+        int lastID = 128;
+
+        var dataStore = inMemoryDataStore();
+        dataStore.getCollection(TestDataStoreCollections.testObject).setLastID(lastID);
+        int actualLastID = dataStore.getCollection(TestDataStoreCollections.testObject).getLastID();
+
+        assertEquals(lastID, actualLastID);
+    }
 }

@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 public class InMemoryCollection<E> implements DataStoreCollection<E> {
     private final DataStoreCollectionDescriptor<E> descriptor;
     private final List<E> entities;
+    private int lastID;
 
     private final Lock readLock;
     private final Lock writeLock;
@@ -23,6 +24,7 @@ public class InMemoryCollection<E> implements DataStoreCollection<E> {
         this.descriptor = descriptor;
 
         entities = new ArrayList<>();
+        lastID = 0;
 
         var lock = new ReentrantReadWriteLock();
         readLock = lock.readLock();
@@ -86,5 +88,15 @@ public class InMemoryCollection<E> implements DataStoreCollection<E> {
         } finally {
             writeLock.unlock();
         }
+    }
+
+    @Override
+    public int getLastID() {
+        return lastID;
+    }
+
+    @Override
+    public void setLastID(int newLastID) {
+        lastID = newLastID;
     }
 }

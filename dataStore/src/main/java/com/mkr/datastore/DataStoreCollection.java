@@ -21,4 +21,8 @@ public interface DataStoreCollection<E> {
     );
 
     void delete(Predicate<E> predicate);
+
+    int getLastID();
+
+    void setLastID(int newLastID);
 }

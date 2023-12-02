@@ -119,6 +119,38 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
         }
     }
 
+    @Override
+    public int getLastID() {
+        int lastID;
+
+        readLock.lock();
+
+        try {
+            fileController.openFile();
+
+            lastID = fileController.readLastID();
+        } finally {
+            fileController.closeFile();
+            readLock.unlock();
+        }
+
+        return lastID;
+    }
+
+    @Override
+    public void setLastID(int newLastID) {
+        writeLock.lock();
+
+        try {
+            fileController.openFile();
+
+            fileController.writeLastID(newLastID);
+        } finally {
+            fileController.closeFile();
+            writeLock.unlock();
+        }
+    }
+
     private void onStreamClose() {
         fileController.closeFile();
         readLock.unlock();

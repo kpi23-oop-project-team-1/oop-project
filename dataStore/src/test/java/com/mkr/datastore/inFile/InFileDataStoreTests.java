@@ -10,6 +10,7 @@ import java.io.File;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class InFileDataStoreTests {
     private static final DataStoreConfiguration dataStoreConfig = DataStoreConfiguration.builder()
@@ -109,5 +110,15 @@ public class InFileDataStoreTests {
 
             assertArrayEquals(expectedResult, actualResult);
         }
+    }
+
+    @Test
+    public void setGetLastIDTest() {
+        int lastID = 128;
+
+        dataStore.getCollection(TestDataStoreCollections.testObject).setLastID(lastID);
+        int actualLastID = dataStore.getCollection(TestDataStoreCollections.testObject).getLastID();
+
+        assertEquals(lastID, actualLastID);
     }
 }
