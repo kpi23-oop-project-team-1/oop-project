@@ -8,7 +8,6 @@ import java.util.Arrays;
 public enum ProductStatus {
     ACTIVE("active"),
     WAITING_FOR_MODERATION("waiting-for-moderation"),
-    ON_MODERATION("on-moderation"),
     DECLINED("declined"),
     SOLD("sold");
 

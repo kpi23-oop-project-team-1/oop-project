@@ -27,7 +27,7 @@ export function parseNumberRange(text: string): NumberRange | undefined {
 
 export const allProductStatuses = [
     'active',
-    'on-moderation',
+    'waiting-for-moderation',
     'declined',
     'sold',
 ] as const
@@ -176,6 +176,8 @@ export type ProductInfo = {
     category: CategoryId,
     state: ProductState,
     color: ColorId,
+    status: ProductStatus
+    trader: ConciseUserInfo,
 }
 
 export type NewProductInfo = {

@@ -77,7 +77,9 @@ interface StringResources {
     readonly saveChanges: string,
     readonly postComment: string,
     readonly rateProductHeader: string,
-    readonly rateTraderHeader: string
+    readonly rateTraderHeader: string,
+    readonly approveProduct: string,
+    readonly declineProduct: string
 }
 
 export const ukrainianStringResources : StringResources = {
@@ -166,7 +168,7 @@ export const ukrainianStringResources : StringResources = {
     edit: "Редагувати",
     productStatusLabels: {
         active: "Активні",
-        'on-moderation': "На модерації",
+        'waiting-for-moderation': "На модерації",
         declined: "Відхилені",
         sold: "Продані"
     },
@@ -183,5 +185,7 @@ export const ukrainianStringResources : StringResources = {
     saveChanges: "Зберегти зміни",
     postComment: "Опублікувати",
     rateProductHeader: "Оцініть товар",
-    rateTraderHeader: "Оцініть продавця"
+    rateTraderHeader: "Оцініть продавця",
+    approveProduct: "Підтвердити",
+    declineProduct: "Заборонити"
 }

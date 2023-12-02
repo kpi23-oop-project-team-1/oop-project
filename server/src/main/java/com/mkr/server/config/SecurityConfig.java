@@ -40,6 +40,10 @@ public class SecurityConfig {
                     "/api/addproduct",
                     "/api/updateproduct"
                 ).hasRole("CUSTOMER_TRADER")
+                .requestMatchers(
+                    "/api/changeproductstatus",
+                    "/api/getproductswaitingapproval"
+                ).hasRole("ADMIN")
                 .requestMatchers("/**", "/api/**").permitAll()
             )
             .httpBasic(basic ->

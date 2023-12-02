@@ -10,6 +10,7 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/datastore" />
             <option value="$PROJECT_DIR$/server" />
+            <option value="$PROJECT_DIR$/serverDataStoreConsole" />
           </set>
         </option>
       </GradleProjectSettings>

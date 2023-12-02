@@ -158,6 +158,14 @@ public class Product implements Commentable {
         return p;
     }
 
+    @NotNull
+    public Product withStatus(@NotNull ProductStatus status) {
+        Product p = copy();
+        p.setStatus(status);
+
+        return p;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

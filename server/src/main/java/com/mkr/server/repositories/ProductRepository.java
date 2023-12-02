@@ -70,6 +70,12 @@ public class ProductRepository {
         );
     }
 
+    public Product[] getProductsBy(@NotNull Predicate<Product> predicate) {
+        try (var data = productCollection().data()) {
+            return data.filter(predicate).toArray(Product[]::new);
+        }
+    }
+
     @NotNull
     public<T> T collectIf(@NotNull Predicate<Product> predicate, @NotNull Collector<Product, ?, T> collector) {
         try (var data = productCollection().data()) {

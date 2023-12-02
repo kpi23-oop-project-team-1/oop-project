@@ -3,6 +3,7 @@ package com.mkr.server;
 import com.mkr.datastore.DataStore;
 import com.mkr.datastore.inMemory.InMemoryDataStore;
 import com.mkr.server.config.DataStoreConfig;
+import com.mkr.server.controllers.AdminController;
 import com.mkr.server.domain.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,7 +39,13 @@ public class ServerApplication extends SpringBootServletInitializer {
 		});
 		user.setProducts(new Product[0]);
 
-		users.insert(user);
+		var admin = new AdminUser(
+			1,
+			"admin@gmail.com",
+			passwordEncoder.encode("password")
+		);
+
+		users.insert(user, admin);
 
 		var products = dataStore.getCollection(DataStoreConfig.products);
 		products.insert(
@@ -49,7 +56,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 				5,
 				ProductCategory.DRESS,
 				ProductState.NEW,
-				ProductStatus.ACTIVE,
+				ProductStatus.WAITING_FOR_MODERATION,
 				ColorId.BLACK
 			),
 			new Product(
