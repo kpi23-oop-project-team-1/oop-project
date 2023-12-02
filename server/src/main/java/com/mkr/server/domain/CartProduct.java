@@ -27,4 +27,19 @@ public class CartProduct {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof CartProduct other &&
+            productId == other.productId &&
+            quantity == other.quantity;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = productId;
+        result = 31 * result + quantity;
+
+        return result;
+    }
 }
