@@ -1,4 +1,5 @@
 rootProject.name = "OOP project"
 include 'datastore'
 include 'server'
+include 'serverDataStoreConsole'
 
