@@ -83,7 +83,7 @@ public class CartControllerTests {
                 ColorId.BLACK
             ),
             new Product(
-                1, 0,
+                1, 1,
                 "456",
                 150,
                 5,

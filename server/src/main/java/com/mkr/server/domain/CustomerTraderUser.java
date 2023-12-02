@@ -180,4 +180,10 @@ public class CustomerTraderUser extends User implements Commentable {
         return u;
     }
 
+    public CustomerTraderUser withEmptyCart() {
+        CustomerTraderUser u = copy();
+        u.cartProducts = new CartProduct[0];
+
+        return u;
+    }
 }

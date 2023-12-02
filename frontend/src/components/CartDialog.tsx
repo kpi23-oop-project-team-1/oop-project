@@ -13,6 +13,7 @@ import { formatPriceToString } from "../utils/stringFormatting"
 import { Dialog } from "./Dialogs"
 import { CartContext, CartProductInfo } from "../cart"
 import { Link } from "react-router-dom";
+import { DiContainerContext } from "../diContainer";
 
 export type CartDialogProps = {
     onClose: () => void
@@ -20,11 +21,22 @@ export type CartDialogProps = {
 
 export default function CartDialog(props: CartDialogProps) {
     const strRes = useContext(StringResourcesContext)
+    const diContainer = useContext(DiContainerContext)
+    const dataSource = diContainer.dataSource
+    const creds = diContainer.userCredsStore.getCurrentUserCredentials()
 
     let [cartState, cartManager] = useContext(CartContext)
 
     function computeTotalPrice(): number {
         return (cartState.value ?? []).reduce((s, p) => s + p.price * p.quantity, 0)
+    }
+
+    function checkout() {
+        if (creds) {
+            dataSource.checkout(creds).then(() => {
+                cartManager.removeAllProductsLocal()
+            })
+        }
     }
 
     return (
@@ -53,7 +65,7 @@ export default function CartDialog(props: CartDialogProps) {
                     {formatPriceToString(computeTotalPrice())}
                 </p>
                 
-                <Link to="/" id="cart-dialog-buy-button" className="link-button primary">{strRes.checkout}</Link>
+                <button id="cart-dialog-buy-button" className="primary" onClick={checkout}>{strRes.checkout}</button>
             </div>
         </Dialog>
     )

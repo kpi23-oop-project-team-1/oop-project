@@ -35,7 +35,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 			new Comment(0, 0, 0, 5, "123", 100)
 		});
 		user.setCartProducts(new CartProduct[]{
-			new CartProduct(0, 5)
+			new CartProduct(1, 5)
 		});
 		user.setProducts(new Product[0]);
 
@@ -60,7 +60,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 				ColorId.BLACK
 			),
 			new Product(
-				1, 0,
+				1, 1,
 				"456",
 				150,
 				5,

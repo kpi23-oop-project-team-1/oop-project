@@ -1,7 +1,6 @@
 import { createContext, useContext, useMemo } from "react"
 import { DeferredDataState, mutateStateIfSuccess } from "./deferredData"
 import { mutateElementAndCopy, pushElementAndCopy, removeElementAndCopy } from "./utils/arrayUtils"
-import { DataSource } from "./dataSource"
 import { useValueFromDataSource } from "./dataSource.react"
 import { DiContainerContext } from "./diContainer"
 
@@ -21,6 +20,7 @@ export type CartManager = {
     addProduct(product: CartProductInfo): void
     removeProduct(productId: number): void
     updateProductQuantity(productId: number, value: number): void
+    removeAllProductsLocal(): void 
 }
 
 export function useCart(): [DeferredDataState<Cart>, CartManager] {
@@ -77,6 +77,9 @@ export function useCart(): [DeferredDataState<Cart>, CartManager] {
                 processPromiseErrors(dataSource.updateCartProductQuantityAsync(productId, value, userCreds))
             }
         },
+        removeAllProductsLocal() {
+            mutateCartIfSuccess(_ => [])
+        }
     }
 
     return [cartState, manager]
@@ -87,6 +90,7 @@ const stubCartManager: CartManager = {
     isProductInCart: () => false,
     removeProduct: () => {},
     updateProductQuantity: () => {},
+    removeAllProductsLocal: () => {}
 }
 
 export const CartContext = createContext<[DeferredDataState<Cart>, CartManager]>([{ type: 'loading' }, stubCartManager])

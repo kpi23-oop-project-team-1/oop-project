@@ -166,6 +166,17 @@ public class Product implements Commentable {
         return p;
     }
 
+    @NotNull
+    public Product withAmountAndStatus(int amount) {
+        Product p = copy();
+        p.setAmount(amount);
+        if (amount == 0) {
+            p.setStatus(ProductStatus.SOLD);
+        }
+
+        return p;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
