@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 public class GlobalSearchFilterDescriptionTests {
     @NotNull
     private static Product product(int price, ColorId color, ProductState state) {
-        return new Product(0, 0, "", new String[0], price, 1, ProductCategory.DRESS, state, ProductStatus.ACTIVE, color);
+        return new Product(0, 0, "", price, 1, ProductCategory.DRESS, state, ProductStatus.ACTIVE, color);
     }
 
     @Test

@@ -1,5 +1,7 @@
 plugins {
     id 'java-library'
+    id 'jacoco'
+    id 'jacoco-report-aggregation'
 }
 
 group = 'com.mkr'
@@ -18,4 +20,13 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+reporting {
+    reports {
+        testCodeCoverageReport(JacocoCoverageReport) {
+            testType = TestSuiteType.UNIT_TEST
+        }
+    }
 }

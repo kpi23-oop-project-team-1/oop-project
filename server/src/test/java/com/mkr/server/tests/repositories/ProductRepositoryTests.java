@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class ProductRepositoryTests {
     @NotNull
     private static Product product(int price) {
-        return new Product(0, 0, "", new String[0], price, 0, ProductCategory.HOME, ProductState.NEW, ProductStatus.SOLD, ColorId.BLACK);
+        return new Product(0, 0, "", price, 0, ProductCategory.HOME, ProductState.NEW, ProductStatus.SOLD, ColorId.BLACK);
     }
 
     @NotNull
