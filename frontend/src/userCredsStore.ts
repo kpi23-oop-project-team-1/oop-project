@@ -1,9 +1,11 @@
-import { getCookie, setCookie } from "./cookies"
+import { deleteCookie, getCookie, setCookie } from "./cookies"
 import { UserCredentials } from './user';
 
 export interface UserCredentialsStore {
     getCurrentUserCredentials(): UserCredentials | undefined
     saveUser(credentials: UserCredentials): void
+    updatePassword(value: string): void
+    deleteCredentials(): void
 }
 
 export class TestUserCredentialsStore implements UserCredentialsStore {
@@ -12,6 +14,12 @@ export class TestUserCredentialsStore implements UserCredentialsStore {
     }
 
     saveUser(): void {
+    }
+
+    updatePassword(value: string): void {
+    }
+
+    deleteCredentials(): void {
     }
 }
 
@@ -32,5 +40,14 @@ export class CookieUserCredentialsStore implements UserCredentialsStore {
     saveUser(credentials: UserCredentials): void {
         setCookie("email", credentials.email, userCredsExpirationDays)
         setCookie("password", credentials.password, userCredsExpirationDays)
+    }
+
+    updatePassword(value: string): void {
+        setCookie("password", value, userCredsExpirationDays)
+    }
+
+    deleteCredentials(): void {
+        deleteCookie("email")
+        deleteCookie("password")
     }
 }
