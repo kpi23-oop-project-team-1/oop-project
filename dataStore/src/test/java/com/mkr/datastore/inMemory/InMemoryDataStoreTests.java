@@ -24,8 +24,8 @@ public class InMemoryDataStoreTests {
     @Test
     public void insertTest() {
         var objects = new TestObject[]{
-            new TestObject(true, "1", 1, TestEnum.VALUE1),
-            new TestObject(false, "2", 2, TestEnum.VALUE2)
+            new TestObject(true, "1", 1, 10L, TestEnum.VALUE1),
+            new TestObject(false, "2", 2, 20L, TestEnum.VALUE2)
         };
 
         var dataStore = inMemoryDataStore();
@@ -42,9 +42,9 @@ public class InMemoryDataStoreTests {
     @Test
     public void deleteTest() {
         var objects = new TestObject[]{
-            new TestObject(true, "1", 1, TestEnum.VALUE1),
-            new TestObject(false, "2", 1, TestEnum.VALUE2),
-            new TestObject(true, "3", 2, TestEnum.VALUE2)
+            new TestObject(true, "1", 1, 10L, TestEnum.VALUE1),
+            new TestObject(false, "2", 1, 20L, TestEnum.VALUE2),
+            new TestObject(true, "3", 2, 30L, TestEnum.VALUE2)
         };
 
         var dataStore = inMemoryDataStore(objects);
@@ -59,7 +59,7 @@ public class InMemoryDataStoreTests {
             .toArray(TestObject[]::new);
 
         var expectedResult = new TestObject[]{
-            new TestObject(true, "3", 2, TestEnum.VALUE2)
+            new TestObject(true, "3", 2, 30L, TestEnum.VALUE2)
         };
 
         assertArrayEquals(expectedResult, actualResult);
@@ -68,9 +68,9 @@ public class InMemoryDataStoreTests {
     @Test
     public void updateTest() {
         var objects = new TestObject[]{
-            new TestObject(true, "1", 1, TestEnum.VALUE1),
-            new TestObject(false, "2", 1, TestEnum.VALUE2),
-            new TestObject(true, "3", 2, TestEnum.VALUE2)
+            new TestObject(true, "1", 1, 10L, TestEnum.VALUE1),
+            new TestObject(false, "2", 1, 20L, TestEnum.VALUE2),
+            new TestObject(true, "3", 2, 30L, TestEnum.VALUE2)
         };
 
         var dataStore = inMemoryDataStore(objects);
@@ -79,7 +79,13 @@ public class InMemoryDataStoreTests {
             .getCollection(TestDataStoreCollections.testObject)
             .update(
                 o -> o.getInteger() == 1,
-                o -> new TestObject(o.getBool(), o.getString() + "0", o.getInteger(), o.getTestEnum())
+                o -> new TestObject(
+                        o.getBool(),
+                        o.getString() + "0",
+                        o.getInteger(),
+                        o.getTestLong(),
+                        o.getTestEnum()
+                )
             );
 
         TestObject[] actualResult = dataStore
@@ -88,9 +94,9 @@ public class InMemoryDataStoreTests {
             .toArray(TestObject[]::new);
 
         var expectedResult = new TestObject[]{
-            new TestObject(true, "10", 1, TestEnum.VALUE1),
-            new TestObject(false, "20", 1, TestEnum.VALUE2),
-            new TestObject(true, "3", 2, TestEnum.VALUE2)
+            new TestObject(true, "10", 1, 10L, TestEnum.VALUE1),
+            new TestObject(false, "20", 1, 20L, TestEnum.VALUE2),
+            new TestObject(true, "3", 2, 30L, TestEnum.VALUE2)
         };
 
         assertArrayEquals(expectedResult, actualResult);

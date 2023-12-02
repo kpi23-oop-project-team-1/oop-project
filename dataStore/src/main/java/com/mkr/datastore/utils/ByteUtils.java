@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 
 public final class ByteUtils {
     public static final int INT32_SIZE = 4;
+    public static final int INT64_SIZE = 8;
     public static final int BOOLEAN_SIZE = 1;
 
     public static byte[] booleanToBytes(boolean value) {
@@ -29,6 +30,21 @@ public final class ByteUtils {
                 .put(bytes)
                 .rewind()
                 .getInt();
+    }
+
+    public static byte[] int64ToBytes(long value) {
+        return ByteBuffer.allocate(8)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .putLong(value)
+                .array();
+    }
+
+    public static long bytesToInt64(byte[] bytes) {
+        return ByteBuffer.allocate(8)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .put(bytes)
+                .rewind()
+                .getLong();
     }
 
     public static byte[] stringToBytes(String string, Charset charset) {

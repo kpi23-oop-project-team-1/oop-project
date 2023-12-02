@@ -53,6 +53,7 @@ public class CollectionFileControllerTests {
                 true,
                 "",
                 0,
+                0L,
                 TestEnum.VALUE1,
                 new String[] {},
                 new Integer[] {});
@@ -60,6 +61,7 @@ public class CollectionFileControllerTests {
                 false,
                 "test",
                 128,
+                128L,
                 TestEnum.VALUE2,
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
@@ -80,6 +82,7 @@ public class CollectionFileControllerTests {
                 true,
                 "",
                 0,
+                0L,
                 TestEnum.VALUE1,
                 new String[] {},
                 new Integer[] {});
@@ -87,6 +90,7 @@ public class CollectionFileControllerTests {
                 false,
                 "test",
                 128,
+                128L,
                 TestEnum.VALUE2,
                 new String[] {"array1", "array2"},
                 new Integer[] {11, 22, 33});
@@ -114,6 +118,7 @@ public class CollectionFileControllerTests {
                     i % 2 == 0,
                     String.valueOf(i),
                     i,
+                    (long) i,
                     TestEnum.VALUE1,
                     new String[] {},
                     new Integer[] {});

@@ -10,8 +10,8 @@ public class TestObjectWithArrays extends TestObject {
     public TestObjectWithArrays() {
     }
 
-    public TestObjectWithArrays(Boolean bool, String string, Integer integer, TestEnum testEnum, String[] strings, Integer[] integers) {
-        super(bool, string, integer, testEnum);
+    public TestObjectWithArrays(Boolean bool, String string, Integer integer, Long testLong, TestEnum testEnum, String[] strings, Integer[] integers) {
+        super(bool, string, integer, testLong, testEnum);
         this.strings = strings;
         this.integers = integers;
     }

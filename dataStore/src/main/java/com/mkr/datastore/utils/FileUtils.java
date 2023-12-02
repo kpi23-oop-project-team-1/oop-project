@@ -21,6 +21,14 @@ public final class FileUtils {
         writeBytesAtPos(raf, ByteUtils.int32ToBytes(value), pos);
     }
 
+    public static long readInt64AtPos(RandomAccessFile raf, long pos) {
+        return ByteUtils.bytesToInt64(FileUtils.readNBytesAtPos(raf, ByteUtils.INT64_SIZE, pos));
+    }
+
+    public static void writeInt64AtPos(RandomAccessFile raf, long value, long pos) {
+        writeBytesAtPos(raf, ByteUtils.int64ToBytes(value), pos);
+    }
+
     public static byte[] readNBytesAtPos(RandomAccessFile raf, int n, long pos) {
         var bytes = new byte[n];
 

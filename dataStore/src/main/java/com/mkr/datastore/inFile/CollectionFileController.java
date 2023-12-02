@@ -115,6 +115,8 @@ public class CollectionFileController<T> {
                     elementsData.add(ByteUtils.booleanToBytes((Boolean) element));
                 } else if (valueElementType == Integer.class) {
                     elementsData.add(ByteUtils.int32ToBytes((Integer) element));
+                } else if (valueElementType == Long.class) {
+                    elementsData.add(ByteUtils.int64ToBytes((Long) element));
                 } else if (valueElementType == String.class) {
                     elementsData.add(ByteUtils.stringToBytes((String) element, StandardCharsets.UTF_8));
                 } else if (valueElementType.isEnum()) {
@@ -210,6 +212,9 @@ public class CollectionFileController<T> {
                 } else if (valueElementType == Integer.class) {
                     elements[i] = FileUtils.readInt32AtPos(raf, offset);
                     offset += ByteUtils.INT32_SIZE;
+                } else if (valueElementType == Long.class) {
+                    elements[i] = FileUtils.readInt64AtPos(raf, offset);
+                    offset += ByteUtils.INT64_SIZE;
                 } else if (valueElementType == String.class) {
                     int stringBytesSize = FileUtils.readInt32AtPos(raf, offset);
                     offset += ByteUtils.INT32_SIZE;
@@ -368,6 +373,8 @@ public class CollectionFileController<T> {
             return new Boolean[elementCount];
         } else if (valueElementType == Integer.class) {
             return new Integer[elementCount];
+        } else if (valueElementType == Long.class) {
+            return new Long[elementCount];
         } else if (valueElementType == String.class) {
             return new String[elementCount];
         } else if (valueElementType.isEnum()) {
