@@ -43,7 +43,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 		var products = dataStore.getCollection(DataStoreConfig.products);
 		products.insert(
 			new Product(
-				100, 0,
+				0, 0,
 				"123",
 				100,
 				5,
@@ -53,7 +53,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 				ColorId.BLACK
 			),
 			new Product(
-				101, 0,
+				1, 0,
 				"456",
 				150,
 				5,
