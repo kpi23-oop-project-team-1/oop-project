@@ -62,7 +62,7 @@ public class CartControllerTests {
         user.setDisplayName("Display name");
         user.setProfileDescription("Description");
         user.setComments(new Comment[]{
-            new Comment(0, 0, 0, 5, "123", 100)
+            new Comment(0, 0, 0, 5, "123", 100L)
         });
         user.setCartProducts(new CartProduct[]{
             new CartProduct(0, 5)

@@ -4,13 +4,14 @@ import com.mkr.server.utils.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Product implements Commentable {
-    private int productId;
-    private int traderId;
+    private Integer productId;
+    private Integer traderId;
     private String title;
-    private int price;
-    private int amount;
+    private Integer price;
+    private Integer amount;
     private String description = "";
     private Comment[] comments = new Comment[0];
     private ProductCategory category;
@@ -22,11 +23,11 @@ public class Product implements Commentable {
     }
 
     public Product(
-        int productId,
-        int traderId,
+        Integer productId,
+        Integer traderId,
         String title,
-        int price,
-        int amount,
+        Integer price,
+        Integer amount,
         ProductCategory category,
         ProductState state,
         ProductStatus status,
@@ -43,19 +44,19 @@ public class Product implements Commentable {
         this.color = color;
     }
 
-    public int getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
-    public int getTraderId() {
+    public Integer getTraderId() {
         return traderId;
     }
 
-    public void setTraderId(int traderId) {
+    public void setTraderId(Integer traderId) {
         this.traderId = traderId;
     }
 
@@ -67,19 +68,19 @@ public class Product implements Commentable {
         this.title = title;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
-    public int getAmount() {
+    public Integer getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(Integer amount) {
         this.amount = amount;
     }
 
@@ -165,10 +166,10 @@ public class Product implements Commentable {
 
         Product product = (Product) o;
 
-        if (productId != product.productId) return false;
-        if (traderId != product.traderId) return false;
-        if (price != product.price) return false;
-        if (amount != product.amount) return false;
+        if (!Objects.equals(productId, product.productId)) return false;
+        if (!Objects.equals(traderId, product.traderId)) return false;
+        if (!Objects.equals(price, product.price)) return false;
+        if (!Objects.equals(amount, product.amount)) return false;
         if (!title.equals(product.title)) return false;
         if (!description.equals(product.description)) return false;
         if (!Arrays.equals(comments, product.comments)) return false;

@@ -25,7 +25,7 @@ public class CustomerTraderUser extends User implements Commentable {
     public CustomerTraderUser() {
     }
 
-    public CustomerTraderUser(int id, String email, String passwordHash) {
+    public CustomerTraderUser(Integer id, String email, String passwordHash) {
         super(id, email, passwordHash);
     }
 

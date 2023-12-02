@@ -1,38 +1,40 @@
 package com.mkr.server.domain;
 
+import java.util.Objects;
+
 public class CartProduct {
-    private int productId;
-    private int quantity;
+    private Integer productId;
+    private Integer quantity;
 
     public CartProduct() {
     }
 
-    public CartProduct(int productId, int quantity) {
+    public CartProduct(Integer productId, Integer quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }
 
-    public int getProductId() {
+    public Integer getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Integer productId) {
         this.productId = productId;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
     @Override
     public boolean equals(Object o) {
         return o instanceof CartProduct other &&
-            productId == other.productId &&
-            quantity == other.quantity;
+                Objects.equals(productId, other.productId) &&
+                Objects.equals(quantity, other.quantity);
     }
 
     @Override

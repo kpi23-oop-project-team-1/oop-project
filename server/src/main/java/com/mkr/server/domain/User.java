@@ -4,7 +4,7 @@ import com.mkr.datastore.BaseModel;
 
 @BaseModel(inheritedClasses = { CustomerTraderUser.class, AdminUser.class })
 public abstract class User {
-    private int id;
+    private Integer id;
 
     private String email;
     private String passwordHash;
@@ -12,17 +12,17 @@ public abstract class User {
     protected User() {
     }
 
-    protected User(int id, String email, String passwordHash) {
+    protected User(Integer id, String email, String passwordHash) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

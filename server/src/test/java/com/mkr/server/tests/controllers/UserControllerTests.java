@@ -110,7 +110,7 @@ public class UserControllerTests {
 
         if (commentAuthorId >= 0) {
             user.setComments(new Comment[]{
-                new Comment(0, id, commentAuthorId, 5, "123 " + id, 100)
+                new Comment(0, id, commentAuthorId, 5, "123 " + id, 100L)
             });
         } else {
             user.setComments(new Comment[0]);

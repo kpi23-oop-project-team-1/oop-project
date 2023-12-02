@@ -1,17 +1,18 @@
 package com.mkr.server.domain;
 
 public class Comment {
-    private int id;
-    private int targetId;
-    private int userId;
-    private int rating;
+    private Integer id;
+    private Integer targetId;
+    private Integer userId;
+    private Integer rating;
     private String text;
-    private long postEpochSeconds;
+    private Long postEpochSeconds;
 
     public Comment() {
     }
 
-    public Comment(int id, int targetId, int userId, int rating, String text, long postEpochSeconds) {
+    public Comment(Integer id, Integer targetId, Integer userId, Integer rating, String text, Long postEpochSeconds) {
+        this.id = id;
         this.targetId = targetId;
         this.userId = userId;
         this.rating = rating;
@@ -19,43 +20,43 @@ public class Comment {
         this.postEpochSeconds = postEpochSeconds;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getTargetId() {
+    public Integer getTargetId() {
         return targetId;
     }
 
-    public void setTargetId(int targetId) {
+    public void setTargetId(Integer targetId) {
         this.targetId = targetId;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
-    public long getPostEpochSeconds() {
+    public Long getPostEpochSeconds() {
         return postEpochSeconds;
     }
 
-    public void setPostEpochSeconds(long postEpochSeconds) {
+    public void setPostEpochSeconds(Long postEpochSeconds) {
         this.postEpochSeconds = postEpochSeconds;
     }
 
