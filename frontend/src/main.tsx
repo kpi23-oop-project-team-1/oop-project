@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { DiContainerContext, TemporaryDiContainer } from "./diContainer";
+import { AppDiContainer, DiContainerContext } from "./diContainer";
 import { StringResourcesContext } from "./StringResourcesContext";
 import { ukrainianStringResources } from "./StringResources";
 
@@ -65,7 +65,7 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <React.StrictMode>
         <StringResourcesContext.Provider value={ukrainianStringResources}>
-            <DiContainerContext.Provider value={TemporaryDiContainer}>
+            <DiContainerContext.Provider value={AppDiContainer}>
                 <RouterProvider router={router} />
             </DiContainerContext.Provider>
         </StringResourcesContext.Provider>

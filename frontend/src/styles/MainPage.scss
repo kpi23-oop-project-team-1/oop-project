@@ -1,47 +1,6 @@
 @use 'colors';
 @use 'sass:math';
 
-$products-in-special-products: 5;
-
-#special-products-block {
-    margin: 0 20px;
-}
-
-#special-products-block h2 {
-    margin-left: 30px;
-    margin-top: 20px;
-}
-
-#special-products-block .horizontal-scroll-container-content-list {
-    gap: 20px;
-    
-    > li {
-        width: 20%;
-    }
-}
-
-#special-products-block .special-product {
-    .product-image-with-stripe {
-        width: 100%;
-    }
-
-    .special-product-title {
-        margin-top: 10px;
-    }
-
-    .special-product-price {
-        margin-top: 5px;
-    }
-
-    .special-product-add-to-cart {
-        border-radius: 0;
-        margin-top: 10px;
-        width: 100%;
-
-        padding: 10px 0;
-    }
-}
-
 #about-us-block {
     background-color: colors.$primary-light-color;
     padding: 60px 0;
