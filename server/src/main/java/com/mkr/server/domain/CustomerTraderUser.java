@@ -215,7 +215,8 @@ public class CustomerTraderUser extends User implements Commentable {
 
     public CustomerTraderUser withEmptyCart() {
         CustomerTraderUser u = copy();
-        u.cartProducts = new CartProduct[0];
+
+        u.setCartProducts(new CartProduct[0]);
 
         return u;
     }

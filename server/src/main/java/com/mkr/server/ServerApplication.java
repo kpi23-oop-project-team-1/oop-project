@@ -32,7 +32,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 		user1.setLastName("Last name");
 		user1.setDisplayName("Display name");
 		user1.setProfileDescription("Description");
-		user1.setComments(new Integer[][] { 0 });
+		user1.setComments(new Integer[] { 0 });
 		user1.setCartProducts(new CartProduct[]{
 			new CartProduct(1, 5)
 		});
