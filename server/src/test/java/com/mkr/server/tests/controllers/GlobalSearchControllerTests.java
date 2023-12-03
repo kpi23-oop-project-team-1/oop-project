@@ -69,7 +69,7 @@ public class GlobalSearchControllerTests {
     }
 
     @Test
-    public void cartProductsTest() throws Exception {
+    public void searchFilterDescriptionTest() throws Exception {
         mockMvc.perform(get("/api/searchfilterdesc"))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"limitingPriceRange\":{\"start\":100,\"end\":150},\"colorIds\":[\"black\",\"white\"],\"states\":[\"acceptable\",\"new\"]}"));

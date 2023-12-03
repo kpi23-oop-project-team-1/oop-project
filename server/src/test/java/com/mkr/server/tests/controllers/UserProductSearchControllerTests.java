@@ -16,16 +16,15 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ProductControllerTests {
+public class UserProductSearchControllerTests {
     @TestConfiguration
     public static class Configuration {
         @Bean
@@ -73,7 +72,7 @@ public class ProductControllerTests {
                         ColorId.BLACK
                 ),
                 new Product(
-                        1, 0,
+                        1, 1,
                         "456",
                         150,
                         5,
@@ -114,41 +113,22 @@ public class ProductControllerTests {
     }
 
     @Test
-    public void productInfoTest() throws Exception {
-        mockMvc.perform(get("/api/product?id=0"))
-                .andExpect(status().isOk())
-                .andExpect(content().json("{\"id\":0,\"title\":\"123\",\"imageSources\":[],\"price\":100,\"totalAmount\":5,\"description\":\"\",\"comments\":[],\"category\":\"dress\",\"state\":\"new\",\"color\":\"black\",\"status\":\"active\",\"trader\":{\"id\":0,\"displayName\":\"Display name 0\"}}"));
-    }
-
-    @Test
-    public void postProductCommentTest() throws Exception {
+    public void userProductsSearchDescriptionTest() throws Exception {
         mockMvc.perform(
-                post("/api/postproductcomment")
-                        .param("targetId", "0")
-                        .param("rating", "3")
-                        .param("text", "test")
-                        .with(user("mail1@gmail.com").password("password").roles("USER", "CUSTOMER_TRADER"))
-        ).andExpect(status().isOk());
-
-        try (var stream = dataStore.getCollection(DataStoreConfig.products).data()) {
-            var product = stream
-                .filter(p -> p.getProductId() == 0)
-                .findFirst().orElseThrow();
-
-            assertEquals(1, product.getComments().length);
-        }
-    }
-
-    @Test
-    public void deleteProductsTest() throws Exception {
-        mockMvc.perform(
-                delete("/api/deleteproducts")
-                        .content("[0,1]")
+                get("/api/userproductssearchdesc?status=active")
                         .with(user("mail0@gmail.com").password("password").roles("USER", "CUSTOMER_TRADER"))
-        ).andExpect(status().isOk());
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().json("{\"totalPages\":1}"));
+    }
 
-        try (var stream = dataStore.getCollection(DataStoreConfig.products).data()) {
-            assertEquals(0, stream.count());
-        }
+    @Test
+    public void getProductsTest() throws Exception {
+        mockMvc.perform(
+                get("/api/userproducts?status=active")
+                        .with(user("mail0@gmail.com").password("password").roles("USER", "CUSTOMER_TRADER"))
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().json("[{\"id\":0,\"title\":\"123\",\"imageSource\":\"/images/product/0/0\",\"price\":100,\"totalAmount\":5}]"));
     }
 }
