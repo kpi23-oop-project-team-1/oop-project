@@ -183,7 +183,7 @@ function AdminPanel(props: AdminPanelProps) {
     function changeProductStatus(status: ProductStatus) {
         if (props.creds) {
         dataSource.changeProductStatus(props.productId, status, props.creds).then(() => {
-            navigate("admin")
+            navigate("/admin")
         }).catch(() => {})
         }
     }

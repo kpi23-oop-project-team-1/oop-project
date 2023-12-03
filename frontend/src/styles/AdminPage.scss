@@ -1,0 +1,29 @@
+@use 'colors';
+
+#admin-page-product-list {
+    padding: 20px;
+}
+
+.admin-page-product-view {
+    padding: 10px;
+    border: 1px solid colors.$color-on-surface-light;
+    border-radius: 10px;
+
+    * {
+        display: inline-block;
+    }
+
+    img {
+        $size: 100px;
+
+        width: $size;
+        max-height: $size;
+        vertical-align: middle;
+    }
+    
+    p {
+        margin-left: 10px;
+        font-size: 1.4em;
+       
+    }
+}
