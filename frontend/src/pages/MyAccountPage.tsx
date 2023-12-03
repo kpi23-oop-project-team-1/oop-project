@@ -84,7 +84,7 @@ export default function MyAccountPage() {
     const [isSubmitInProgress, setSubmitInProgress] = useState(false)
 
     function onMyProfileClick() {
-        navigate("/user/$" + accountInfo.id + "/")
+        navigate("/user/" + accountInfo.id + "/")
     }
 
     function onMyProductsClick() {

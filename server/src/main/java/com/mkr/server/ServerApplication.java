@@ -64,6 +64,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 		);
 
 		users.insert(user1, user2, admin);
+		users.setLastID(2);
 
 		var products = dataStore.getCollection(DataStoreConfig.products);
 		products.insert(
@@ -88,6 +89,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 				ColorId.WHITE
 			)
 		);
+		products.setLastID(1);
 
 		return dataStore;
 	}
