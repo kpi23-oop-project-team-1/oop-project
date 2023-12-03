@@ -42,6 +42,8 @@ public class Product implements Commentable {
         this.state = state;
         this.status = status;
         this.color = color;
+
+        comments = new Integer[0];
     }
 
     public Integer getProductId() {

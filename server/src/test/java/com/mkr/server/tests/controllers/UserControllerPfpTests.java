@@ -6,6 +6,7 @@ import com.mkr.server.config.DataStoreConfig;
 import com.mkr.server.domain.*;
 import com.mkr.server.services.storage.FileStorageService;
 import com.mkr.server.services.storage.StorageService;
+import com.mkr.server.tests.TestServerConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.FileSystemUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -32,27 +34,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerPfpTests {
-    private static final Path testDir = Path.of("test_images");
+    private static final Path testImageDir = Path.of("test_images");
 
     @TestConfiguration
     public static class UserControllerConfiguration {
-        @Bean
-        @Primary
-        public DataStore testDataStore() {
-            return new InMemoryDataStore(DataStoreConfig.configuration);
-        }
-
-        @SuppressWarnings("deprecation")
-        @Primary
-        @Bean
-        public PasswordEncoder testPasswordEncoder() {
-            return NoOpPasswordEncoder.getInstance();
-        }
-
         @Primary
         @Bean
         public StorageService userPfpStorageService() {
-            return new FileStorageService(testDir);
+            return new FileStorageService(testImageDir);
         }
     }
 
@@ -68,14 +57,6 @@ public class UserControllerPfpTests {
     @Autowired
     private MockMvc mockMvc;
 
-    @AfterAll
-    public static void afterAll() {
-        try {
-            Files.delete(testDir);
-        } catch (IOException ignored) {
-        }
-    }
-
     @BeforeEach
     public void beforeTest() {
         var users = dataStore.getCollection(DataStoreConfig.users);
@@ -83,11 +64,18 @@ public class UserControllerPfpTests {
 
         users.delete(p -> true);
         products.delete(p -> true);
-        users.insert(createUser(0, 1));
-        users.insert(createUser(1, -1));
+
+        users.insert(createUser(0));
+        users.insert(createUser(1));
     }
 
-    private User createUser(int id, int commentAuthorId) {
+    @AfterAll
+    public static void afterAll() throws IOException {
+        FileSystemUtils.deleteRecursively(testImageDir);
+        FileSystemUtils.deleteRecursively(TestServerConfiguration.dataStorePath);
+    }
+
+    private User createUser(int id) {
         var user = new CustomerTraderUser(
             id,
             "mail" + id + "@gmail.com",
@@ -98,16 +86,6 @@ public class UserControllerPfpTests {
         user.setLastName("Last name " + id);
         user.setDisplayName("Display name " + id);
         user.setProfileDescription("Description " + id);
-
-        if (commentAuthorId >= 0) {
-            user.setComments(new Integer[] { 0 });
-        } else {
-            user.setComments(new Integer[0]);
-        }
-
-        user.setCartProducts(new CartProduct[]{
-            new CartProduct(0, 5)
-        });
 
         return user;
     }

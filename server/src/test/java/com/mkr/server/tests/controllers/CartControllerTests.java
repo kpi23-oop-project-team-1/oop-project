@@ -1,19 +1,20 @@
 package com.mkr.server.tests.controllers;
 
 import com.mkr.datastore.DataStore;
-import com.mkr.datastore.inMemory.InMemoryDataStore;
 import com.mkr.server.config.DataStoreConfig;
 import com.mkr.server.domain.*;
+import com.mkr.server.tests.TestServerConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.FileSystemUtils;
+
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,15 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CartControllerTests {
-    @TestConfiguration
-    public static class Configuration {
-        @Bean
-        @Primary
-        public DataStore testDataStore() {
-            return new InMemoryDataStore(DataStoreConfig.configuration);
-        }
-    }
-
     @Autowired
     private DataStore dataStore;
 
@@ -90,6 +82,11 @@ public class CartControllerTests {
                 ColorId.WHITE
             )
         );
+    }
+
+    @AfterAll
+    public static void afterAll() throws IOException {
+        FileSystemUtils.deleteRecursively(TestServerConfiguration.dataStorePath);
     }
 
     @Test
@@ -151,12 +148,7 @@ public class CartControllerTests {
 
     private CartProduct[] getZeroUserCart() {
         try (var data = dataStore.getCollection(DataStoreConfig.users).data()) {
-            var firstUser = data.filter(u -> u.getId() == 0 && u instanceof CustomerTraderUser)
-                .map(u -> (CustomerTraderUser) u)
-                .findFirst()
-                .orElseThrow();
-
-            return firstUser.getCartProducts();
+            return data.filter(u -> u.getId() == 0).findFirst().map(u -> ((CustomerTraderUser)u).getCartProducts()).orElseThrow();
         }
     }
 }

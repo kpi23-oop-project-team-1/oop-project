@@ -27,6 +27,10 @@ public class CustomerTraderUser extends User implements Commentable {
 
     public CustomerTraderUser(Integer id, String email, String passwordHash) {
         super(id, email, passwordHash);
+
+        comments = new Integer[0];
+        cartProductIds = new Integer[0];
+        cartProductQuantities = new Integer[0];
     }
 
     @Override

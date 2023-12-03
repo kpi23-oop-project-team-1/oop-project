@@ -112,12 +112,17 @@ public class CollectionFileController<T> {
             ByteArrayBuilder elementsData = new ByteArrayBuilder();
 
             Object[] elements;
+            System.out.println("Is Array = " + valueType.isArray());
             if (valueType.isArray()) {
                 elements = (Object[]) value;
                 elementsData.add(ByteUtils.int32ToBytes(elements.length));
+
+                System.out.println("Writing array length" + elements.length);
             } else {
                 elements = new Object[] { value };
             }
+
+            System.out.println("\tWriting " + valueElementType + " " + valueType + " " + Arrays.toString(elements));
 
             for (var element : elements) {
                 System.out.println("\tWriting " + element);
@@ -217,9 +222,12 @@ public class CollectionFileController<T> {
 
             int elementCount = 1;
             if (valueType.isArray()) {
+                System.out.println("Reading at " + offset);
                 elementCount = FileUtils.readInt32AtPos(raf, offset);
                 offset += ByteUtils.INT32_SIZE;
             }
+
+            System.out.println("Reading " + valueType + " " + valueElementType + " " + elementCount);
 
             Object[] elements = instantiateArrayByElementType(valueElementType, elementCount);
             for (int i = 0; i < elementCount; i++) {
@@ -322,6 +330,10 @@ public class CollectionFileController<T> {
         verifyIsOpen();
         System.out.println("Count entities");
         long offset = pos;
+        if (offset == findFileEndPos()) {
+            return 0;
+        }
+
         int count = 0;
 
         while (true) {

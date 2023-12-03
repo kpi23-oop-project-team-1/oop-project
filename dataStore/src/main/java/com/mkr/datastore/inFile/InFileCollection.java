@@ -109,6 +109,9 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             fileController.openFile();
 
             long offset = fileController.getFirstEntityPos();
+            if (offset == fileController.findFileEndPos()) {
+                return;
+            }
 
             while (offset >= 0) {
                 E entity = fileController.readEntityAtPos(offset);

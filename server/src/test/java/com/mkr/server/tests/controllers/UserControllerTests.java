@@ -9,6 +9,8 @@ import com.mkr.server.dto.AccountInfo;
 import com.mkr.server.dto.CommentInfo;
 import com.mkr.server.dto.ConciseUserInfo;
 import com.mkr.server.dto.DetailedUserInfo;
+import com.mkr.server.tests.TestServerConfiguration;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.FileSystemUtils;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -34,22 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UserControllerTests {
-    @TestConfiguration
-    public static class Configuration {
-        @Bean
-        @Primary
-        public DataStore testDataStore() {
-            return new InMemoryDataStore(DataStoreConfig.configuration);
-        }
-
-        @SuppressWarnings("deprecation")
-        @Primary
-        @Bean
-        public PasswordEncoder testPasswordEncoder() {
-            return NoOpPasswordEncoder.getInstance();
-        }
-    }
-
     @Autowired
     private DataStore dataStore;
 
@@ -70,8 +59,13 @@ public class UserControllerTests {
 
         users.delete(p -> true);
         products.delete(p -> true);
-        users.insert(createUser(0, 1));
-        users.insert(createUser(1, -1));
+        comments.delete(p -> true);
+
+        var zeroUser = createUser(0);
+        ((CustomerTraderUser)zeroUser).setComments(new Integer[] { 0 });
+
+        users.insert(zeroUser);
+        users.insert(createUser(1));
 
         products.insert(
             new Product(
@@ -107,7 +101,12 @@ public class UserControllerTests {
         );
     }
 
-    private User createUser(int id, int commentAuthorId) {
+    @AfterAll
+    public static void afterAll() throws IOException {
+        //FileSystemUtils.deleteRecursively(TestServerConfiguration.dataStorePath);
+    }
+
+    private User createUser(int id) {
         var user = new CustomerTraderUser(
             id,
             "mail" + id + "@gmail.com",
@@ -118,16 +117,6 @@ public class UserControllerTests {
         user.setLastName("Last name " + id);
         user.setDisplayName("Display name " + id);
         user.setProfileDescription("Description " + id);
-
-        if (commentAuthorId >= 0) {
-            user.setComments(new Integer[] { 0 });
-        } else {
-            user.setComments(new Integer[0]);
-        }
-
-        user.setCartProducts(new CartProduct[]{
-            new CartProduct(0, 5)
-        });
 
         return user;
     }
@@ -186,7 +175,6 @@ public class UserControllerTests {
     @Test
     public void updateAccountInfoTest() throws Exception {
         var newPassword = "password1";
-        var newPasswordHash = passwordEncoder.encode(newPassword);
 
         mockMvc.perform(
             post("/api/updateaccountinfo")
@@ -202,7 +190,7 @@ public class UserControllerTests {
 
         CustomerTraderUser actualUser = getZeroUser();
 
-        assertEquals(newPasswordHash, actualUser.getPasswordHash());
+        assertTrue(passwordEncoder.matches(newPassword, actualUser.getPasswordHash()));
         assertEquals("Display name 2", actualUser.getDisplayName());
         assertEquals("Description 2", actualUser.getProfileDescription());
         assertEquals("First name 2", actualUser.getFirstName());

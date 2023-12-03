@@ -122,6 +122,8 @@ public class UserService {
     }
 
     public CommentInfo[] getUserComments(@NotNull CustomerTraderUser user) {
+        System.out.println("COMMENTS " + Arrays.toString(user.getComments()));
+
         return Arrays.stream(user.getComments())
             .map(i -> commentService.getCommentInfo(i, this::getConciseUserInfo))
             .toArray(CommentInfo[]::new);
