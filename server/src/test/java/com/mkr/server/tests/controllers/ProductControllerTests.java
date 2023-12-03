@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -83,6 +84,7 @@ public class ProductControllerTests {
                         ColorId.WHITE
                 )
         );
+        products.setLastID(1);
     }
 
     private User createUser(int id, int commentAuthorId) {
@@ -136,6 +138,77 @@ public class ProductControllerTests {
                 .findFirst().orElseThrow();
 
             assertEquals(1, product.getComments().length);
+        }
+    }
+
+    @Test
+    public void addProductTest() throws Exception {
+        mockMvc.perform(
+                multipart("/api/addproduct")
+                        .param("title", "test")
+                        .param("description", "desc")
+                        .param("price", "100")
+                        .param("amount", "150")
+                        .param("category", "dress")
+                        .param("state", "new")
+                        .param("color", "black")
+                        .with(user("mail0@gmail.com").password("password").roles("USER", "CUSTOMER_TRADER"))
+        ).andExpect(status().isOk());
+
+        var expected = new Product(
+                2,
+                0,
+                "test",
+                100,
+                150,
+                ProductCategory.DRESS,
+                ProductState.NEW,
+                ProductStatus.WAITING_FOR_MODERATION,
+                ColorId.BLACK
+        );
+
+        try (var stream = dataStore.getCollection(DataStoreConfig.products).data()) {
+            var product = stream
+                    .filter(p -> p.getProductId() == 2)
+                    .findFirst().orElseThrow();
+
+            assertEquals(expected.hashCode(), product.hashCode());
+        }
+    }
+
+    @Test
+    public void updateProductTest() throws Exception {
+        mockMvc.perform(
+                multipart("/api/updateproduct")
+                        .param("title", "test")
+                        .param("description", "desc")
+                        .param("price", "100")
+                        .param("amount", "150")
+                        .param("category", "dress")
+                        .param("state", "new")
+                        .param("color", "black")
+                        .param("id", "1")
+                        .with(user("mail0@gmail.com").password("password").roles("USER", "CUSTOMER_TRADER"))
+        ).andExpect(status().isOk());
+
+        var expected = new Product(
+                1,
+                0,
+                "test",
+                100,
+                150,
+                ProductCategory.DRESS,
+                ProductState.NEW,
+                ProductStatus.ACTIVE,
+                ColorId.BLACK
+        );
+
+        try (var stream = dataStore.getCollection(DataStoreConfig.products).data()) {
+            var product = stream
+                    .filter(p -> p.getProductId() == 1)
+                    .findFirst().orElseThrow();
+
+            assertEquals(expected.hashCode(), product.hashCode());
         }
     }
 

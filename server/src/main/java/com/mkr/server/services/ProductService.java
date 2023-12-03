@@ -54,12 +54,8 @@ public class ProductService {
             @NotNull ProductCategory category,
             @NotNull ProductState state,
             @NotNull ColorId color,
-            @NotNull MultipartFile[] imageFiles
+            MultipartFile[] imageFiles
     ) {
-        if (imageFiles.length == 0) {
-            throw new ValidationException("No images");
-        }
-
         if (title.isEmpty()) {
             throw new ValidationException("Empty title");
         }
@@ -75,9 +71,11 @@ public class ProductService {
         int productId = repo.getLastID() + 1;
 
         // Save images
-        for (int i = 0; i < imageFiles.length; i++) {
-            MultipartFile file = imageFiles[i];
-            storageService.store(file, getImageFileName(productId, i));
+        if (imageFiles != null) {
+            for (int i = 0; i < imageFiles.length; i++) {
+                MultipartFile file = imageFiles[i];
+                storageService.store(file, getImageFileName(productId, i));
+            }
         }
 
         // Add product
@@ -105,12 +103,8 @@ public class ProductService {
             @NotNull ProductCategory category,
             @NotNull ProductState state,
             @NotNull ColorId color,
-            @NotNull MultipartFile[] imageFiles
+            MultipartFile[] imageFiles
     ) {
-        if (imageFiles.length == 0) {
-            throw new ValidationException("No images");
-        }
-
         if (title.isEmpty()) {
             throw new ValidationException("Empty title");
         }
@@ -126,9 +120,11 @@ public class ProductService {
         // Update images
         deleteImages(productId);
 
-        for (int i = 0; i < imageFiles.length; i++) {
-            MultipartFile file = imageFiles[i];
-            storageService.store(file, getImageFileName(productId, i));
+        if (imageFiles != null) {
+            for (int i = 0; i < imageFiles.length; i++) {
+                MultipartFile file = imageFiles[i];
+                storageService.store(file, getImageFileName(productId, i));
+            }
         }
 
         // Update product
