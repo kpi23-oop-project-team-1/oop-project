@@ -25,7 +25,8 @@ public final class InFileDataStore implements DataStore {
         collectionMap = new HashMap<>();
         for (DataStoreCollectionDescriptor<?> descriptor : descriptors) {
             var fileController = new CollectionFileController<>(getFilePath(descriptor), descriptor);
-            // TODO: set chunk size and fragmentation threshold
+            fileController.setChunkSize(200);
+            fileController.setFragmentationThreshold(0.5f);
 
             var document = new InFileCollection<>(fileController);
 

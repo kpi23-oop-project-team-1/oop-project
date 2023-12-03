@@ -8,6 +8,8 @@ import com.mkr.datastore.utils.TypeUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 public class CollectionFileController<T> {
@@ -54,32 +56,39 @@ public class CollectionFileController<T> {
     }
 
     public void writeLastID(int id) {
+        System.out.println("Write last id");
         verifyIsOpen();
         FileUtils.writeInt32AtPos(raf, id, LAST_ID_POS);
     }
 
     public int readLastID() {
+        System.out.println("Read last id");
         verifyIsOpen();
         return FileUtils.readInt32AtPos(raf, LAST_ID_POS);
     }
 
     public void writeEntityIsActiveAtPos(boolean isActive, long pos) {
+        System.out.println("Write isActive");
         verifyIsOpen();
         FileUtils.writeBoolAtPos(raf, isActive, pos);
     }
 
     public boolean readEntityIsActiveAtPos(long pos) {
+        System.out.println("Read isActive");
         verifyIsOpen();
         return FileUtils.readBoolAtPos(raf, pos);
     }
 
     public int readEntitySizeAtPos(long pos) {
+        System.out.println("Read entity size");
         verifyIsOpen();
         return FileUtils.readInt32AtPos(raf, pos + ByteUtils.BOOLEAN_SIZE);
     }
 
     public <E extends T> void writeEntityAtPos(E entity, long pos) {
         verifyIsOpen();
+
+        System.out.println("Write entity " + entity);
 
         EntityScheme<T> scheme = descriptor.getScheme();
         Class<? extends T> entityClass = (Class<? extends T>) entity.getClass();
@@ -111,6 +120,7 @@ public class CollectionFileController<T> {
             }
 
             for (var element : elements) {
+                System.out.println("\tWriting " + element);
                 if (valueElementType == Boolean.class) {
                     elementsData.add(ByteUtils.booleanToBytes((Boolean) element));
                 } else if (valueElementType == Integer.class) {
@@ -137,15 +147,19 @@ public class CollectionFileController<T> {
         boolean createNewRecord;
 
         if (pos >= fileLength) {  // No old record at this pos
+            System.out.println("\tWriting to new pos 1");
             createNewRecord = true;
         } else {  // There is an old record at this pos
             createNewRecord = entityBytes.length > readEntitySizeAtPos(pos);
+            System.out.println("\tWriting instead of old");
             if (createNewRecord) {
+                System.out.println("\tWriting to new pos 2");
                 writeEntityIsActiveAtPos(false, pos);  // Deactivate old record
                 offset = fileLength;  // Go to the end of file
             }
         }
 
+        System.out.println("\tWriting at " + offset);
         if (createNewRecord) {  // Write isActive
             FileUtils.writeBoolAtPos(raf, true, offset);
         }
@@ -171,6 +185,8 @@ public class CollectionFileController<T> {
     public T readEntityAtPos(long pos) {
         verifyIsOpen();
 
+        System.out.println("Read entity");
+
         EntityScheme<T> scheme = descriptor.getScheme();
 
         long offset = pos;
@@ -185,6 +201,7 @@ public class CollectionFileController<T> {
         offset += ByteUtils.INT32_SIZE;
 
         // Read entity
+        System.out.println("\tRead at " + offset);
         int classIdBytesSize = FileUtils.readInt32AtPos(raf, offset);
         offset += ByteUtils.INT32_SIZE;
         byte[] classIdBytes = FileUtils.readNBytesAtPos(raf, classIdBytesSize, offset);
@@ -249,7 +266,7 @@ public class CollectionFileController<T> {
 
     public void defragment() {
         verifyIsOpen();
-
+        System.out.println("Defragment");
         // Create new collection file
         var tmpFilePath = filePath + "1";
         var tmpFileController = new CollectionFileController<>(tmpFilePath, descriptor);
@@ -284,7 +301,7 @@ public class CollectionFileController<T> {
 
     public float calculateFragmentationCoefficient() {
         verifyIsOpen();
-
+        System.out.println("Calc frag index");
         long unusedBytes = 0;
 
         long offset = getFirstEntityPos();
@@ -303,7 +320,7 @@ public class CollectionFileController<T> {
 
     public int countEntitiesFromPos(long pos) {
         verifyIsOpen();
-
+        System.out.println("Count entities");
         long offset = pos;
         int count = 0;
 
@@ -322,7 +339,7 @@ public class CollectionFileController<T> {
 
     public long findNextEntityPos(long currentEntityPos) {
         verifyIsOpen();
-
+        System.out.println("Find next");
         long nextEntityPos = currentEntityPos +
                 ByteUtils.BOOLEAN_SIZE +
                 ByteUtils.INT32_SIZE +
@@ -335,10 +352,13 @@ public class CollectionFileController<T> {
 
     public long findFileEndPos() {
         verifyIsOpen();
+        System.out.println("Find end");
         return FileUtils.getFileLength(raf);
     }
 
     public void openFile() {
+        System.out.println("\nOPEN ==================== " + filePath);
+
         if (isOpen) return;
 
         File file = new File(filePath);
@@ -346,9 +366,10 @@ public class CollectionFileController<T> {
         boolean fileExists = file.exists();
 
         try {
+            Files.createDirectories(file.toPath().toAbsolutePath().getParent());
             raf = new RandomAccessFile(file, "rw");
             isOpen = true;
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -358,6 +379,7 @@ public class CollectionFileController<T> {
     }
 
     public void closeFile() {
+        System.out.println("CLOSE ==================== " + filePath);
         if (!isOpen) return;
 
         try {

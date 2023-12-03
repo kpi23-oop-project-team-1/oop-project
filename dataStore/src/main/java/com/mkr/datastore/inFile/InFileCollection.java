@@ -35,6 +35,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
     @Override
     @NotNull
     public Stream<E> data() {
+        System.out.println("\n\n\ndata() in collection " + getDescriptor().getName());
+
         readLock.lock();
 
         fileController.openFile();
@@ -47,6 +49,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
     @SafeVarargs
     @Override
     public final void insert(@NotNull E... values) {
+        System.out.println("\n\n\ninsert() in collection " + getDescriptor().getName());
+
         writeLock.lock();
 
         try {
@@ -66,6 +70,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
             @NotNull Predicate<E> predicate,
             @NotNull Function<E, E> transformEntity
     ) {
+        System.out.println("\n\n\nupdate() in collection " + getDescriptor().getName());
+
         writeLock.lock();
 
         try {
@@ -95,6 +101,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
 
     @Override
     public void delete(Predicate<E> predicate) {
+        System.out.println("\n\n\ndelete() in collection " + getDescriptor().getName());
+
         writeLock.lock();
 
         try {
@@ -121,6 +129,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
 
     @Override
     public int getLastID() {
+        System.out.println("\n\n\ngetLastID() in collection " + getDescriptor().getName());
+
         int lastID;
 
         readLock.lock();
@@ -139,6 +149,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
 
     @Override
     public void setLastID(int newLastID) {
+        System.out.println("\n\n\nsetLastID() in collection " + getDescriptor().getName());
+
         writeLock.lock();
 
         try {
@@ -152,6 +164,8 @@ public class InFileCollection<E> implements DataStoreCollection<E> {
     }
 
     private void onStreamClose() {
+        System.out.println("\n\n\nonStreamClose() in collection " + getDescriptor().getName());
+
         fileController.closeFile();
         readLock.unlock();
     }

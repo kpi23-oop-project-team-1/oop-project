@@ -1,6 +1,7 @@
 package com.mkr.server;
 
 import com.mkr.datastore.DataStore;
+import com.mkr.datastore.inFile.InFileDataStore;
 import com.mkr.datastore.inMemory.InMemoryDataStore;
 import com.mkr.server.config.DataStoreConfig;
 import com.mkr.server.controllers.AdminController;
@@ -19,7 +20,10 @@ public class ServerApplication extends SpringBootServletInitializer {
 
 	@Bean
 	public DataStore dataStore(PasswordEncoder passwordEncoder) {
-		var dataStore = new InMemoryDataStore(DataStoreConfig.configuration);
+		var dataStore = new InFileDataStore(
+				DataStoreConfig.configuration,
+				d -> "collections/" + d.getName() + ".bin"
+		);
 
 		var users = dataStore.getCollection(DataStoreConfig.users);
 		var user1 = new CustomerTraderUser(
@@ -88,7 +92,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 		product2.setComments(new Integer[0]);
 
 		products.insert(product1, product2);
-		users.setLastID(1);
+		products.setLastID(1);
 
 		var comments = dataStore.getCollection(DataStoreConfig.comments);
 		comments.insert(

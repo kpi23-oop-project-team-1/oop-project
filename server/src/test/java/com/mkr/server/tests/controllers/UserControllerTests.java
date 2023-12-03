@@ -66,6 +66,7 @@ public class UserControllerTests {
     public void beforeTest() {
         var users = dataStore.getCollection(DataStoreConfig.users);
         var products = dataStore.getCollection(DataStoreConfig.products);
+        var comments = dataStore.getCollection(DataStoreConfig.comments);
 
         users.delete(p -> true);
         products.delete(p -> true);
@@ -92,6 +93,16 @@ public class UserControllerTests {
                 ProductState.ACCEPTABLE,
                 ProductStatus.ACTIVE,
                 ColorId.WHITE
+            )
+        );
+
+        comments.insert(
+            new Comment(
+                0,
+                1,
+                5,
+                "123 0",
+                100L
             )
         );
     }

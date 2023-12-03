@@ -38,7 +38,7 @@ public final class FileUtils {
                 bytes[i] = raf.readByte();
             }
         } catch(IOException e) {
-            throw new RuntimeException(e);  // TODO: better exception handling
+            throw new RuntimeException(e);
         }
 
         return bytes;
