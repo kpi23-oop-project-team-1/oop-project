@@ -16,9 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -26,6 +23,9 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository repo;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     @Qualifier("userPfpStorageService")
@@ -85,9 +85,8 @@ public class UserService {
 
         user.setTelNumber(telNumber);
         user.setProfileDescription("");
-        user.setProducts(new Product[0]);
+        user.setComments(new Integer[0]);
         user.setCartProducts(new CartProduct[0]);
-        user.setComments(new Comment[0]);
 
         repo.addUser(user);
     }
@@ -120,30 +119,14 @@ public class UserService {
 
     public CommentInfo[] getUserComments(@NotNull CustomerTraderUser user) {
         return Arrays.stream(user.getComments())
-            .map(c -> new CommentInfo(
-                c.getId(),
-                getConciseUserInfo(c.getUserId()).orElseThrow(),
-                c.getRating(),
-                c.getText(),
-                LocalDateTime.ofEpochSecond(c.getPostEpochSeconds(), 0, ZoneOffset.UTC))
-            )
+            .map(i -> commentService.getCommentInfo(i, this::getConciseUserInfo))
             .toArray(CommentInfo[]::new);
     }
 
-    public void addNewComment(@NotNull String authorEmail, @NotNull NewCommentInfo commentInfo) {
-        long nowEpochSeconds = LocalDateTime.now(Clock.systemUTC()).toEpochSecond(ZoneOffset.UTC);
+    public void addUserComment(int userId, int authorId, int rating, @NotNull String text) {
+        int commentId = commentService.addComment(authorId, rating, text);
 
-        Optional<CustomerTraderUser> authorUser = repo.findCustomerTraderUserByEmail(authorEmail);
-        Comment comment = new Comment(
-            0,
-            commentInfo.targetId(),
-            authorUser.orElseThrow().getId(),
-            commentInfo.rating(),
-            commentInfo.text(),
-            nowEpochSeconds
-        );
-
-        repo.addComment(comment);
+        repo.addUserComment(userId, commentId);
     }
 
     public int getUserId(String email) {

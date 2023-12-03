@@ -109,17 +109,14 @@ public class UserControllerTests {
         user.setProfileDescription("Description " + id);
 
         if (commentAuthorId >= 0) {
-            user.setComments(new Comment[]{
-                new Comment(0, id, commentAuthorId, 5, "123 " + id, 100L)
-            });
+            user.setComments(new Integer[] { 0 });
         } else {
-            user.setComments(new Comment[0]);
+            user.setComments(new Integer[0]);
         }
 
         user.setCartProducts(new CartProduct[]{
             new CartProduct(0, 5)
         });
-        user.setProducts(new Product[0]);
 
         return user;
     }

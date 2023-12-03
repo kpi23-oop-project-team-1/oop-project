@@ -19,6 +19,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 	@Bean
 	public DataStore dataStore(PasswordEncoder passwordEncoder) {
 		var dataStore = new InMemoryDataStore(DataStoreConfig.configuration);
+
 		var users = dataStore.getCollection(DataStoreConfig.users);
 		var user = new CustomerTraderUser(
 			0,
@@ -30,39 +31,54 @@ public class ServerApplication extends SpringBootServletInitializer {
 		user.setLastName("Last name");
 		user.setDisplayName("Display name");
 		user.setProfileDescription("Description");
-		user.setComments(new Comment[] {
-			new Comment(0, 0, 0, 5, "123", 100L)
-		});
+		user.setComments(new Integer[] { 0 });
 		user.setCartProducts(new CartProduct[]{
 			new CartProduct(0, 5)
 		});
-		user.setProducts(new Product[0]);
 
 		users.insert(user);
+		users.setLastID(0);
 
 		var products = dataStore.getCollection(DataStoreConfig.products);
-		products.insert(
-			new Product(
-				0, 0,
-				"123",
-				100,
-				5,
-				ProductCategory.DRESS,
-				ProductState.NEW,
-				ProductStatus.ACTIVE,
-				ColorId.BLACK
-			),
-			new Product(
-				1, 0,
-				"456",
-				150,
-				5,
-				ProductCategory.SPORT,
-				ProductState.ACCEPTABLE,
-				ProductStatus.ACTIVE,
-				ColorId.WHITE
+		var product1 = new Product(
+			0,
+			0,
+			"123",
+			100,
+			5,
+			ProductCategory.DRESS,
+			ProductState.NEW,
+			ProductStatus.ACTIVE,
+			ColorId.BLACK
+		);
+		product1.setComments(new Integer[0]);
+
+		var product2 = new Product(
+			1, 0,
+			"456",
+			150,
+			5,
+			ProductCategory.SPORT,
+			ProductState.ACCEPTABLE,
+			ProductStatus.ACTIVE,
+			ColorId.WHITE
+		);
+		product2.setComments(new Integer[0]);
+
+		products.insert(product1, product2);
+		users.setLastID(1);
+
+		var comments = dataStore.getCollection(DataStoreConfig.comments);
+		comments.insert(
+			new Comment(
+				0,
+				0,
+				4,
+				"Example comment",
+				100L
 			)
 		);
+		users.setLastID(0);
 
 		return dataStore;
 	}

@@ -27,6 +27,9 @@ public class ProductController {
     private ProductService productService;
 
     @Autowired
+    private ProductService commentService;
+
+    @Autowired
     private UserService userService;
 
     @GetMapping("/api/product")
@@ -91,9 +94,9 @@ public class ProductController {
 
     @PostMapping("/api/postproductcomment")
     public void postProductComment(@Valid PostCommentInfo info, Authentication auth) {
-        int userId = getUserId(auth);
+        int authorId = getUserId(auth);
 
-        productService.addComment(info.targetId(), userId, info.rating(), info.text());
+        productService.addProductComment(info.targetId(), authorId, info.rating(), info.text());
     }
 
     private int getUserId(@NotNull Authentication auth) {

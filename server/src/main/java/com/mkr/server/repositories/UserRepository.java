@@ -4,7 +4,6 @@ import com.mkr.datastore.DataStore;
 import com.mkr.datastore.DataStoreCollection;
 import com.mkr.server.config.DataStoreConfig;
 import com.mkr.server.domain.CartProduct;
-import com.mkr.server.domain.Comment;
 import com.mkr.server.domain.CustomerTraderUser;
 import com.mkr.server.domain.User;
 import org.jetbrains.annotations.NotNull;
@@ -56,8 +55,8 @@ public class UserRepository {
         userCollection().insert(user);
     }
 
-    public void addComment(@NotNull Comment comment) {
-        updateUser(comment.getTargetId(), u -> u.withComment(comment));
+    public void addUserComment(int userId, int commentId) {
+        updateUser(userId, u -> u.withComment(commentId));
     }
 
     public void addCartProduct(int userId, @NotNull CartProduct product) {

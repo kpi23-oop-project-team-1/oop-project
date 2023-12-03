@@ -5,7 +5,6 @@ import com.mkr.datastore.DataStoreCollection;
 import com.mkr.server.common.IntRange;
 import com.mkr.server.config.DataStoreConfig;
 import com.mkr.server.domain.Product;
-import com.mkr.server.domain.Comment;
 import com.mkr.server.search.SearchOrder;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,11 +62,8 @@ public class ProductRepository {
         productCollection().delete(o -> o.getProductId() == id);
     }
 
-    public void addComment(@NotNull Comment comment) {
-        productCollection().update(
-            p -> p.getProductId() == comment.getTargetId(),
-            p -> p.withComment(comment)
-        );
+    public void addProductComment(int productId, int commentId) {
+        updateProduct(productId, p -> p.withComment(commentId));
     }
 
     @NotNull

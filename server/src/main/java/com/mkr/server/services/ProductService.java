@@ -18,9 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -29,6 +26,9 @@ import java.util.Optional;
 public class ProductService {
     @Autowired
     private ProductRepository repo;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private UserService userService;
@@ -91,7 +91,7 @@ public class ProductService {
                 ProductStatus.WAITING_FOR_MODERATION,
                 color
         );
-        product.setComments(new Comment[0]);
+        product.setComments(new Integer[0]);
 
         repo.addProduct(product);
     }
@@ -152,6 +152,12 @@ public class ProductService {
     }
 
     public void deleteProduct(int productId) {
+        var product = repo.getProductById(productId).orElseThrow();
+
+        for (var id : product.getComments()) {
+            commentService.deleteComment(id);
+        }
+
         repo.deleteProduct(productId);
 
         deleteImages(productId);
@@ -159,21 +165,14 @@ public class ProductService {
 
     public CommentInfo[] getProductComments(@NotNull Product product) {
         return Arrays.stream(product.getComments())
-                .map(c -> new CommentInfo(
-                        c.getId(),
-                        userService.getConciseUserInfo(c.getUserId()).get(),
-                        c.getRating(),
-                        c.getText(),
-                        LocalDateTime.ofEpochSecond(c.getPostEpochSeconds(), 0, ZoneOffset.UTC))
-                )
+                .map(i -> commentService.getCommentInfo(i, userService::getConciseUserInfo))
                 .toArray(CommentInfo[]::new);
     }
 
-    public void addComment(int productId, int userId, int rating, @NotNull String text) {
-        long postEpochSeconds = LocalDateTime.now(Clock.systemUTC()).toEpochSecond(ZoneOffset.UTC);
+    public void addProductComment(int productId, int authorId, int rating, @NotNull String text) {
+        int commentId = commentService.addComment(authorId, rating, text);
 
-        var comment = new Comment(0, productId, userId, rating, text, postEpochSeconds);
-        repo.addComment(comment);
+        repo.addProductComment(productId, commentId);
     }
 
     public boolean checkIfTraderMatches(int productId, int traderId) {

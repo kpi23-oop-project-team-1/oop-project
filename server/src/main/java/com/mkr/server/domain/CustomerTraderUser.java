@@ -18,9 +18,9 @@ public class CustomerTraderUser extends User implements Commentable {
     private String telNumber;
     private String profileDescription;
 
-    private Comment[] comments;
-    private Product[] products;
-    private CartProduct[] cartProducts;
+    private Integer[] comments;
+    private Integer[] cartProductIds;
+    private Integer[] cartProductQuantities;
 
     public CustomerTraderUser() {
     }
@@ -35,11 +35,11 @@ public class CustomerTraderUser extends User implements Commentable {
     }
 
     @Override
-    public Comment[] getComments() {
+    public Integer[] getComments() {
         return comments;
     }
 
-    public void setComments(Comment[] comments) {
+    public void setComments(Integer[] comments) {
         this.comments = comments;
     }
 
@@ -83,20 +83,47 @@ public class CustomerTraderUser extends User implements Commentable {
         this.profileDescription = profileDescription;
     }
 
-    public Product[] getProducts() {
-        return products;
+    public Integer[] getCartProductIds() {
+        return cartProductIds;
     }
 
-    public void setProducts(Product[] products) {
-        this.products = products;
+    public void setCartProductIds(Integer[] cartProductIds) {
+        this.cartProductIds = cartProductIds;
+    }
+
+    public Integer[] getCartProductQuantities() {
+        return cartProductQuantities;
+    }
+
+    public void setCartProductQuantities(Integer[] cartProductQuantities) {
+        this.cartProductQuantities = cartProductQuantities;
     }
 
     public CartProduct[] getCartProducts() {
+        var cartProducts = new CartProduct[cartProductIds.length];
+
+        Arrays.setAll(
+                cartProducts,
+                i -> new CartProduct(cartProductIds[i], cartProductQuantities[i])
+        );
+
         return cartProducts;
     }
 
     public void setCartProducts(CartProduct[] cartProducts) {
-        this.cartProducts = cartProducts;
+        cartProductIds = new Integer[cartProducts.length];
+
+        Arrays.setAll(
+                cartProductIds,
+                i -> cartProducts[i].getProductId()
+        );
+
+        cartProductQuantities = new Integer[cartProducts.length];
+
+        Arrays.setAll(
+                cartProductQuantities,
+                i -> cartProducts[i].getQuantity()
+        );
     }
 
     public CustomerTraderUser copy() {
@@ -108,13 +135,13 @@ public class CustomerTraderUser extends User implements Commentable {
         u.setTelNumber(telNumber);
         u.setProfileDescription(profileDescription);
         u.setComments(Arrays.copyOf(comments, comments.length));
-        u.setProducts(Arrays.copyOf(products, products.length));
-        u.setCartProducts(Arrays.copyOf(cartProducts, cartProducts.length));
+        u.setCartProductIds(Arrays.copyOf(cartProductIds, cartProductIds.length));
+        u.setCartProductQuantities(Arrays.copyOf(cartProductQuantities, cartProductQuantities.length));
 
         return u;
     }
 
-    public CustomerTraderUser withComment(Comment comment) {
+    public CustomerTraderUser withComment(Integer comment) {
         CustomerTraderUser u = copy();
         var newComments = Arrays.copyOf(u.comments, u.comments.length + 1);
         newComments[u.comments.length] = comment;
@@ -149,8 +176,10 @@ public class CustomerTraderUser extends User implements Commentable {
 
     public CustomerTraderUser withCartProduct(CartProduct cartProduct) {
         CustomerTraderUser u = copy();
-        var newCartProducts = Arrays.copyOf(u.cartProducts, u.cartProducts.length + 1);
-        newCartProducts[u.cartProducts.length] = cartProduct;
+
+        var cartProducts = u.getCartProducts();
+        var newCartProducts = Arrays.copyOf(cartProducts, cartProducts.length + 1);
+        newCartProducts[cartProducts.length] = cartProduct;
 
         u.setCartProducts(newCartProducts);
 
@@ -159,7 +188,7 @@ public class CustomerTraderUser extends User implements Commentable {
 
     public CustomerTraderUser withUpdatedCartProductAmount(int productId, int newAmount) {
         CustomerTraderUser u = copy();
-        CartProduct[] cartProducts = u.cartProducts;
+        var cartProducts = u.getCartProducts();
 
         for (CartProduct cartProduct : cartProducts) {
             if (cartProduct.getProductId() == productId) {
@@ -168,14 +197,18 @@ public class CustomerTraderUser extends User implements Commentable {
             }
         }
 
+        u.setCartProducts(cartProducts);
+
         return u;
     }
 
     public CustomerTraderUser withRemovedCartProduct(int productId) {
         CustomerTraderUser u = copy();
-        List<CartProduct> productList = new ArrayList<>(List.of(u.cartProducts));
+        var productList = new ArrayList<>(List.of(u.getCartProducts()));
+
         productList.removeIf(p -> p.getProductId() == productId);
-        u.cartProducts = productList.toArray(CartProduct[]::new);
+
+        u.setCartProducts(productList.toArray(CartProduct[]::new));
 
         return u;
     }

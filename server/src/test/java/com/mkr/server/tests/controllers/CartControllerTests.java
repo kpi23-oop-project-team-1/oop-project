@@ -61,13 +61,10 @@ public class CartControllerTests {
         user.setLastName("Last name");
         user.setDisplayName("Display name");
         user.setProfileDescription("Description");
-        user.setComments(new Comment[]{
-            new Comment(0, 0, 0, 5, "123", 100L)
-        });
+        user.setComments(new Integer[] { 0 });
         user.setCartProducts(new CartProduct[]{
             new CartProduct(0, 5)
         });
-        user.setProducts(new Product[0]);
 
         users.insert(user);
 

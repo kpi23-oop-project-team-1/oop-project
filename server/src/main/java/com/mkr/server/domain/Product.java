@@ -13,7 +13,7 @@ public class Product implements Commentable {
     private Integer price;
     private Integer amount;
     private String description = "";
-    private Comment[] comments = new Comment[0];
+    private Integer[] comments;
     private ProductCategory category;
     private ProductState state;
     private ColorId color;
@@ -93,11 +93,11 @@ public class Product implements Commentable {
     }
 
     @Override
-    public Comment[] getComments() {
+    public Integer[] getComments() {
         return comments;
     }
 
-    public void setComments(Comment[] comments) {
+    public void setComments(Integer[] comments) {
         this.comments = comments;
     }
 
@@ -152,7 +152,7 @@ public class Product implements Commentable {
     }
 
     @NotNull
-    public Product withComment(@NotNull Comment comment) {
+    public Product withComment(@NotNull Integer comment) {
         Product p = copy();
         p.setComments(ArrayUtils.withAddedElement(comments, comment));
 

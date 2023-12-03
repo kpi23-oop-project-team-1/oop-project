@@ -4,11 +4,13 @@ import com.mkr.server.domain.UserRole;
 import com.mkr.server.dto.*;
 import com.mkr.server.services.UserService;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,10 +52,10 @@ public class UserController {
     }
 
     @PostMapping("/api/postusercomment")
-    public void postUserComment(NewCommentInfo commentInfo, Authentication auth) {
-        String email = auth.getName();
+    public void postUserComment(NewCommentInfo info, Authentication auth) {
+        int authorId = getUserId(auth);
 
-        userService.addNewComment(email, commentInfo);
+        userService.addUserComment(info.targetId(), authorId, info.rating(), info.text());
     }
 
     @GetMapping("/api/accountid")
@@ -85,5 +87,14 @@ public class UserController {
         return ResponseEntity.ok().header(
             HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\""
         ).body(resource);
+    }
+
+    private int getUserId(@NotNull Authentication auth) {
+        int userId = userService.getUserIdByEmail(auth.getName());
+        if (userId < 0) {
+            throw new UsernameNotFoundException("Username not found");
+        }
+
+        return userId;
     }
 }

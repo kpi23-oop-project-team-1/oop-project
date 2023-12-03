@@ -2,8 +2,7 @@ package com.mkr.server.domain;
 
 public class Comment {
     private Integer id;
-    private Integer targetId;
-    private Integer userId;
+    private Integer authorId;
     private Integer rating;
     private String text;
     private Long postEpochSeconds;
@@ -11,10 +10,9 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(Integer id, Integer targetId, Integer userId, Integer rating, String text, Long postEpochSeconds) {
+    public Comment(Integer id, Integer authorId, Integer rating, String text, Long postEpochSeconds) {
         this.id = id;
-        this.targetId = targetId;
-        this.userId = userId;
+        this.authorId = authorId;
         this.rating = rating;
         this.text = text;
         this.postEpochSeconds = postEpochSeconds;
@@ -28,20 +26,12 @@ public class Comment {
         this.id = id;
     }
 
-    public Integer getTargetId() {
-        return targetId;
+    public Integer getAuthorId() {
+        return authorId;
     }
 
-    public void setTargetId(Integer targetId) {
-        this.targetId = targetId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setAuthorId(Integer authorId) {
+        this.authorId = authorId;
     }
 
     public Integer getRating() {

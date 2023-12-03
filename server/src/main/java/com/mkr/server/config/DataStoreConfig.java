@@ -3,6 +3,7 @@ package com.mkr.server.config;
 import com.mkr.datastore.DataStoreCollectionDescriptor;
 import com.mkr.datastore.DataStoreCollectionDescriptorBuilder;
 import com.mkr.datastore.DataStoreConfiguration;
+import com.mkr.server.domain.Comment;
 import com.mkr.server.domain.Product;
 import com.mkr.server.domain.User;
 
@@ -20,9 +21,15 @@ public final class DataStoreConfig {
         .entityClass(Product.class)
         .build();
 
+    public static final DataStoreCollectionDescriptor<Comment> comments = new DataStoreCollectionDescriptorBuilder<Comment>()
+            .name("comments")
+            .entityClass(Comment.class)
+            .build();
+
     public static final DataStoreConfiguration configuration = DataStoreConfiguration.builder()
         .addCollection(users)
         .addCollection(products)
+        .addCollection(comments)
         .build();
 
 }
