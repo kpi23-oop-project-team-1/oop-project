@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import shopifyLogo from '../../public/images/shopify-logo.png'
 import CategoryIcon from '../icons/category.svg'
-import FavoriteIcon from '../icons/favorite.svg'
+import AdminIcon from '../icons/admin.svg'
 import CartIcon from '../icons/cart.svg'
 import UserIcon from '../icons/user.svg'
 import "../styles/FullHeader.scss"
@@ -55,10 +55,17 @@ export default function FullHeader(props: FullHeaderProps) {
                     userType == 'customer-trader' ?
                     <>
                         <CartButton productCount={(cart.value ?? []).length} onClick={props.onShowCart}/>
-                        <HeaderLinkRoundButton to='/' icon={<FavoriteIcon/>} type='fill-only'/>
                     </>
                     : undefined
                 }
+
+                {
+                    userType == 'admin' ?
+                    <HeaderLinkRoundButton to={"/admin"} icon={<AdminIcon/>} type='fill-only'/>
+                    : undefined
+                }
+
+
                 <HeaderLinkRoundButton to='/myaccount' icon={<UserIcon/>} type="stroke-only" id='header-user-button'/>
             </div>
         </div>

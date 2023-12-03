@@ -2,6 +2,7 @@ package com.mkr.server.services;
 
 import com.mkr.server.domain.*;
 import com.mkr.server.dto.*;
+import com.mkr.server.repositories.ProductRepository;
 import com.mkr.server.repositories.UserRepository;
 import com.mkr.server.services.storage.StorageService;
 import com.mkr.server.services.storage.UserPfpUrlMapper;
@@ -22,7 +23,10 @@ import java.util.Optional;
 @Service
 public class UserService {
     @Autowired
-    private UserRepository repo;
+    private UserRepository userRepo;
+
+    @Autowired
+    private ProductRepository productRepo;
 
     @Autowired
     private CommentService commentService;
@@ -38,7 +42,7 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public Optional<User> findUserByEmail(@NotNull String email) {
-        return repo.findUserByEmail(email);
+        return userRepo.findUserByEmail(email);
     }
 
     public void addCustomerTraderUser(
@@ -68,11 +72,11 @@ public class UserService {
             throw new ValidationException("Invalid telNumber");
         }
 
-        if (repo.findUserByEmail(email).isPresent()) {
+        if (userRepo.findUserByEmail(email).isPresent()) {
             throw new ValidationException("A user with such email already exists");
         }
 
-        if (repo.findUserByTelNumber(telNumber).isPresent()) {
+        if (userRepo.findUserByTelNumber(telNumber).isPresent()) {
             throw new ValidationException("A user with such tel-number already exists");
         }
 
@@ -88,20 +92,20 @@ public class UserService {
         user.setComments(new Integer[0]);
         user.setCartProducts(new CartProduct[0]);
 
-        repo.addUser(user);
+        userRepo.addUser(user);
     }
 
     public int getUserIdByEmail(@NotNull String email) {
-        return repo.findUserByEmail(email).map(User::getId).orElse(-1);
+        return userRepo.findUserByEmail(email).map(User::getId).orElse(-1);
     }
 
     public Optional<ConciseUserInfo> getConciseUserInfo(int userId) {
-        return repo.findCustomerTraderUserBy(u -> u.getId() == userId)
+        return userRepo.findCustomerTraderUserBy(u -> u.getId() == userId)
             .map(u -> new ConciseUserInfo(u.getId(), u.getDisplayName()));
     }
 
     public Optional<DetailedUserInfo> getDetailedUserInfo(int id) {
-        return repo.findCustomerTraderUserBy(u -> u.getId() == id)
+        return userRepo.findCustomerTraderUserBy(u -> u.getId() == id)
             .map(this::getDetailedUserInfo);
     }
 
@@ -126,17 +130,17 @@ public class UserService {
     public void addUserComment(int userId, int authorId, int rating, @NotNull String text) {
         int commentId = commentService.addComment(authorId, rating, text);
 
-        repo.addUserComment(userId, commentId);
+        userRepo.addUserComment(userId, commentId);
     }
 
     public int getUserId(String email) {
-        return repo.findUserByEmail(email).map(User::getId).orElseThrow();
+        return userRepo.findUserByEmail(email).map(User::getId).orElseThrow();
     }
 
     public Optional<AccountInfo> getAccountInfo(int id) {
         var pfpSource = pfpUrlMapper.getEndpointUrl(id);
 
-        return repo.findCustomerTraderUserBy(u -> u.getId() == id).map(user -> new AccountInfo(
+        return userRepo.findCustomerTraderUserBy(u -> u.getId() == id).map(user -> new AccountInfo(
             user.getId(),
             user.getEmail(),
             user.getDisplayName(),
@@ -153,7 +157,7 @@ public class UserService {
         @NotNull UpdateAccountInfo accountInfo,
         @Nullable MultipartFile pfpFile
     ) {
-        int userId = repo.findCustomerTraderUserByEmail(email).map(User::getId).orElseThrow();
+        int userId = userRepo.findCustomerTraderUserByEmail(email).map(User::getId).orElseThrow();
 
         String passwordHash = null;
 
@@ -165,7 +169,7 @@ public class UserService {
             storageService.store(pfpFile, getImageFileName(userId));
         }
 
-        repo.updateUserInfo(
+        userRepo.updateUserInfo(
             userId,
             passwordHash,
             accountInfo.firstName(),
@@ -185,6 +189,20 @@ public class UserService {
         }
 
         return null;
+    }
+
+    public void checkout(@NotNull String email) {
+        CustomerTraderUser user = userRepo.findCustomerTraderUserByEmail(email).orElseThrow();
+        for (CartProduct cartProduct : user.getCartProducts()) {
+            Product product = productRepo.getProductById(cartProduct.getProductId()).orElseThrow();
+            if (cartProduct.getQuantity() > product.getAmount()) {
+                throw new ValidationException("Cannot buy more than the trader have");
+            }
+
+            productRepo.updateProductAmount(product.getProductId(), a -> a - cartProduct.getQuantity());
+        }
+
+        userRepo.removeAllCartProducts(user.getId());
     }
 
     @NotNull

@@ -38,8 +38,13 @@ public class SecurityConfig {
                     "/api/cartproduct",
                     "/api/updateaccountinfo",
                     "/api/addproduct",
-                    "/api/updateproduct"
+                    "/api/updateproduct",
+                    "/api/checkout"
                 ).hasRole("CUSTOMER_TRADER")
+                .requestMatchers(
+                    "/api/changeproductstatus",
+                    "/api/getproductswaitingapproval"
+                ).hasRole("ADMIN")
                 .requestMatchers("/**", "/api/**").permitAll()
             )
             .httpBasic(basic ->

@@ -77,6 +77,11 @@ public class UserController {
         userService.updateAccountInfo(auth.getName(), info, pfpFile);
     }
 
+    @PostMapping("/api/checkout")
+    public void checkout(Authentication auth) {
+        userService.checkout(auth.getName());
+    }
+
     @GetMapping("/images/pfp/{id}")
     public ResponseEntity<Resource> pfpImage(@PathVariable int id) {
         Resource resource = userService.getImageResource(id);

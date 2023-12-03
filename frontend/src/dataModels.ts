@@ -27,7 +27,7 @@ export function parseNumberRange(text: string): NumberRange | undefined {
 
 export const allProductStatuses = [
     'active',
-    'on-moderation',
+    'waiting-for-moderation',
     'declined',
     'sold',
 ] as const
@@ -136,8 +136,7 @@ export type SignUpInfo = {
 export type ConciseProductInfo = {
     id: number,
     title: string,
-    imageSource: string,
-    stripeText?: string,
+    imageSource: string
     price: number,
     totalAmount: number
 }
@@ -168,7 +167,6 @@ export type ProductInfo = {
     id: number,
     title: string,
     imageSources: string[],
-    stripeText?: string,
     price: number,
     totalAmount: number,
     description: string,
@@ -176,6 +174,8 @@ export type ProductInfo = {
     category: CategoryId,
     state: ProductState,
     color: ColorId,
+    status: ProductStatus
+    trader: ConciseUserInfo,
 }
 
 export type NewProductInfo = {
@@ -190,8 +190,6 @@ export type NewProductInfo = {
 }
 
 export type UpdateProductInfo = { id: number } & Omit<NewProductInfo, 'images'> & { images: (File | undefined)[] }
-
-
 
 // Account
 

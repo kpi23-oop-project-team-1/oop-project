@@ -2,6 +2,7 @@ package com.mkr.server.services;
 
 import com.mkr.server.domain.*;
 import com.mkr.server.dto.CommentInfo;
+import com.mkr.server.dto.ConciseProduct;
 import com.mkr.server.dto.ProductInfo;
 import com.mkr.server.repositories.ProductRepository;
 import com.mkr.server.services.storage.ProductImageUrlMapper;
@@ -193,14 +194,15 @@ public class ProductService {
                 productId,
                 product.getTitle(),
                 imageSources,
-                "",
                 product.getPrice(),
                 product.getAmount(),
                 product.getDescription(),
                 getProductComments(product),
                 product.getCategory().toPrettyString(),
                 product.getState().toPrettyString(),
-                product.getColor().toPrettyString()
+                product.getColor().toPrettyString(),
+                product.getStatus(),
+                userService.getConciseUserInfo(product.getTraderId()).orElseThrow()
         );
     }
 
@@ -213,6 +215,24 @@ public class ProductService {
         }
 
         return null;
+    }
+
+    public void changeProductStatus(int id, ProductStatus status) {
+        Product product = repo.getProductById(id).orElseThrow();
+        if (product.getStatus() != ProductStatus.WAITING_FOR_MODERATION) {
+            throw new ValidationException("Product status is not WAITING_FOR_MODERATION");
+        }
+
+        repo.updateProduct(id, p -> p.withStatus(status));
+    }
+
+    public ConciseProduct[] getProductsWaitingApproval() {
+        var mapper = productImageUrlMapper.asSingleImageFunction();
+
+        return ConciseProduct.fromProducts(
+            repo.getProductsBy(p -> p.getStatus() == ProductStatus.WAITING_FOR_MODERATION),
+            mapper
+        );
     }
 
     private void deleteImages(int productId) {

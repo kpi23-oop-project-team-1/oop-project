@@ -1,16 +1,19 @@
 package com.mkr.server.dto;
 
+import com.mkr.server.domain.ProductStatus;
+
 public record ProductInfo(
     int id,
     String title,
     String[] imageSources,
-    String stripeText,
     int price,
     int totalAmount,
     String description,
     CommentInfo[] comments,
     String category,
     String state,
-    String color
+    String color,
+    ProductStatus status,
+    ConciseUserInfo trader
 ) {
 }

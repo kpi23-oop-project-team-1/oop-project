@@ -71,6 +71,10 @@ public class UserRepository {
         updateUser(userId, u -> u.withRemovedCartProduct(productId));
     }
 
+    public void removeAllCartProducts(int userId) {
+        updateUser(userId, CustomerTraderUser::withEmptyCart);
+    }
+
     private void updateUser(int userId, Function<CustomerTraderUser, CustomerTraderUser> transform) {
         userCollection().update(
             u -> u.getId() == userId && u instanceof CustomerTraderUser,

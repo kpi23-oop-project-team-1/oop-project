@@ -1,0 +1,45 @@
+plugins {
+    id 'application'
+}
+
+group = 'com.mkr'
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(":datastore")
+    implementation 'org.springframework.security:spring-security-crypto:6.2.0'
+    implementation 'commons-logging:commons-logging:1.3.0'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+application {
+    mainClass="com.mkr.serverDataStoreConsole.Main"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    manifest {
+        attributes('Main-Class': 'com.mkr.serverDataStoreConsole.Main')
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

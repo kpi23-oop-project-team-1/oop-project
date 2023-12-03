@@ -3,6 +3,7 @@ package com.mkr.server;
 import com.mkr.datastore.DataStore;
 import com.mkr.datastore.inMemory.InMemoryDataStore;
 import com.mkr.server.config.DataStoreConfig;
+import com.mkr.server.controllers.AdminController;
 import com.mkr.server.domain.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -21,23 +22,44 @@ public class ServerApplication extends SpringBootServletInitializer {
 		var dataStore = new InMemoryDataStore(DataStoreConfig.configuration);
 
 		var users = dataStore.getCollection(DataStoreConfig.users);
-		var user = new CustomerTraderUser(
+		var user1 = new CustomerTraderUser(
 			0,
 			"mail@gmail.com",
 			passwordEncoder.encode("password")
 		);
-		user.setTelNumber("1234567891");
-		user.setFirstName("First name");
-		user.setLastName("Last name");
-		user.setDisplayName("Display name");
-		user.setProfileDescription("Description");
-		user.setComments(new Integer[] { 0 });
-		user.setCartProducts(new CartProduct[]{
-			new CartProduct(0, 5)
+		user1.setTelNumber("1234567891");
+		user1.setFirstName("First name");
+		user1.setLastName("Last name");
+		user1.setDisplayName("Display name");
+		user1.setProfileDescription("Description");
+		user1.setComments(new Integer[][] { 0 });
+		user1.setCartProducts(new CartProduct[]{
+			new CartProduct(1, 5)
 		});
 
-		users.insert(user);
-		users.setLastID(0);
+		var user2 = new CustomerTraderUser(
+			2,
+			"mail2@gmail.com",
+			passwordEncoder.encode("password")
+		);
+		user2.setTelNumber("1234567891");
+		user2.setFirstName("First name");
+		user2.setLastName("Last name");
+		user2.setDisplayName("Display name");
+		user2.setProfileDescription("Description");
+		user2.setComments(new Integer[] { 0 });
+		user2.setCartProducts(new CartProduct[]{
+			new CartProduct(1, 5)
+		});
+
+		var admin = new AdminUser(
+			1,
+			"admin@gmail.com",
+			passwordEncoder.encode("password")
+		);
+
+		users.insert(user1, user2, admin);
+        users.setLastID(2);
 
 		var products = dataStore.getCollection(DataStoreConfig.products);
 		var product1 = new Product(
@@ -54,7 +76,7 @@ public class ServerApplication extends SpringBootServletInitializer {
 		product1.setComments(new Integer[0]);
 
 		var product2 = new Product(
-			1, 0,
+			1, 2,
 			"456",
 			150,
 			5,
@@ -72,13 +94,13 @@ public class ServerApplication extends SpringBootServletInitializer {
 		comments.insert(
 			new Comment(
 				0,
-				0,
+				2,
 				4,
 				"Example comment",
 				100L
 			)
 		);
-		users.setLastID(0);
+        comments.setLastID(0);
 
 		return dataStore;
 	}

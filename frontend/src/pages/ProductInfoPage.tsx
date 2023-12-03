@@ -7,7 +7,7 @@ import ImageCarousel from "../components/ImageCarousel";
 import { useValueFromDataSource } from "../dataSource.react";
 import { formatPriceToString } from "../utils/stringFormatting";
 import { StringResourcesContext } from "../StringResourcesContext";
-import { CommentInfo, ProductInfo, totalCommentStarCount } from "../dataModels";
+import { CommentInfo, ProductInfo, ProductStatus, totalCommentStarCount } from "../dataModels";
 import { StarRating } from "../components/StarRating";
 import "../styles/ProductInfoPage.scss"
 import NumberInput from "../components/NumberInput";
@@ -17,6 +17,7 @@ import PostCommentDialog from "../components/PostCommentDialog";
 import { DialogInfo } from "../components/Dialogs";
 import { DiContainerContext } from "../diContainer";
 import { CommentView } from "../components/CommentView";
+import { UserCredentials } from "../user";
 
 type OwnPageDialogType = 'post-comment'
 type DialogType = PageWithFullHeaderDialogType | OwnPageDialogType
@@ -44,6 +45,17 @@ export default function ProductInfoPage() {
     const isProductInCart = useMemo(() => cartManager.isProductInCart(productId ?? 0), [cart])
     const userCreds = useMemo(() => diContainer.userCredsStore.getCurrentUserCredentials(), [])
     const userType = useCurrentUserType()
+    const [currentUserIdState] = useValueFromDataSource(async ds => userCreds ? await ds.getUserId(userCreds.email) : -1, [userCreds])
+    const currentUserId = currentUserIdState.value ?? -1
+
+    const isAdmin = userType.type == 'success' && userType.value == 'admin'
+
+    useEffect(() => {
+        if (userType.type == 'success' && userType.value != 'admin' && product && product.status != 'active') {
+            navigate("/")
+        }
+    }, [userType, product])
+   
 
     function addToCart() {
         if (product) {
@@ -98,9 +110,16 @@ export default function ProductInfoPage() {
                                 <Characteristic name={strRes.color} value={product?.color} valueToTextMap={strRes.colorLabels}/>
                             </Section>
 
-                            <Section header={strRes.productComments}>
-                                {product?.comments.map(comment => <CommentView key={comment.id} comment={comment}/>)}
-                            </Section>
+                            {
+                                product && product.status == 'active' &&
+                                <Section header={strRes.productComments}>
+                                    {product?.comments.map(comment => <CommentView key={comment.id} comment={comment}/>)}
+                                </Section>
+                            }
+
+                            {
+                                isAdmin && product && product.status != 'active' && <AdminPanel productId={productId ?? -1} creds={userCreds}/>
+                            }
                             
                         </div>
 
@@ -108,9 +127,7 @@ export default function ProductInfoPage() {
                             <p id="product-info-price">{product ? formatPriceToString(product.price) : ""}</p>
 
                             {
-                                userType.value != 'customer-trader' ?
-                                undefined 
-                                :
+                                userType.value == 'customer-trader' && !isAdmin && currentUserId != product?.trader.id ?
                                 <>
                                     {isProductInCart ? 
                                         <p id="product-info-in-cart-label">{strRes.productAlreadyInCart}</p> 
@@ -136,6 +153,7 @@ export default function ProductInfoPage() {
                                         {strRes.writeComment}
                                     </button>
                                 </>
+                                : undefined
                             }
                         </div>
                     </div>
@@ -149,6 +167,38 @@ export default function ProductInfoPage() {
 
 function productToCartProduct(product: ProductInfo, quantity: number): CartProductInfo {
     return { ...product, quantity, imageSource: product.imageSources[0] }
+}
+
+type AdminPanelProps = {
+    productId: number,
+    creds: UserCredentials | undefined
+}
+
+function AdminPanel(props: AdminPanelProps) {
+    const strRes = useContext(StringResourcesContext)
+    const diContainer = useContext(DiContainerContext)
+    const dataSource = diContainer.dataSource
+    const navigate = useNavigate()
+
+    function changeProductStatus(status: ProductStatus) {
+        if (props.creds) {
+        dataSource.changeProductStatus(props.productId, status, props.creds).then(() => {
+            navigate("/admin")
+        }).catch(() => {})
+        }
+    }
+
+    return (
+        <div id="product-info-admin-panel">
+            <button className="primary" onClick={() => changeProductStatus('active')}>
+                {strRes.approveProduct}
+            </button>
+
+            <button className="primary" onClick={() => changeProductStatus('declined')}>
+                {strRes.declineProduct}
+            </button>
+        </div>
+    )
 }
 
 function Section(props: React.PropsWithChildren<{ header: string }>) {

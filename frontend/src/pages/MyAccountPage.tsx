@@ -92,6 +92,7 @@ export default function MyAccountPage() {
     }
 
     function onSignOutClick() {
+        diContainer.userCredsStore.deleteCredentials()
         navigate("/")
     }
 
@@ -117,6 +118,8 @@ export default function MyAccountPage() {
 
         setSubmitInProgress(true)
         dataSource.updateAccountInfo(newAccount, userCreds).then(() => {
+            diContainer.userCredsStore.updatePassword(password)
+
             // Refresh page
             navigate(0)
         }).catch(() => {

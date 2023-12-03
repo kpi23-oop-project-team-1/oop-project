@@ -58,7 +58,7 @@ export default function SignInPage() {
 
                         <div id="signup-block">
                             <p>{strRes.newToWebsite}</p>
-                            <Link to="signup">{strRes.signUp}</Link>
+                            <Link to="/signup">{strRes.signUp}</Link>
                         </div>
                     </div>
 

@@ -58,12 +58,25 @@ public class ProductRepository {
         );
     }
 
+    public void updateProductAmount(int id, @NotNull Function<Integer, Integer> transformAmount) {
+        productCollection().update(
+            p -> p.getProductId() == id,
+            p -> p.withAmountAndStatus(transformAmount.apply(p.getAmount()))
+        );
+    }
+
     public void deleteProduct(int id) {
         productCollection().delete(o -> o.getProductId() == id);
     }
 
     public void addProductComment(int productId, int commentId) {
         updateProduct(productId, p -> p.withComment(commentId));
+    }
+
+    public Product[] getProductsBy(@NotNull Predicate<Product> predicate) {
+        try (var data = productCollection().data()) {
+            return data.filter(predicate).toArray(Product[]::new);
+        }
     }
 
     @NotNull

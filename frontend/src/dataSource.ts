@@ -51,6 +51,10 @@ export interface DataSource {
 
     postProductComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined>
     postUserComment(info: NewCommentInfo, creds: UserCredentials): Promise<undefined>
+
+    checkout(creds: UserCredentials): Promise<undefined>
+    changeProductStatus(productId: number, status: ProductStatus, creds: UserCredentials): Promise<undefined>
+    getProductsWaitingApproval(creds: UserCredentials): Promise<ConciseProductInfo[]>
 }
 
 export class ServerDataSource implements DataSource {
@@ -285,6 +289,30 @@ export class ServerDataSource implements DataSource {
         return httpFetchAsync({
             method: "GET",
             url: this.createUrl(`detaileduserinfo?id=${id}`)
+        })
+    }
+
+    checkout(creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
+            method: "POST",
+            url: this.createUrl("checkout"),
+            credentials: creds
+        })
+    }
+
+    changeProductStatus(productId: number, status: ProductStatus, creds: UserCredentials): Promise<undefined> {
+        return this.noResponseFetch({
+            method: "POST",
+            url: this.createUrl(`changeproductstatus?id=${productId}&status=${status}`),
+            credentials: creds
+        })
+    }
+
+    getProductsWaitingApproval(creds: UserCredentials): Promise<ConciseProductInfo[]> {
+        return httpFetchAsync({
+            method: "GET",
+            url: this.createUrl(`getproductswaitingapproval`),
+            credentials: creds
         })
     }
 
