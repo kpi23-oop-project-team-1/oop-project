@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -71,6 +72,7 @@ public class UserControllerTests {
         products.delete(p -> true);
         users.insert(createUser(0, 1));
         users.insert(createUser(1, -1));
+        users.setLastID(1);
 
         products.insert(
             new Product(
@@ -201,6 +203,21 @@ public class UserControllerTests {
         assertEquals("Last name 2", actualUser.getLastName());
         assertEquals("0000000000", actualUser.getTelNumber());
 
+    }
+
+    @Test
+    public void signUpTest() throws Exception {
+        mockMvc.perform(post("/api/signup")
+                .param("firstName", "name")
+                .param("lastName", "surname")
+                .param("telNumber", "1234567890")
+                .param("email", "email5@gmail.com")
+                .param("password", "password")
+        ).andExpect(status().isOk());
+
+        try (var stream = dataStore.getCollection(DataStoreConfig.users).data()) {
+            assertEquals(3, stream.toArray().length);
+        }
     }
 
     private CustomerTraderUser getZeroUser() {
