@@ -118,7 +118,9 @@ export default function MyAccountPage() {
 
         setSubmitInProgress(true)
         dataSource.updateAccountInfo(newAccount, userCreds).then(() => {
-            diContainer.userCredsStore.updatePassword(password)
+            if (password.length >= 8) {
+                diContainer.userCredsStore.updatePassword(password)
+            }
 
             // Refresh page
             navigate(0)
